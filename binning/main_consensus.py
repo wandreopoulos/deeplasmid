@@ -35,7 +35,7 @@ import multiprocessing
 import glob
 import pysam
 
-from metagenome_binning.rqc_metagenome_binning import run_unsup_binning_test_datasets, run_sup_binning_test_datasets, binning_cmd_sup_blastnt_megan, binning_cmd_sup_blastfungal_megan, binning_cmd_sup_blastmicrob_megan, binning_cmd_sup_blastfungal_taxmapper, binning_cmd_sup_blastmicrob_taxmapper, binning_cmd_unsup_metabat
+from rqc_metagenome_binning import run_unsup_binning_test_datasets, run_sup_binning_test_datasets, binning_cmd_sup_blastnt_megan, binning_cmd_sup_blastfungal_megan, binning_cmd_sup_blastmicrob_megan, binning_cmd_sup_blastfungal_taxmapper, binning_cmd_sup_blastmicrob_taxmapper, binning_cmd_unsup_metabat
 
 
 #
@@ -75,7 +75,7 @@ def delete_temp_files(nocleanup, output_path, log):
     return 0
 
 
-pipeline_name = "JGI Microbial Metagenome Binning"
+pipeline_name = "JGI Binning"
 pipeline_version = "1.0"    
 readme_headers = {}
 readme_bodies = {}
@@ -89,7 +89,7 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
 
     startruntime = time()
     
-    print "Binning pipeline version %s %s. " % (pipeline_name, pipeline)
+    print "Binning pipeline version %s %s. " % (pipeline_name, pipeline_version)
     print "Author: Bill Andreopoulos. Date: January 16, 2016."
     print "This binning pipeline is aimed for decontamination of datasets and will output 3 sets of clusters using different approaches: "
     print "  1) TAXONOMIC/BINS contains the bins as fasta files from a taxonomic analysis using Megan."
@@ -147,11 +147,11 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
 
     # initialize my logger
     log_level = "INFO"
-    log_file = os.path.join(output_path, "binning_metagenome_cmd.log")
+    log_file = os.path.join(output_path, "binning_cmd.log")
     #print "Started phix_error pipeline, writing log to: %s" % (log_file)
     
     # log = logging object
-    log = get_logger("binning_metagenome_cmd", log_file, log_level)
+    log = get_logger("binning_cmd", log_file, log_level)
     log.info("Starting %s: %s", pipeline_name, fasta)
 
 
@@ -378,12 +378,21 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
             count += 1
             level2seedsMemberships_rev[count] = []
             contigs_i = get_contigs_list(cluster_fasta_file)
+            longest_contig_found = False
             for ci in contigs_i:
                 ###print "       contigi %s" % (ci)
                 seed_tmp = []
                 nonseed_tmp = []
                 if ci in seedset:
                     ###print "seed"
+                    seed_tmp.append(ci)
+                    subclustersLevel2[ci] = []
+                    level2seedsMemberships[ci] = count
+                    level2seedsMemberships_rev[count].append(ci)
+                elif not longest_contig_found:
+                    ###We set the longest contig as additional seed, so in the closest function the non-seeds
+                    ###have an option where to go in case there is an unknown organism not detected in step 1.
+                    longest_contig_found = True
                     seed_tmp.append(ci)
                     subclustersLevel2[ci] = []
                     level2seedsMemberships[ci] = count
@@ -403,18 +412,20 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
         
         ###compareEachSeedtoAllSeedsSimsinClusters1and2()
         ###Move the subclusters based on the clusters1 results (if their seeds were clustered together in clusters1),
-        ###UNLESS the unsup pairwise similarities of the seeds do not warrant it, in which case leave in clusters2:
-        ###For each seed assign to the seed with which it was in the same cluster1 and to which it has
+        ###UNLESS the unsup pairwise similarities of the seeds are high, in which case leave in clusters2:
+        ###For each seed assign to the seed with which it was in the same cluster1 [and to which it has
         ###the highest unsup pairwise similarity(UPS), as long as the UPS is at least as
-        ###high as the highest unsup pairwise similarity to other seeds in clusters2.
+        ###high as the highest unsup pairwise similarity to other seeds in clusters2], as long as
+        ###the UPS to the closest seed in level 2 is not significant (>0.02).
         ###def compareEachSeedtoAllSeedsSimsinClusters1and2():
         #pragma omp parallel for
         for seed in subclustersLevel2.keys():
             ###(sim1_c1, seed1_c1) = nearest_sim_neighbor_seed(seed, sim1, seedset)
             ###(sim2_c1, seed2_c1) = nearest_sim_neighbor_seed(seed, sim2, seedset)
-            (sim1_c2, seed1_c2) = nearest_sim_neighbor_seed(seed, sim1, set(level2seedsMemberships_rev[level2seedsMemberships[seed]]))
-            (sim2_c2, seed2_c2) = nearest_sim_neighbor_seed(seed, sim2, set(level2seedsMemberships_rev[level2seedsMemberships[seed]]))
-            if sim1_c2 > 0.02 and sim2_c2 > 0.02 and seed1_c2 != "" and seed2_c2 != "":  ###sim1_c1
+            #(sim1_c2, seed1_c2) = nearest_sim_neighbor_seed(seed, sim1, set(level2seedsMemberships_rev[level2seedsMemberships[seed]]))
+            #(sim2_c2, seed2_c2) = nearest_sim_neighbor_seed(seed, sim2, set(level2seedsMemberships_rev[level2seedsMemberships[seed]]))
+            #if sim1_c2 > 0.02 and sim2_c2 > 0.02 and seed1_c2 != "" and seed2_c2 != "":  ###sim1_c1
+            if level1seedsMemberships.has_key(seed):
                 print "------> switch for seed %s from level2 %s to level1 %s" % (seed, level2seedsMemberships[seed], level1seedsMemberships[seed])
                 final_binMemberships[seed] = level1seedsMemberships[seed] ###seed1_c1]
                 for s in subclustersLevel2[seed]:
@@ -454,16 +465,34 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
     exit(1)
 
 def get_contigs_list(filename):
-    contigs = []
+    contigs = {}
+    s = ""
+    prev_contig = ""
     f = open(filename, 'r')
     for i in f:
         if i.startswith(">"):
-            contigs.append(i[1:].strip())
-    return contigs
+            #If L=length of s is >0:
+            #Assign L to previous contig
+            #Set string to ""
+            if len(s) > 0 and len(prev_contig) > 0:
+                if not len(s) in contigs:
+                    contigs[len(s)] = []
+                contigs.get(len(s)).append(prev_contig)
+            ###contigs.append(i[1:].strip())
+            prev_contig = i[1:].strip()
+            s = ""
+        else:
+            s += i.strip()
+    r = [value for (key, value) in sorted(contigs.items())]
+    return list(itertools.chain(*r))
 
+'''
+Only attach nonseed to closest seed if the sim significance is <0.02,
+since else it might be an unknown organism contig that we are searching for and does not match the seed.
+'''
 def closest(seed_array, nonseed_item, sim1, sim2):
-    simholder1 = 10000.0
-    simholder2 = 10000.0
+    simholder1 = 0.02
+    simholder2 = 0.02
     res = ""
     for s in seed_array:
         fset = frozenset((nonseed_item,s))

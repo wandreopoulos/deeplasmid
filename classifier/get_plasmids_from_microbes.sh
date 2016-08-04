@@ -58,9 +58,11 @@ fi
 # read contigs.fa as command line option
 
 # run read_fasta.py against contigs.fa
-export CLASSPATH=/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12:$CLASSPATH
+export CLASSPATH=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12:$CLASSPATH
 
 export PYTHONPATH=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/assemblyqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/readqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/tools/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc/:$PYTHONPATH
+
+export PATH=$PATH:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/
 
 FASTA=`realpath $1`
 if [ -f $FASTA ];
@@ -129,7 +131,7 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/pr
 #MODEL=/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURES_BALANCED.J48.model
 ML=weka.classifiers.bayes.NaiveBayes
 
-MODEL=/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESrevcompl_BALANCED.NB.model
+MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESrevcompl_BALANCED.NB.model
 #
 #ML=weka.classifiers.trees.RandomForest
 #

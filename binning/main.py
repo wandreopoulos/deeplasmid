@@ -197,7 +197,7 @@ def main(output_path, fasta, bam_files, nocleanup=None):
     readme_headers[len(readme_headers)] = "Tools and Input Files"
     
     readme_bodies[len(readme_headers)-1] = ""
-    readme_bodies[len(readme_headers)-1] += "Taxonomic binning: " + TAXONOMIC + "\n"
+    ###readme_bodies[len(readme_headers)-1] += "Taxonomic binning: " + TAXONOMIC + "\n"
     readme_bodies[len(readme_headers)-1] += "Unsupervised binning: " + UNSUPERVISED + "\n"
     readme_bodies[len(readme_headers)-1] += "Fasta " + fasta_name + "\n"
     #readme_bodies[len(readme_headers)-1] += "Reference Genome: " + ref_genome + "\n"
@@ -216,6 +216,7 @@ def main(output_path, fasta, bam_files, nocleanup=None):
     unclass = []
     
     if status == "start":
+        '''
         binning_cmd = TAXONOMIC ###="/global/projectb/scratch/andreopo/binning/taxonomy/run_blastnt_megan.sh "
         binning_cmd_params = fasta
         output_path2 = os.path.join( output_path , "TAXONOMIC" )
@@ -236,9 +237,10 @@ def main(output_path, fasta, bam_files, nocleanup=None):
             status = "run_sup_binning_test_datasets success"
             checkpoint_step(status_log, status)
 
-    if status == "run_sup_binning_test_datasets success" and len(unclass) > 0:
+        if status == "run_sup_binning_test_datasets success" and len(unclass) > 0:
+        '''
         binning_cmd = UNSUPERVISED ###="module load metabat; runMetaBat.sh "
-        binning_cmd_params = "%s %s" % (unclass[0], bam_files)
+        binning_cmd_params = "%s %s" % (fasta, bam_files) ###unclass[0]
         output_path3 = os.path.join( output_path , "UNSUPERVISED" )
         
         if os.path.isdir(output_path3) and os.path.exists(output_path3):
@@ -306,4 +308,3 @@ def main(output_path, fasta, bam_files, nocleanup=None):
     done = True
         
     return 0
-

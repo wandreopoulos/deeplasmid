@@ -74,6 +74,23 @@ def cogs(sequence, seqin, penalty_value):
         cmd = ["/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
         subprocess.check_call(cmd)
 
+        prodigalFile = open(FASTA + ".prodigal.out", "r")
+        x = {}
+        genecount = 0
+        contiglen = len(sequence)
+        for i in xrange(0,contiglen):
+           x[i] = 0
+        for line in prodigalFile:
+                if line.find("CDS") > -1:
+                      [ start , end ] = [ int(i) for i in re.findall("\d+", line) ]
+                      for i in xrange(min(start, end)-1, max(start, end)):
+                           x[i] = 1
+                      genecount += 1
+        
+        ones = x.values().count(1)
+        genesperMB=(float(ones)/float(contiglen))
+        prodigalFile.close()
+
         ###prodigal input contig file output genes as aas
         ###rpsblast on genes as aas
         Cog = "/global/dna/projectdirs/microbial/img/databases/cog/Cog"  ###"/global/projectb/sandbox/IMG/img/databases/cog"
@@ -128,7 +145,7 @@ def cogs(sequence, seqin, penalty_value):
         os.remove(FASTA + ".prodigal.out")
         os.remove(FASTA + ".gene.faa.rpsblast.log")
         
-        return results
+        return results, genesperMB, genecount
 
 
 def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHomopol, totalLongHomopol, longest_repeat, occur_longest_repeat, longest_rev_repeat, occur_longest_rev_repeat, longest_revcompl_repeat, occur_longest_revcompl_repeat, longest_revcompl_repeat_s2, occur_longest_revcompl_repeat_s2, len_sequence, longest_id_ecoli, longest_id_vector, energy, max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, max_occur_trimer, max_occur_same_trimer, percent_occur_same_trimer, max_occur_tetramer, max_occur_same_tetramer, percent_occur_same_tetramer, \
@@ -137,7 +154,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
             max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
             max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
             max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
-            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, header):
+            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, genesperMB, genecount, header):
     
     features_file = open(os.path.join(output_path, 'features.svn'), 'a')
     features_file_excel = open(os.path.join(output_path, 'features.txt'), 'a')
@@ -421,6 +438,19 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
                 print "COG " + i + " " + str(coghits.get(i))
             feature_index += 1
             line_excel += " " + str(coghits.get(i))
+            
+        line += " " + str(feature_index) + ":" + str(genesperMB)
+        if DEBUG == 1:
+            print "genesperMB " + str(genesperMB)
+        feature_index += 1
+        line_excel += " " + str(genesperMB)
+        
+        line += " " + str(feature_index) + ":" + str(genecount)
+        if DEBUG == 1:
+            print "genecount " + str(genecount)
+        feature_index += 1
+        line_excel += " " + str(genecount)
+
     '''
     if not max_occur_octamer is None:
         line += " " + str(feature_index) + ":" + str(max_occur_octamer)
@@ -2046,7 +2076,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                         print "fivesixFindMers"
 
                     startpointingtime = time()
-                    coghits = cogs(sequence, seqin, penalty_value);
+                    coghits, genesperMB, genecount = cogs(sequence, seqin, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME cogs: " + runtime
                     if DEBUG == 1:
@@ -2078,7 +2108,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
             max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
             max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
             max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
-            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, header);
+            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, genesperMB, genecount, header);
                     
                     return penalty_value;
 
@@ -2326,7 +2356,7 @@ if __name__ == "__main__":
     features_file_excel.write("pf,gccontent,mingc,maxgc,longestAhomopol,totalLongAhomopol,longestChomopol,totalLongChomopol,longestGhomopol,totalLongGhomopol,longestThomopol,totalLongThomopol,longestHomopolSum,totalLongHomopolSum,longestdirectrepeat,occurdirectrepeat,longestreverserepeat,occurreverserepeat,longestreversecomplrepeat,occurreversecomplrepeat,sequencelengthbases,ecolialign,vectoralign,freenergy,max_occur_same_dimer,percent_occur_same_dimer,max_occur_same_trimer,percent_occur_same_trimer,class,faheader\n")
     features_file_excel.close()
     '''
-    colheaders = "id_run,gc_content,mingc,maxgc,AlongestHomopol,AtotalLongHomopol,ClongestHomopol,CtotalLongHomopol,GlongestHomopol,GtotalLongHomopol,TlongestHomopol,TtotalLongHomopol,longestHomopolSum,totalLongHomopolSum,longest_repeat,occur_longest_repeat,longest_rev_repeat,occur_longest_rev_repeat,longest_revcompl_repeat,occur_longest_revcompl_repeat,longest_revcompl_repeat_s2,occur_longest_revcompl_repeat_s2,len_sequence,longest_id_ecoli,longest_id_vector,energy,max_occur_dimer,max_occur_same_dimer,percent_occur_same_dimer,max_occur_trimer,max_occur_same_trimer,percent_occur_same_trimer,max_occur_tetramer,max_occur_same_tetramer,percent_occur_same_tetramer,max_occur_pentamer,max_occur_same_pentamer,percent_occur_same_pentamer,max_occur_hexamer,max_occur_same_hexamer,percent_occur_same_hexamer,max_occur_heptamer,max_occur_same_heptamer,percent_occur_same_heptamer"
+    colheaders = "id_run,gc_content,mingc,maxgc,AlongestHomopol,AtotalLongHomopol,ClongestHomopol,CtotalLongHomopol,GlongestHomopol,GtotalLongHomopol,TlongestHomopol,TtotalLongHomopol,longestHomopolSum,totalLongHomopolSum,longest_repeat,occur_longest_repeat,longest_rev_repeat,occur_longest_rev_repeat,longest_revcompl_repeat,occur_longest_revcompl_repeat,longest_revcompl_repeat_s2,occur_longest_revcompl_repeat_s2,len_sequence,longest_id_ecoli,longest_id_vector,energy,max_occur_dimer,max_occur_same_dimer,percent_occur_same_dimer,max_occur_trimer,max_occur_same_trimer,percent_occur_same_trimer,max_occur_tetramer,max_occur_same_tetramer,percent_occur_same_tetramer,max_occur_pentamer,max_occur_same_pentamer,percent_occur_same_pentamer,max_occur_hexamer,max_occur_same_hexamer,percent_occur_same_hexamer,max_occur_heptamer,max_occur_same_heptamer,percent_occur_same_heptamer,COGS,genesperMB,genecount"
     if len(input_path) >0:
         features_file = open(os.path.join(output_path, 'features.svn'), 'w')
         features_file.write(colheaders + "\n")

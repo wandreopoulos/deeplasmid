@@ -1,10 +1,10 @@
 #!/bin/bash -l
-#get_mitos_from_fungi.sh <in fasta file>
+#get_mitos_from_fungi2.sh <in fasta file>
 
 usage(){
 echo "
 Written by Bill Andreopoulos, from February 2015 - present
-Last modified October 16, 2015
+Last modified January 28, 2016
 
 Description:  This is a tool for finding mitos in fungi.
 The run is based on a Naive Bayes classifier.
@@ -15,6 +15,11 @@ sequences on the basis of a set of predetermined features, including:
 - The longest homopolymer for each of A,C,G,T.
 - The total nucleotides in long (>5n) homopolymers.
 - Most frequent di-, tri-, tetranucleotide up to dekamers (python khmer package).
+
+These features became obsolete (June 2015):
+- Length of the sequence.
+- Longest alignment to refseq.mito.
+- The repeat and inverse repeat content.
 
 Note: the model has been trained only for mitochondrial vs. fungi separation.
 
@@ -56,6 +61,8 @@ fi
 export CLASSPATH=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12:$CLASSPATH
 
 export PYTHONPATH=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/assemblyqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/readqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/tools/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc/:$PYTHONPATH
+
+export PATH=$PATH:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/
 
 FASTA=`realpath $1`
 if [ -f $FASTA ];
@@ -115,7 +122,9 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i '/^id.*
 
 for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i 's/,,/,?,/g' $i ; done
 
-for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_mito_fungi2 $i > $i.tmp && mv $i.tmp $i ; done
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/header_mito_fungi2 $i > $i.tmp && mv $i.tmp $i ; done
+# /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_mito_fungi2
+
 
 ###To produce the model use:
 ###andreopo@gpint108:/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12$ java weka.classifiers.bayes.NaiveBayes -c 1 -d  ./MODEL/mainfungal_mito_jgi_releases_ALLFEATURES_BALANCED.NB.model -t ./MODEL/mainfungal_mito_jgi_releases_ALLFEATURES_BALANCED.arff
