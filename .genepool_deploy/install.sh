@@ -1,3 +1,3 @@
 #!/bin/bash -l
 set -ex
-rsync -a --exclude=".*" $PREFIX/
+rsync -a --exclude=".*" ./ $PREFIX/
