@@ -1,29 +1,29 @@
 #!/bin/bash -l
-#get_plasmids_from_microbes.sh <in fasta file>
+#get_plasmids_from_microbes2.sh <in fasta file>
 
 usage(){
 echo "
 Written by Bill Andreopoulos, from February 2015 - present
-Last modified June 2, 2015
+Last modified January 28, 2016
 
 Description:  This is a tool for finding plasmids in microbes.
-The run is based on a Naive Bayes model.
-The decision tree has been trained to separate microbial vs. plasmid
+The run is based on a Naive Bayes classifier.
+The classifier has been trained to separate microbial vs. plasmid
 sequences on the basis of a set of predetermined features, including:
 - GC % in the entire sequence.
 - Min and Max GC% in any window of 100b.
 - The longest homopolymer for each of A,C,G,T.
 - The total nucleotides in long (>5n) homopolymers.
-- Most frequent di-, tri-, tetranucleotide, as well as their span of the sequence (python khmer package).
-- The repeat and inverse repeat content.
+- Most frequent di-, tri-, tetranucleotide up to dekamers (python khmer package).
 
 These features became obsolete (June 2015):
 - Length of the sequence.
 - Longest alignment to refseq.plasmid.
+- The repeat and inverse repeat content.
 
 Note: the model has been trained only for plasmid vs. microbial separation.
 
-To run:   get_plasmids_from_microbes.sh <in fasta file>
+To run:   get_plasmids_from_microbes2.sh <in fasta file>
 
 The parameter is a fasta file of contigs. The run will produce an
 output directory with a .fa file of the contigs that are predicted
@@ -99,7 +99,7 @@ echo "Started computing prediction features....."
 module load khmer
 
 ###/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/
-read_fasta.py  -i  $FASTA  -o  $DIR/$FASTA_FILE  >  $DIR/$FASTA_FILE/organelle.out  2>  $DIR/$FASTA_FILE/organelle.err
+read_fasta2_plasmids.py  -i  $FASTA  -o  $DIR/$FASTA_FILE  >  $DIR/$FASTA_FILE/organelle.out  2>  $DIR/$FASTA_FILE/organelle.err
 
 echo "Finished computing prediction features"
 
@@ -119,7 +119,10 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i 's/ /,/
 #replace header with text blob
 for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i '/^id.*$/d' $i ; done
 
-for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_plasmids_microbes $i > $i.tmp && mv $i.tmp $i ; done
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i 's/,,/,?,/g' $i ; done
+
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/header_plasmids_microbes4 $i > $i.tmp && mv $i.tmp $i ; done
+# /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_plasmids_microbes3
 
 ###To produce the model use:
 ###andreopo@gpint108:/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12$ java weka.classifiers.bayes.NaiveBayes -c 1 -d  ./MODEL/microbial_plasmid_jgi_releases_ALLFEATURES_BALANCED.NB.model -t ./MODEL/microbial_plasmid_jgi_releases_ALLFEATURES_BALANCED.arff
@@ -131,7 +134,8 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/pr
 #MODEL=/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURES_BALANCED.J48.model
 ML=weka.classifiers.bayes.NaiveBayes
 
-MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESrevcompl_BALANCED.NB.model
+###MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESmanymers_BALANCED.NB.model
+MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESmanymers_cogs_prodigal_BALANCED3.NB.model
 #
 #ML=weka.classifiers.trees.RandomForest
 #
@@ -148,7 +152,12 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred` ; do egrep 
 #extract from contigs.fa the mito contigs and save into mito_contigs.fa
 for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.PLASMIDLINES` ; do iDIR=$(dirname $i); for j in `cat $i` ; do  sed -n $(($j+1))p  $iDIR/features.txt  | sed 's/^.* >//g' | sed 's/COV/cov/g' | sed 's/LENGTH/length/g' >> $i.PLASMIDCONTIGS ; done ; done
 
-for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.PLASMIDLINES.PLASMIDCONTIGS` ; do iDIR=$(dirname $i); ~jfroula/Tools/Jazz/screen_list.pl $i $iDIR/contigs.fa keep > $i.fa ; done
+
+
+module load jigsaw
+
+###for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.PLASMIDLINES.PLASMIDCONTIGS` ; do iDIR=$(dirname $i); ~jfroula/Tools/Jazz/screen_list.pl $i $iDIR/contigs.fa keep > $i.fa ; done
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.PLASMIDLINES.PLASMIDCONTIGS` ; do iDIR=$(dirname $i); filter_fasta.pl -k $i $iDIR/contigs.fa > $i.fa ; done
 
 NUMCONTIGS=`wc -l $DIR/$FASTA_FILE/features.txt-NEW.arff.NB.pred.PLASMIDLINES | sed 's/ .*$//'`
 
@@ -158,6 +167,13 @@ echo "Prediction results: features.txt-NEW.arff.NB.pred"
 echo "Plasmids fasta file: features.txt-NEW.arff.NB.pred.PLASMIDLINES.PLASMIDCONTIGS.fa"
 
 #optionally: run quast against released mito fasta
+
+if ! [ -z "$2" ]; then
+    cp $DIR/$FASTA_FILE/features.txt-NEW.arff.NB.pred.PLASMIDLINES.PLASMIDCONTIGS.fa  $DIR/$2
+    echo "Plasmids fasta file was copied to $DIR/$2 "
+else
+    echo "Plasmids fasta file is features.txt-NEW.arff.NB.pred.PLASMIDLINES.PLASMIDCONTIGS.fa"
+fi
 
 ###TODO:
 ###parallel passing of reads to read_fasta.py, break up files and then merge back, see how you analysed refseq.microb.

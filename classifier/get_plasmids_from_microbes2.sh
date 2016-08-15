@@ -1,25 +1,25 @@
 #!/bin/bash -l
-#get_plasmids_from_microbes.sh <in fasta file>
+#get_plasmids_from_microbes2.sh <in fasta file>
 
 usage(){
 echo "
 Written by Bill Andreopoulos, from February 2015 - present
-Last modified June 2, 2015
+Last modified January 28, 2016
 
 Description:  This is a tool for finding plasmids in microbes.
-The run is based on a Naive Bayes model.
-The decision tree has been trained to separate microbial vs. plasmid
+The run is based on a Naive Bayes classifier.
+The classifier has been trained to separate microbial vs. plasmid
 sequences on the basis of a set of predetermined features, including:
 - GC % in the entire sequence.
 - Min and Max GC% in any window of 100b.
 - The longest homopolymer for each of A,C,G,T.
 - The total nucleotides in long (>5n) homopolymers.
-- Most frequent di-, tri-, tetranucleotide, as well as their span of the sequence (python khmer package).
-- The repeat and inverse repeat content.
+- Most frequent di-, tri-, tetranucleotide up to dekamers (python khmer package).
 
 These features became obsolete (June 2015):
 - Length of the sequence.
 - Longest alignment to refseq.plasmid.
+- The repeat and inverse repeat content.
 
 Note: the model has been trained only for plasmid vs. microbial separation.
 
@@ -62,7 +62,7 @@ export CLASSPATH=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12:$
 
 export PYTHONPATH=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/assemblyqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/readqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/tools/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc/:$PYTHONPATH
 
-export PATH=$PATH:$(pwd)
+export PATH=$PATH:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/
 
 FASTA=`realpath $1`
 if [ -f $FASTA ];
@@ -121,7 +121,8 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i '/^id.*
 
 for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i 's/,,/,?,/g' $i ; done
 
-for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_plasmids_microbes3 $i > $i.tmp && mv $i.tmp $i ; done
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/header_plasmids_microbes4 $i > $i.tmp && mv $i.tmp $i ; done
+# /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_plasmids_microbes3
 
 ###To produce the model use:
 ###andreopo@gpint108:/global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12$ java weka.classifiers.bayes.NaiveBayes -c 1 -d  ./MODEL/microbial_plasmid_jgi_releases_ALLFEATURES_BALANCED.NB.model -t ./MODEL/microbial_plasmid_jgi_releases_ALLFEATURES_BALANCED.arff
@@ -134,7 +135,7 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/pr
 ML=weka.classifiers.bayes.NaiveBayes
 
 ###MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESmanymers_BALANCED.NB.model
-MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESmanymers_cogs_UNBALANCED.NB.model
+MODEL=/global/projectb/scratch/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/microbial_plasmid_jgi_releases_ALLFEATURESmanymers_cogs_prodigal_BALANCED3.NB.model
 #
 #ML=weka.classifiers.trees.RandomForest
 #
@@ -181,3 +182,4 @@ fi
 ###produce statistics for the user at output console.
 ###test on known cases automatically. Test different ML tools.
 ###MODEL not out of scratch, out of module deploy prod dir.
+###Ask user if s/he agrees with the prediction for the purposes of improving the algorithm. If yes, cp fasta to Failed else to Passed.
