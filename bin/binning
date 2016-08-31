@@ -25,8 +25,8 @@ parser.add_argument("-f", "--fasta", dest="fasta", help="Fasta file name of cont
 parser.add_argument("-o", "--output-path", dest="output_path", help = "Output path to write to", required=True)
 parser.add_argument("-b", "--bam-files", dest="bam_files", help = "The bam files with the alignment of the fastqs to the fasta file of contigs. To generate a bam file from a fastq and fasta you can use the run.q, run.sh, run.config files under this directory as a template. To submit a binning job you can use the run_bin.q, run_bin.sh and run.config files under this directory as a template.", required=True)
 parser.add_argument('-n', '--nocleanup', dest="nocleanup", action='store_true', default=False, help = "Do not cleanup files after run")
-parser.add_argument("-r", "-ref-type", dest="ref_type", help = "Specify either n for nt or m for refseq.mito or f for refseq.fungi", required=False)
-parser.add_argument("-t", "-run-type", dest="run_type", help = "Specify either m for metagenome binning or c for contaminant binning", required=False)
+parser.add_argument("-r", "-ref-type", dest="ref_type", help = "Specify either n for nt or m for refseq.mito or f for refseq.fungi (default m)", required=False)
+parser.add_argument("-t", "-run-type", dest="run_type", help = "Specify either m for metagenome binning or c for contaminant binning (default c)", required=False)
 ###parser.add_argument("-h", "-help", dest="help", help = "To generate a bam file from a fastq and fasta you can use the run.q, run.sh, run.config files under this directory as a template. To submit a binning job you can use the run_bin.q, run_bin.sh and run.config files under this directory as a template", required=False)
 '''
 module load bbtools; bbsplitpairs.sh in=fastq.gz out=genome1.fq out2=genome2.fq outsingle=singletons.fq  minlen=45 trimq=10 qtrim=rl ow=t

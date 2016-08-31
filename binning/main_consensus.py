@@ -493,7 +493,7 @@ since else it might be an unknown organism contig that we are searching for and 
 def closest(seed_array, nonseed_item, sim1, sim2):
     simholder1 = 0.02
     simholder2 = 0.02
-    res = ""
+    res = "NONE"
     for s in seed_array:
         fset = frozenset((nonseed_item,s))
         if fset in sim1 and sim1[fset] <= simholder1 and fset in sim2 and sim2[fset] <= simholder2:
