@@ -86,7 +86,7 @@ readme_bodies = {}
 ##If false, both reads will be used but ONLY if fastq is pair-ended to start with (else read1 will be used if fastq is single-ended).
 
 
-def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
+def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
 
     startruntime = time()
     
