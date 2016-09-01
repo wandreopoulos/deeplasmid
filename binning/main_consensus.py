@@ -22,8 +22,8 @@ import shutil
 
 dir = os.path.dirname(__file__)
 from common import get_logger, get_status, run_command, checkpoint_step, append_rqc_file, append_rqc_stats, get_run_path, post_mortem_cmd
-from os_utility import runCommand
-from db_access import db_connect
+###from os_utility import runCommand
+###from db_access import db_connect
 
 #from common import *
 #from rqc_utility import *
@@ -34,6 +34,7 @@ from time import time, strftime
 import multiprocessing
 import glob
 import pysam
+import itertools
 
 from rqc_metagenome_binning import run_unsup_binning_test_datasets, run_sup_binning_test_datasets, binning_cmd_sup_blastnt_megan, binning_cmd_sup_blastfungal_megan, binning_cmd_sup_blastmicrob_megan, binning_cmd_sup_blastfungal_taxmapper, binning_cmd_sup_blastmicrob_taxmapper, binning_cmd_unsup_metabat
 
