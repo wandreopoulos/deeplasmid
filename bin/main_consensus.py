@@ -447,14 +447,14 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
             print "_________________"
             ###print str(inv_map.get(k))
             if k <= separator_lev12:
-                filename1 = "Level1." + str(k) + ".____." + file_lev1_labels[k] + ".fa"
+                filename1 = "Level1." + str(k) + ".____." + file_lev1_labels[k] + ".fastaheaders"
                 print "Cluster level1 bin %s written to file %s" % (k, filename1)
                 f = open( os.path.join( output_path, filename1 ), 'a' )
                 for s in inv_map.get(k):
                     f.write(s + "\n")
                 f.close()
             else:
-                filename2 = "Level2." + str(k) + ".fa"
+                filename2 = "Level2." + str(k) + ".fastaheaders"
                 print "Cluster level2 bin %s written to file %s" % (k, filename2)
                 f = open( os.path.join( output_path, filename2 ), 'a' )
                 for s in inv_map.get(k):
