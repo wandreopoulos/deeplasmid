@@ -22,8 +22,8 @@ import shutil
 
 dir = os.path.dirname(__file__)
 from common import get_logger, get_status, run_command, checkpoint_step, append_rqc_file, append_rqc_stats, get_run_path, post_mortem_cmd
-from os_utility import runCommand
-from db_access import db_connect
+###from os_utility import runCommand
+###from db_access import db_connect
 
 #from common import *
 #from rqc_utility import *
@@ -34,6 +34,7 @@ from time import time, strftime
 import multiprocessing
 import glob
 import pysam
+import itertools
 
 from rqc_metagenome_binning import run_unsup_binning_test_datasets, run_sup_binning_test_datasets, binning_cmd_sup_blastnt_megan, binning_cmd_sup_blastfungal_megan, binning_cmd_sup_blastmicrob_megan, binning_cmd_sup_blastfungal_taxmapper, binning_cmd_sup_blastmicrob_taxmapper, binning_cmd_unsup_metabat
 
@@ -85,7 +86,7 @@ readme_bodies = {}
 ##If false, both reads will be used but ONLY if fastq is pair-ended to start with (else read1 will be used if fastq is single-ended).
 
 
-def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
+def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
 
     startruntime = time()
     
@@ -289,7 +290,7 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
         std_out, std_err, exit_code = run_command(doncmd, True, log)
         if exit_code != 0:
             print "CMD %s failed with OUT %s ERR %s" % (doncmd, std_out, std_err)
-            exit(2)
+            return 2
             
         donfile = os.path.join( output_path3 , "bin.dist" )
         doncmd2 = "/global/homes/d/ddkang/program/metabat_dist  -i %s -a %s -o %s" % (fasta, dondepth, donfile)
@@ -297,7 +298,7 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
         std_out, std_err, exit_code = run_command(doncmd2, True, log)
         if exit_code != 0:
             print "CMD %s failed with OUT %s ERR %s" % (doncmd2, std_out, std_err)
-            exit(2)
+            return 2
 
         ###Bilcom implementation
         ###Interface the python with C++ code
@@ -332,6 +333,7 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
         file_lev1_labels = {}
         
         for cluster_fasta_file in clusters1:
+            print "----> Level1 cluster_fasta_file %s" % (cluster_fasta_file)
             count += 1
             file_lev1_labels[count] = os.path.basename(cluster_fasta_file)
             level1seedsMemberships_rev[count] = []
@@ -379,10 +381,10 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
             level2seedsMemberships_rev[count] = []
             contigs_i = get_contigs_list(cluster_fasta_file)
             longest_contig_found = False
+            seed_tmp = []
+            nonseed_tmp = []
             for ci in contigs_i:
                 ###print "       contigi %s" % (ci)
-                seed_tmp = []
-                nonseed_tmp = []
                 if ci in seedset:
                     ###print "seed"
                     seed_tmp.append(ci)
@@ -398,15 +400,15 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
                     level2seedsMemberships[ci] = count
                     level2seedsMemberships_rev[count].append(ci)
                 else:
-                    print "nonseed contigi %s" % (ci)
+                    #print "nonseed contigi %s" % (ci)
                     nonseed_tmp.append(ci)
                 final_binMemberships[ci] = count
-                if len(seed_tmp) > 0:
-                    for n in nonseed_tmp:
-                        ###for n in nonseed get closest seed
-                        cj = closest(seed_tmp, n, sim1, sim2)
-                        print "cj %s seed_tmp %s n %s" % (cj, seed_tmp, n)
-                        subclustersLevel2[cj].append(n)
+            if len(seed_tmp) > 0:
+                for n in nonseed_tmp:
+                    ###for n in nonseed get closest seed
+                    cj = closest(seed_tmp, n, sim1, sim2)
+                    #print "cj %s seed_tmp %s n %s" % (cj, seed_tmp, n)
+                    subclustersLevel2[cj].append(n)
         ###upc(contig,)
         ###barrier
         
@@ -426,10 +428,10 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
             #(sim2_c2, seed2_c2) = nearest_sim_neighbor_seed(seed, sim2, set(level2seedsMemberships_rev[level2seedsMemberships[seed]]))
             #if sim1_c2 > 0.02 and sim2_c2 > 0.02 and seed1_c2 != "" and seed2_c2 != "":  ###sim1_c1
             if level1seedsMemberships.has_key(seed):
-                print "------> switch for seed %s from level2 %s to level1 %s" % (seed, level2seedsMemberships[seed], level1seedsMemberships[seed])
+                #print "------> switch for seed %s from level2 %s to level1 %s" % (seed, level2seedsMemberships[seed], level1seedsMemberships[seed])
                 final_binMemberships[seed] = level1seedsMemberships[seed] ###seed1_c1]
                 for s in subclustersLevel2[seed]:
-                    print "     --------------> switch for member %s to level1 %s" % (s, level1seedsMemberships[seed])
+                    #print "     --------------> switch for member %s to level1 %s" % (s, level1seedsMemberships[seed])
                     final_binMemberships[s] = level1seedsMemberships[seed]
             ###if sim2_c2 > 0.1 :  ###sim2_c1
             ###    final_binMemberships[seed] = level1seedsMemberships[seed] ###seed2_c1]
@@ -446,23 +448,23 @@ def main(output_path, fasta, bam_files, reftype="m", nocleanup=None):
             print "_________________"
             ###print str(inv_map.get(k))
             if k <= separator_lev12:
-                filename1 = "Level1." + str(k) + ".____." + file_lev1_labels[k] + ".fa"
+                filename1 = "Level1." + str(k) + ".____." + file_lev1_labels[k] + ".fastaheaders"
                 print "Cluster level1 bin %s written to file %s" % (k, filename1)
                 f = open( os.path.join( output_path, filename1 ), 'a' )
                 for s in inv_map.get(k):
                     f.write(s + "\n")
                 f.close()
             else:
-                filename2 = "Level2." + str(k) + ".fa"
+                filename2 = "Level2." + str(k) + ".fastaheaders"
                 print "Cluster level2 bin %s written to file %s" % (k, filename2)
                 f = open( os.path.join( output_path, filename2 ), 'a' )
                 for s in inv_map.get(k):
                     f.write(s + "\n")
                 f.close()
 
-        exit(0)
+        return 0
 
-    exit(1)
+    return 1
 
 def get_contigs_list(filename):
     contigs = {}
@@ -487,13 +489,13 @@ def get_contigs_list(filename):
     return list(itertools.chain(*r))
 
 '''
-Only attach nonseed to closest seed if the sim significance is <0.02,
+Only attach nonseed to closest seed if the sim significance is <0.02?
 since else it might be an unknown organism contig that we are searching for and does not match the seed.
 '''
 def closest(seed_array, nonseed_item, sim1, sim2):
-    simholder1 = 0.02
-    simholder2 = 0.02
-    res = ""
+    simholder1 = 1 ##0.02
+    simholder2 = 1 ##0.02
+    res = "NONE"
     for s in seed_array:
         fset = frozenset((nonseed_item,s))
         if fset in sim1 and sim1[fset] <= simholder1 and fset in sim2 and sim2[fset] <= simholder2:
