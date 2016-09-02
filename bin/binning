@@ -91,7 +91,7 @@ if  options.nocleanup:
 
 if run_type == "c":
     from main_consensus import main
-    sys.exit(main(output_path, fasta, bam_files, ref_type, nocleanup))
+    exit(main(output_path, fasta, bam_files, ref_type, nocleanup))
 elif run_type == "m":
 	from main import main
-	sys.exit(main(output_path, fasta, bam_files, nocleanup))
+	exit(main(output_path, fasta, bam_files, nocleanup))

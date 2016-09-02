@@ -290,7 +290,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         std_out, std_err, exit_code = run_command(doncmd, True, log)
         if exit_code != 0:
             print "CMD %s failed with OUT %s ERR %s" % (doncmd, std_out, std_err)
-            exit(2)
+            return 2
             
         donfile = os.path.join( output_path3 , "bin.dist" )
         doncmd2 = "/global/homes/d/ddkang/program/metabat_dist  -i %s -a %s -o %s" % (fasta, dondepth, donfile)
@@ -298,7 +298,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         std_out, std_err, exit_code = run_command(doncmd2, True, log)
         if exit_code != 0:
             print "CMD %s failed with OUT %s ERR %s" % (doncmd2, std_out, std_err)
-            exit(2)
+            return 2
 
         ###Bilcom implementation
         ###Interface the python with C++ code
@@ -461,9 +461,9 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
                     f.write(s + "\n")
                 f.close()
 
-        exit(0)
+        return 0
 
-    exit(1)
+    return 1
 
 def get_contigs_list(filename):
     contigs = {}
