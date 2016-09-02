@@ -380,10 +380,10 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
             level2seedsMemberships_rev[count] = []
             contigs_i = get_contigs_list(cluster_fasta_file)
             longest_contig_found = False
+            seed_tmp = []
+            nonseed_tmp = []
             for ci in contigs_i:
                 ###print "       contigi %s" % (ci)
-                seed_tmp = []
-                nonseed_tmp = []
                 if ci in seedset:
                     ###print "seed"
                     seed_tmp.append(ci)
@@ -402,12 +402,12 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
                     print "nonseed contigi %s" % (ci)
                     nonseed_tmp.append(ci)
                 final_binMemberships[ci] = count
-                if len(seed_tmp) > 0:
-                    for n in nonseed_tmp:
-                        ###for n in nonseed get closest seed
-                        cj = closest(seed_tmp, n, sim1, sim2)
-                        print "cj %s seed_tmp %s n %s" % (cj, seed_tmp, n)
-                        subclustersLevel2[cj].append(n)
+            if len(seed_tmp) > 0:
+                for n in nonseed_tmp:
+                    ###for n in nonseed get closest seed
+                    cj = closest(seed_tmp, n, sim1, sim2)
+                    print "cj %s seed_tmp %s n %s" % (cj, seed_tmp, n)
+                    subclustersLevel2[cj].append(n)
         ###upc(contig,)
         ###barrier
         
@@ -488,12 +488,12 @@ def get_contigs_list(filename):
     return list(itertools.chain(*r))
 
 '''
-Only attach nonseed to closest seed if the sim significance is <0.02,
+Only attach nonseed to closest seed if the sim significance is <0.02?
 since else it might be an unknown organism contig that we are searching for and does not match the seed.
 '''
 def closest(seed_array, nonseed_item, sim1, sim2):
-    simholder1 = 0.02
-    simholder2 = 0.02
+    simholder1 = 1 ##0.02
+    simholder2 = 1 ##0.02
     res = "NONE"
     for s in seed_array:
         fset = frozenset((nonseed_item,s))
