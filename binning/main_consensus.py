@@ -333,6 +333,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         file_lev1_labels = {}
         
         for cluster_fasta_file in clusters1:
+            print "----> Level1 cluster_fasta_file %s" % (cluster_fasta_file)
             count += 1
             file_lev1_labels[count] = os.path.basename(cluster_fasta_file)
             level1seedsMemberships_rev[count] = []
@@ -399,14 +400,14 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
                     level2seedsMemberships[ci] = count
                     level2seedsMemberships_rev[count].append(ci)
                 else:
-                    print "nonseed contigi %s" % (ci)
+                    #print "nonseed contigi %s" % (ci)
                     nonseed_tmp.append(ci)
                 final_binMemberships[ci] = count
             if len(seed_tmp) > 0:
                 for n in nonseed_tmp:
                     ###for n in nonseed get closest seed
                     cj = closest(seed_tmp, n, sim1, sim2)
-                    print "cj %s seed_tmp %s n %s" % (cj, seed_tmp, n)
+                    #print "cj %s seed_tmp %s n %s" % (cj, seed_tmp, n)
                     subclustersLevel2[cj].append(n)
         ###upc(contig,)
         ###barrier
@@ -427,10 +428,10 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
             #(sim2_c2, seed2_c2) = nearest_sim_neighbor_seed(seed, sim2, set(level2seedsMemberships_rev[level2seedsMemberships[seed]]))
             #if sim1_c2 > 0.02 and sim2_c2 > 0.02 and seed1_c2 != "" and seed2_c2 != "":  ###sim1_c1
             if level1seedsMemberships.has_key(seed):
-                print "------> switch for seed %s from level2 %s to level1 %s" % (seed, level2seedsMemberships[seed], level1seedsMemberships[seed])
+                #print "------> switch for seed %s from level2 %s to level1 %s" % (seed, level2seedsMemberships[seed], level1seedsMemberships[seed])
                 final_binMemberships[seed] = level1seedsMemberships[seed] ###seed1_c1]
                 for s in subclustersLevel2[seed]:
-                    print "     --------------> switch for member %s to level1 %s" % (s, level1seedsMemberships[seed])
+                    #print "     --------------> switch for member %s to level1 %s" % (s, level1seedsMemberships[seed])
                     final_binMemberships[s] = level1seedsMemberships[seed]
             ###if sim2_c2 > 0.1 :  ###sim2_c1
             ###    final_binMemberships[seed] = level1seedsMemberships[seed] ###seed2_c1]
