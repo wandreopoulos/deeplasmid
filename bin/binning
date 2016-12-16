@@ -76,15 +76,25 @@ if (run_type == 'm'):
 ###TODO do not allow the output path to have "homes" in it.
 if options.output_path:
 	output_path = options.output_path
+	if not os.path.isabs(output_path):
+		output_path = os.path.join(os.getcwd() , output_path)
 else:
-        ###base = os.path.basename(fastq)
-        output_path = os.getcwd()  ###os.path.join( os.getcwd() , base )
+    ###base = os.path.basename(fastq)
+    output_path = os.getcwd()  ###os.path.join( os.getcwd() , base )
 
 if options.fasta:
 	fasta = options.fasta
+	if not os.path.isabs(fasta):
+		fasta = os.path.join(os.getcwd() , fasta)
 
 if options.bam_files:
 	bam_files = options.bam_files
+	if not os.path.isabs(bam_files):
+		bam_files = os.path.join(os.getcwd() , bam_files)
+
+print "output_path: %s" % (output_path)
+print "fasta: %s" % (fasta)
+print "bam_files: %s" % (bam_files)
 
 if  options.nocleanup:
 	nocleanup = True

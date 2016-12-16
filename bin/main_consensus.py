@@ -91,7 +91,8 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
     startruntime = time()
     
     print "Binning pipeline version %s %s. " % (pipeline_name, pipeline_version)
-    print "Author: Bill Andreopoulos. Date: January 16, 2016."
+    print "Author: Bill Andreopoulos. Date: December 15, 2016."
+    print "Note absolute paths are required for all parameters given."
     print "This binning pipeline is aimed for decontamination of datasets and will output 3 sets of clusters using different approaches: "
     print "  1) TAXONOMIC/BINS contains the bins as fasta files from a taxonomic analysis using Megan."
     print "  2) UNSUPERVISED/BINS contains the bins as fasta files from an unsupervised (cluster based) analysis using Metabat."
@@ -196,7 +197,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         checkpoint_step(status_log, status)
 
 
-    TAXONOMIC = binning_cmd_sup_blastmicrob_megan ###binning_cmd_sup_blastnt_megan ###binning_cmd_sup_blastfungal_megan ###binning_cmd_sup_blastmicrob_megan  ###binning_cmd_sup_blastfungal_taxmapper ###binning_cmd_sup_blastmicrob_taxmapper
+    TAXONOMIC = binning_cmd_sup_blastnt_megan ###binning_cmd_sup_blastmicrob_megan ###binning_cmd_sup_blastfungal_megan ###binning_cmd_sup_blastmicrob_megan  ###binning_cmd_sup_blastfungal_taxmapper ###binning_cmd_sup_blastmicrob_taxmapper
     if reftype == "m":
         TAXONOMIC = binning_cmd_sup_blastmicrob_megan
         print "The refseq.microbial database will be used for taxonomic binning. This option is suitable for decontamination and binning of microbial datasets"
@@ -466,6 +467,9 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
 
     return 1
 
+'''
+Get all the contigs in the fasta file sorted by length from largest to smallest
+'''
 def get_contigs_list(filename):
     contigs = {}
     s = ""
@@ -485,6 +489,11 @@ def get_contigs_list(filename):
             s = ""
         else:
             s += i.strip()
+    #Deal with the last contig in the file
+    if len(s) > 0 and len(prev_contig) > 0:
+        if not len(s) in contigs:
+            contigs[len(s)] = []
+        contigs.get(len(s)).append(prev_contig)
     r = [value for (key, value) in sorted(contigs.items())]
     return list(itertools.chain(*r))
 
