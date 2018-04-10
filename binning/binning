@@ -12,8 +12,8 @@ run.q starts metagenome_binning and run_bin.q creates the BAM files
 
 
 import sys,os.path
-root = os.path.join(os.path.dirname(__file__), '..')
-sys.path.append(root)
+#root = os.path.join(os.path.dirname(__file__), '..')
+#sys.path.append(root)
 
 #from rnaseq_microbe.util.misc import virtual_env
 #virtual_env(root)

@@ -101,6 +101,8 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
     print "Each contig can belong in only one bin/cluster."
     print "While the bins/clusters will represent the organisms in the dataset as reliably as possible,"
     print "interpretation of the clusters is always in the eye of the beholder."
+    print "dir:"
+    print dir
 
     if nocleanup == True:
         print "The files will not be cleaned up after run"
@@ -208,6 +210,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         TAXONOMIC = binning_cmd_sup_blastnt_megan
         print "The nt database will be used for taxonomic binning. This option is suitable for decontamination and binning of all datasets"
     UNSUPERVISED = binning_cmd_unsup_metabat
+    print "dir: " + dir
     
     ###TODO consider doing a flush
     readme_headers[0]  = pipeline_name
@@ -238,6 +241,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
 
     unclass = []
     
+    print "Starting"
     if status == "start":
         binning_cmd = TAXONOMIC ###="/global/projectb/scratch/andreopo/binning/taxonomy/run_blastnt_megan.sh "
         binning_cmd_params = fasta
@@ -250,6 +254,8 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         if not os.path.isdir(output_path2):
             os.makedirs(output_path2)
         
+        print "Running run_sup_binning_test_datasets"
+        print("Running run_sup_binning_test_datasets2")
         (exit_code, unclass, clusters1) = run_sup_binning_test_datasets(binning_cmd, output_path2, binning_cmd_params, log)
         if exit_code != 0:
             status = "run_sup_binning_test_datasets failed"
@@ -271,7 +277,10 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         if not os.path.isdir(output_path3):
             os.makedirs(output_path3)
 
+        print "Running run_unsup_binning_test_datasets"
+        print("Running run_unsup_binning_test_datasets2")
         (exit_code, clusters2) = run_unsup_binning_test_datasets(binning_cmd, output_path3, binning_cmd_params, log)
+        print("after run_unsup_binning_test_datasets clusters2: %s" % (clusters2))
         if exit_code != 0:
             status = "run_unsup_binning_test_datasets failed"
             checkpoint_step(status_log, status)
@@ -287,7 +296,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
 
         dondepth = os.path.join( output_path3 , "depth.txt" )
         doncmd = "module load metabat; jgi_summarize_bam_contig_depths --outputDepth %s  %s" % (dondepth, bam_files)
-        print(doncmd)
+        print doncmd
         std_out, std_err, exit_code = run_command(doncmd, True, log)
         if exit_code != 0:
             print "CMD %s failed with OUT %s ERR %s" % (doncmd, std_out, std_err)
@@ -295,7 +304,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
             
         donfile = os.path.join( output_path3 , "bin.dist" )
         doncmd2 = "/global/homes/d/ddkang/program/metabat_dist  -i %s -a %s -o %s" % (fasta, dondepth, donfile)
-        print(doncmd2)
+        print doncmd2
         std_out, std_err, exit_code = run_command(doncmd2, True, log)
         if exit_code != 0:
             print "CMD %s failed with OUT %s ERR %s" % (doncmd2, std_out, std_err)
@@ -342,7 +351,7 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
             seeds += seeds_i
             for j in seeds_i:
                 level1seedsMemberships[j] = count
-                ###print "count %s level1seedsMemberships_rev.get_count=%s" % (count, level1seedsMemberships_rev.get(count))
+                print "count %s level1seedsMemberships_rev.get_count=%s" % (count, level1seedsMemberships_rev.get(count))
                 level1seedsMemberships_rev[count].append(j)
                 final_binMemberships[j] = count
                 
@@ -377,17 +386,17 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         #read don's file linear and put in named 2d array cluster2_seed2allcontigsSims
         #pragma omp parallel for
         for cluster_fasta_file in clusters2:
-            print "----> Level2 cluster_fasta_file %s" % (cluster_fasta_file)
             count += 1
+            print "----> Level2 cluster_fasta_file %s count %s" % (cluster_fasta_file, count)
             level2seedsMemberships_rev[count] = []
             contigs_i = get_contigs_list(cluster_fasta_file)
             longest_contig_found = False
             seed_tmp = []
             nonseed_tmp = []
             for ci in contigs_i:
-                ###print "       contigi %s" % (ci)
+                print "-------------->contigi %s count %s" % (ci, count)
                 if ci in seedset:
-                    ###print "seed"
+                    print "----------------------->seed %s" % (ci)
                     seed_tmp.append(ci)
                     subclustersLevel2[ci] = []
                     level2seedsMemberships[ci] = count
@@ -395,13 +404,14 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
                 elif not longest_contig_found:
                     ###We set the longest contig as additional seed, so in the closest function the non-seeds
                     ###have an option where to go in case there is an unknown organism not detected in step 1.
+                    print "----------------------->longest_contig_found %s" % (ci)
                     longest_contig_found = True
                     seed_tmp.append(ci)
                     subclustersLevel2[ci] = []
                     level2seedsMemberships[ci] = count
                     level2seedsMemberships_rev[count].append(ci)
                 else:
-                    #print "nonseed contigi %s" % (ci)
+                    print "----------------------->nonseed contigi %s" % (ci)
                     nonseed_tmp.append(ci)
                 final_binMemberships[ci] = count
             if len(seed_tmp) > 0:
@@ -443,28 +453,46 @@ def main(output_path, fasta, bam_files, reftype="n", nocleanup=None):
         for k, v in final_binMemberships.iteritems():
             inv_map[v] = inv_map.get(v, [])
             inv_map[v].append(k)
-        ###print str(inv_map)
+        print str(inv_map)
+        sys.stdout.flush()
 
-        for k in inv_map:
+        for k in inv_map.keys():
             print "_________________"
-            ###print str(inv_map.get(k))
+            print "Cluster %s" % (k) ###str(inv_map.get(k))
             if k <= separator_lev12:
-                filename1 = "Level1." + str(k) + ".____." + file_lev1_labels[k] + ".fastaheaders"
-                print "Cluster level1 bin %s written to file %s" % (k, filename1)
-                f = open( os.path.join( output_path, filename1 ), 'a' )
+                faheaders1 = os.path.join( output_path, "Level1." + str(k) + ".____." + file_lev1_labels[k] + ".fastaheaders")
+                print "Cluster level1 bin %s written to file %s" % (k, faheaders1)
+                f = open( faheaders1, 'a' )
                 for s in inv_map.get(k):
                     f.write(s + "\n")
                 f.close()
+                faoutfile1 = faheaders1 + ".fasta"
+                faoutfilecmd = "module load bbtools; filterbyname.sh in=%s names=%s out=%s include=true ow" % (fasta, faheaders1, faoutfile1)
+                print(faoutfilecmd)
+                std_out, std_err, exit_code = run_command(faoutfilecmd, True, log)
+                if exit_code != 0:
+                    print "CMD %s failed with OUT %s ERR %s" % (faoutfilecmd, std_out, std_err)
+                    return 2
             else:
-                filename2 = "Level2." + str(k) + ".fastaheaders"
-                print "Cluster level2 bin %s written to file %s" % (k, filename2)
-                f = open( os.path.join( output_path, filename2 ), 'a' )
+                faheaders2 = os.path.join( output_path, "Level2." + str(k) + ".fastaheaders")
+                print "Cluster level2 bin %s written to file %s" % (k, faheaders2)
+                f = open( faheaders2, 'a' )
                 for s in inv_map.get(k):
                     f.write(s + "\n")
                 f.close()
+                faoutfile2 = faheaders2 + ".fasta"
+                faoutfilecmd = "module load bbtools; filterbyname.sh in=%s names=%s out=%s include=true ow" % (fasta, faheaders2, faoutfile2)
+                print(faoutfilecmd)
+                std_out, std_err, exit_code = run_command(faoutfilecmd, True, log)
+                if exit_code != 0:
+                    print "CMD %s failed with OUT %s ERR %s" % (faoutfilecmd, std_out, std_err)
+                    return 2
+            sys.stdout.flush()
 
+        print "return 0"
         return 0
-
+    
+    print "return 1"
     return 1
 
 '''
