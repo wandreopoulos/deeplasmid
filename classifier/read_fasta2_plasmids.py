@@ -98,7 +98,7 @@ def cogs(sequence, seqin, penalty_value):
         if os.path.getsize(FASTA + ".gene.faa") > 0:
             Cog = "/global/dna/projectdirs/microbial/img/databases/cog/Cog"  ###"/global/projectb/sandbox/IMG/img/databases/cog"
             ###cmd2 = ["/usr/bin/rpsblast", "-m", "8", "-d", Cog, "-i", FASTA + ".gene.faa", "-b", "1", "-a", "1", "-e", "1e-2", "-l", FASTA + ".gene.faa.rpsblast.log" ]    ####
-            cmd2 = ["shifter", "--image=registry.services.nersc.gov/jgi/hmmer:latest", "hmmsearch", "--cut_ga", "--domtblout", FASTA + ".COG.hmm.hmmsearch.domtblout.txt", "/global/projectb/scratch/andreopo/GAA-1290_plasmids/Dingl/microbial/NEW3_ALL_FEATURES/tmp170.refseq.bacteria.NOplasmids_NOmito.fasta.1/COG.hmm",  FASTA + ".gene.faa"] ###COG_sub2  ###"-E", "100"
+            cmd2 = ["shifter", "--image=registry.services.nersc.gov/jgi/hmmer:latest", "hmmsearch", "--cut_ga", "--domtblout", FASTA + ".COG.hmm.hmmsearch.domtblout.txt", "/global/projectb/scratch/andreopo/GAA-1290_plasmids/Dingl/microbial/NEW3_ALL_FEATURES/tmp170.refseq.bacteria.NOplasmids_NOmito.fasta.1/COG_sub2.hmm",  FASTA + ".gene.faa"] ###COG_sub2  ###"-E", "100"
             std_out2 = subprocess.check_output(cmd2)
             print "std_out2_________ " + std_out2
         '''
@@ -201,10 +201,10 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     if not os.path.exists(os.path.join(output_path, 'yml')):
         os.makedirs(os.path.join(output_path, 'yml'))
     header_start = header.split(" ")[0].rstrip("|").replace("/", "_")
-    suff = header_start[-3:]
-    if not os.path.exists(os.path.join(output_path, 'yml/' + suff)):
-        os.makedirs(os.path.join(output_path, 'yml/' + suff))
-    features_file_yml = open(os.path.join(output_path, 'yml/'+ suff + '/' + header_start.split("|")[-1]+'.yml'), 'a')
+    ###suff = header_start[-3:]
+    ###if not os.path.exists(os.path.join(output_path, 'yml/' + suff)):
+    ###    os.makedirs(os.path.join(output_path, 'yml/' + suff))
+    features_file_yml = open(os.path.join(output_path, 'yml'+ '/' + header_start.split("|")[-1]+'.yml'), 'a')
     yml_dict = {}
     
     line = ""
