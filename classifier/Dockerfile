@@ -83,5 +83,5 @@ RUN git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
 
 
 ###ENTRYPOINT feature_DL_plasmid_predict.sh fasta out
-ENTRYPOINT ["/srv/jgi-ml/classifier/get_plasmids_from_microbes2.sh", "-o", "/acdc", "-K", "/krakendb"]
+ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh"]
 
