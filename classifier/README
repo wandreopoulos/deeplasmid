@@ -1,0 +1,6 @@
+
+Entry point for plasmid prediction:
+feature_DL_plasmid_predict.sh
+
+Pass in a FASTA file and an OUTPUT dir
+ 
