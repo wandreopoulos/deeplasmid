@@ -5,21 +5,22 @@ import sys
 import os
 import hashlib
 from nose import *
+import glob
 
 
 dir = os.path.dirname(__file__)
 sys.path.append(os.path.join(dir,'../'))       ## rqc-pipeline/assemblyqc/lib
-sys.path.append(os.path.join(dir,'../lib'))    ## rqc-pipeline/lib
-sys.path.append(os.path.join(dir,'../tools'))  ## rqc-pipeline/tools
-sys.path.append(os.path.join(dir,'../../lib'))    ## rqc-pipeline/lib
-sys.path.append(os.path.join(dir,'../../tools'))  ## rqc-pipeline/tools
+#sys.path.append(os.path.join(dir,'../lib'))    ## rqc-pipeline/lib
+#sys.path.append(os.path.join(dir,'../tools'))  ## rqc-pipeline/tools
+#sys.path.append(os.path.join(dir,'../../lib'))    ## rqc-pipeline/lib
+#sys.path.append(os.path.join(dir,'../../tools'))  ## rqc-pipeline/tools
 
-from common import *
+#from common import *
 
-from assemblyqc_utils import *
-from assemblyqc_constants import *
-from assemblyqc_report import *
-from assemblyqc import *
+#from assemblyqc_utils import *
+#from assemblyqc_constants import *
+#from assemblyqc_report import *
+#from assemblyqc import *
 
 from time import time, strftime
 import shutil
@@ -57,32 +58,82 @@ def my_teardown_function():
 ###'/global/dna/dm_archive/sdm/illumina/00/80/69/8069.1.89378.GGCTAC.fastq.gz',
 ###'/global/dna/dm_archive/sdm/illumina/00/79/45/7945.1.87371.GCCAA.fastq.gz',
 test_fastas = [
-'/global/dna/dm_archive/sdm/illumina/00/78/46/7846.5.85464.ACATCT.fastq.gz']
+'/global/projectb/scratch/andreopo/AsafPlasmids/MockFASTAs/ALL.fasta'
+]
 
 
 
-'''
-'/global/dna/dm_archive/sdm/illumina/00/79/54/7954.2.88067.ACAGTG.fastq.gz',
-'''
+GOLD_features_yml = ['/global/projectb/scratch/andreopo/AsafPlasmids/MockFASTAs/yml']
+GOLD_formatting = ['/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/dataTest_MockFASTAs/assayer4.test-scaff-split.yml']
+GOLD_DL = ['/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/typescript.data_MockFASTAs']
 
 
+def compare_yaml(yaml1, yaml2):
+    bulk1=read_yaml(yaml1)
+    bulk2=read_yaml(yaml2)
+
+    scaffD1={}
+    for seg in range(6):
+        if seg in bulk1:
+            #print('ww',seg,type(bulk[seg]),len(scaffD))
+            scaffD1.update(bulk1[seg])
+
+    scaffD2={}
+    for seg in range(6):
+        if seg in bulk2:
+            #print('ww',seg,type(bulk[seg]),len(scaffD))
+            scaffD2.update(bulk2[seg])
+
+    #import numpy as np
+    globFeatureL = ['gc_content','len_sequence']
+    for x in 'ACTG' :
+        globFeatureL.append(x+'_longestHomopol')
+        globFeatureL.append(x+'_totalLongHomopol')
+
+    for scaffN in scaffD1:  
+        seqStr=scaffD1[scaffN]['seq']
+        txt = scaffD1[scaffN]['text'].lower()
+        assert scaffN in scaffD2
+        assert seqStr == scaffD2[scaffN]['seq']
+        assert txt == scaffD2[scaffN]['text'].lower()
+    
+        floatD=scaffD1[scaffN]['features']
+        floatL1=[ floatD[x] for x in globFeatureL ]
+        floatD=scaffD2[scaffN]['features']
+        floatL2=[ floatD[x] for x in globFeatureL ]
+        assert len(floatL1) == len(floatL2)
+        for i in range(len(floatL1)):
+           assert floatL1[i] == floatL2[i]
+
+
+
+
+def compare_csv(csv1,csv2):
+    assert 1
 
 @with_setup(my_setup_function, my_teardown_function)
 def test_assembly():
     timestamp = strftime("%m%d%Y-%H%M%S")
+    i=0
     for fasta in test_fastas:
     
-        my_name = "TEST " + fasta
+        ###my_name = "TEST " + fasta
         base = os.path.basename(fasta)
-        output_path = os.path.join( os.getcwd() , base )
+        output_path = os.path.join( os.getcwd() , base+"."+timestamp )
         
         ###Run feature extraction
         ###Read yaml file
         ###Read gold yaml file
         ###Compare values . Assert equal or within +-1%
-        feature_DL_plasmid_predict.sh fasta output_path
+        cm="feature_DL_plasmid_predict.sh %s %s" % (fasta, output_path)
+        os.system(cm)
 
+        formatted_yaml = glob.glob(output_path + "/dlDataPath/")[0]
 
+        compare_yaml(GOLD_formatting[i], formatted_yaml)
+
+        i += 1
+        '''
         ###Read the golden standard files
         golden_path = os.path.join( os.getcwd() , "gold_" + base )
         assert os.path.exists(golden_path)
@@ -186,3 +237,4 @@ def test_assembly():
             checkpoint_step(status_log, "failed")
     
         log.info("Completed %s: %s", my_name, fastq)
+        '''
