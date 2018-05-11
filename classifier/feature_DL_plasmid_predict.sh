@@ -29,7 +29,7 @@ then echo "format_Test.py failed"
 exit 1
 fi
 
-predict_Plasmid.py --dataPath $OUT/dlDataPath  --given test  --kModelList  20-29  --dataSegment -1  --seedModel  /tmp/jgi-ml/build/plasmid4g-
+predict_Plasmid.py --dataPath $OUT/dlDataPath  --given test  --kModelList  20-29  --dataSegment -1  --seedModel  models/plasmid4g-
 
 if [ $? -ne 0 ];
 then echo "predict_Plasmid.py failed"

@@ -79,9 +79,10 @@ WORKDIR /srv/
 ###git clone jgi-ml
 RUN git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
 
-RUN mkdir /tmp/jgi-ml/build
-#WORKDIR /tmp/jgi-ml/build
-ADD /global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* /tmp/jgi-ml/build/
+RUN mkdir /srv/jgi-ml/classifier/models/
+WORKDIR /srv/jgi-ml/classifier/models/
+#ADD /global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* /srv/jgi-ml/build/
+ADD models/plasmid4g-* /srv/jgi-ml/classifier/models/
 
 ###ENTRYPOINT feature_DL_plasmid_predict.sh fasta out
 ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh"]
