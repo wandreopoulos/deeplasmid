@@ -1,0 +1,280 @@
+Using TensorFlow backend.
+deep-libs1 imported elaT=0.0 sec
+deep-libs2 imported, TF.ver=1.3.0, elaT=0.0 sec
+myArg: arrIdx 24
+myArg: verb 0
+myArg: prjName assayer4
+myArg: dataPath data
+myArg: outPath ./
+myArg: seedModel None
+myArg: seedWeights None
+myArg: kfoldOffset 4
+myArg: noXterm True
+myArg: epochs 30
+myArg: batch_size 200
+myArg: events 601000
+myArg: dropFrac 0.1
+myArg: earlyStopPatience 10
+myArg: checkPtOn True
+myArg: reduceLearn True
+disable Xterm
+Plotter_Plasmid : Graphics started
+Deep_Plasmid , prj: assayer4
+oneHot base, size= 15 , sample:
+base: A 1-hot: [1.0, 0.0, 0.0, 0.0]
+base: C 1-hot: [0.0, 1.0, 0.0, 0.0]
+base: T 1-hot: [0.0, 0.0, 1.0, 0.0]
+base: G 1-hot: [0.0, 0.0, 0.0, 1.0]
+all bases : ['A', 'C', 'T', 'G', 'N', 'Y', 'K', 'M', 'V', 'S', 'H', 'R', 'W', 'B', 'D']
+use seqLenCut= 300
+Deep_Plasmid , prj: assayer4
+globFeatureL 10 fixed order: ['gc_content', 'len_sequence', 'A_longestHomopol', 'A_totalLongHomopol', 'C_longestHomopol', 'C_totalLongHomopol', 'T_longestHomopol', 'T_totalLongHomopol', 'G_longestHomopol', 'G_totalLongHomopol']
+
+prep_labeled scaffolds from: data/assayer4.plasm-scaff-split.yml
+  read  yaml: data/assayer4.plasm-scaff-split.yml  size=7   elaT=0.7 sec
+  role: plasm segL: 3  dom: val , numSpec: 156 , kfoldOffset= 4
+sum3= 99998  numScaff= 156
+   request  numSamples= 37562 val plasm
+1 scaff: NC_000948.1 plasm size/B=30750 numSampl=244 got=244=244
+2 scaff: NC_000951.1 plasm size/B=29838 numSampl=242 got=242=242
+3 scaff: NC_000952.1 plasm size/B=30800 numSampl=245 got=245=245
+4 scaff: NC_000953.1 plasm size/B=30885 numSampl=245 got=245=245
+   completed role= plasm ,got numSamples= 37558
+prep: val plasm  completed, elaT=0.8 sec , gotSamples= 37558
+
+prep_labeled scaffolds from: data/assayer4.plasm-scaff-split.yml
+  read  yaml: data/assayer4.plasm-scaff-split.yml  size=7   elaT=0.6 sec
+  role: plasm segL: [4, 0, 1, 2]  dom: train , numSpec: 653 , kfoldOffset= 4
+sum3= 99997  numScaff= 653
+   request  numSamples= 300500 train plasm
+1 scaff: NC_000906.2 plasm size/B=8506 numSampl=298 got=298=298
+2 scaff: NC_000956.1 plasm size/B=52971 numSampl=607 got=607=607
+3 scaff: NC_001390.1 plasm size/B=2355 numSampl=201 got=201=201
+4 scaff: NC_001476.1 plasm size/B=12887 numSampl=346 got=346=346
+500 scaff: NC_002150.1 plasm size/B=6159 numSampl=268 got=268=268
+   completed role= plasm ,got numSamples= 300460
+prep: train plasm  completed, elaT=1.4 sec , gotSamples= 300460
+
+prep_labeled scaffolds from: data/assayer4.main-scaff-split.yml
+  read  yaml: data/assayer4.main-scaff-split.yml  size=7   elaT=7.1 sec
+  role: main segL: 3  dom: val , numSpec: 1696 , kfoldOffset= 4
+sum3= 99994  numScaff= 1696
+   request  numSamples= 37562 val main
+1 scaff: NZ_AAAL02000004.1 main size/B=201792 numSampl=55 got=55=55
+2 scaff: NZ_AARK02000187.1 main size/B=5644 numSampl=13 got=13=13
+3 scaff: NZ_ABBE01001076.1 main size/B=10660 numSampl=16 got=16=16
+4 scaff: NZ_ABKZ01000384.1 main size/B=19628 numSampl=20 got=20=20
+500 scaff: NZ_CSOA01000080.1 main size/B=17966 numSampl=20 got=20=20
+1000 scaff: NZ_JUVB01000066.1 main size/B=84763 numSampl=37 got=37=37
+1500 scaff: NZ_MMUK01000017.1 main size/B=231662 numSampl=59 got=59=59
+   completed role= main ,got numSamples= 37461
+prep: val main  completed, elaT=8.2 sec , gotSamples= 37461
+
+prep_labeled scaffolds from: data/assayer4.main-scaff-split.yml
+  read  yaml: data/assayer4.main-scaff-split.yml  size=7   elaT=7.0 sec
+  role: main segL: [4, 0, 1, 2]  dom: train , numSpec: 6610 , kfoldOffset= 4
+sum3= 100015  numScaff= 6610
+   request  numSamples= 300500 train main
+1 scaff: NZ_AAAM04000255.1 main size/B=2851 numSampl=21 got=21=21
+2 scaff: NZ_AAMD01000365.1 main size/B=2826 numSampl=21 got=21=21
+3 scaff: NZ_AAQF01000075.1 main size/B=21478 numSampl=42 got=42=42
+4 scaff: NZ_AARK02000283.1 main size/B=3096 numSampl=22 got=22=22
+500 scaff: NZ_CTFN01000092.1 main size/B=56898 numSampl=63 got=63=63
+1000 scaff: NZ_JWAS01000124.1 main size/B=2627 numSampl=21 got=21=21
+1500 scaff: NZ_MUOK01000010.1 main size/B=4699 numSampl=24 got=24=24
+2000 scaff: NZ_CFUZ01000056.1 main size/B=4583 numSampl=24 got=24=24
+2500 scaff: NZ_JMNT01000081.1 main size/B=16957 numSampl=38 got=38=38
+3000 scaff: NZ_LZKW01000108.1 main size/B=4171 numSampl=24 got=24=24
+3500 scaff: NZ_AZRA01000105.1 main size/B=14041 numSampl=36 got=36=36
+4000 scaff: NZ_FRUK01000126.1 main size/B=64450 numSampl=66 got=66=66
+4500 scaff: NZ_LLAM01000156.1 main size/B=8400 numSampl=30 got=30=30
+5000 scaff: NZ_AINB01000061.1 main size/B=20084 numSampl=41 got=41=41
+5500 scaff: NZ_CXFU01000066.1 main size/B=22272 numSampl=43 got=43=43
+6000 scaff: NZ_KK323831.1 main size/B=22352 numSampl=43 got=43=43
+6500 scaff: NZ_NACS01000124.1 main size/B=53030 numSampl=61 got=61=61
+   completed role= main ,got numSamples= 299853
+prep: train main  completed, elaT=12.3 sec , gotSamples= 299853
+   build_training_data: val plasm  numSeq=37558 ...
+   build_training_data: val main  numSeq=37461 ...
+build_training_data for dom: val Xs,Xf,Y: (75019, 300, 4) (75019, 10) (75019,) SNR=1.003 done
+ add noise  0.01  to gloft in val
+   build_training_data: train plasm  numSeq=300460 ...
+   build_training_data: train main  numSeq=299853 ...
+build_training_data for dom: train Xs,Xf,Y: (600313, 300, 4) (600313, 10) (600313,) SNR=1.002 done
+ add noise  0.05  to gloft in train
+start fresh model
+build_model inpA: (?, 300, 4)   inpB: (?, 10)
+Dens act= relu  recurDropFrac= 0.05  layerDropFrac= 0.1  idx= 24
+ (re)Compile model
+____________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+seq_300_x_4 (InputLayer)         (None, 300, 4)        0                                            
+____________________________________________________________________________________________________
+globF_10 (InputLayer)            (None, 10)            0                                            
+____________________________________________________________________________________________________
+A_40 (LSTM)                      (None, 300, 40)       7200        seq_300_x_4[0][0]                
+____________________________________________________________________________________________________
+G_4 (Dense)                      (None, 4)             44          globF_10[0][0]                   
+____________________________________________________________________________________________________
+B_40 (LSTM)                      (None, 40)            12960       A_40[0][0]                       
+____________________________________________________________________________________________________
+H_4 (Dense)                      (None, 4)             20          G_4[0][0]                        
+____________________________________________________________________________________________________
+seq_glob (Concatenate)           (None, 44)            0           B_40[0][0]                       
+                                                                   H_4[0][0]                        
+____________________________________________________________________________________________________
+C_40 (Dense)                     (None, 40)            1800        seq_glob[0][0]                   
+____________________________________________________________________________________________________
+fr_0.1 (Dropout)                 (None, 40)            0           C_40[0][0]                       
+____________________________________________________________________________________________________
+D_20 (Dense)                     (None, 20)            820         fr_0.1[0][0]                     
+____________________________________________________________________________________________________
+fr_same (Dropout)                (None, 20)            0           D_20[0][0]                       
+____________________________________________________________________________________________________
+score (Dense)                    (None, 1)             21          fr_same[0][0]                    
+====================================================================================================
+Total params: 22,865
+Trainable params: 22,865
+Non-trainable params: 0
+____________________________________________________________________________________________________
+model (re)compiled elaT=0.0 sec
+save model full to .//assayer4.model.h5
+  closed  hdf5: .//assayer4.model.h5  size=0.12 MB
+train for epochs: 30
+enabled EarlyStopping, patience= 10
+enabled ModelCheckpoint, period= 1
+enabled ReduceLROnPlateau
+
+Train_model X: (600313, 300, 4)  earlyStop= 10  epochs= 30  batch= 200 , data SNR(train)=1.0020, SNR(valid)=1.0026
+Train on 600313 samples, validate on 75019 samples
+Epoch 1/30
+Epoch 00000: val_loss improved from inf to 0.52365, saving model to .//assayer4.weights_best.h5
+1548s - loss: 0.5967 - acc: 0.6784 - val_loss: 0.5236 - val_acc: 0.7537
+Epoch 2/30
+Epoch 00001: val_loss improved from 0.52365 to 0.52075, saving model to .//assayer4.weights_best.h5
+1445s - loss: 0.5709 - acc: 0.7050 - val_loss: 0.5207 - val_acc: 0.7462
+Epoch 3/30
+Epoch 00002: val_loss improved from 0.52075 to 0.51821, saving model to .//assayer4.weights_best.h5
+1445s - loss: 0.5658 - acc: 0.7088 - val_loss: 0.5182 - val_acc: 0.7396
+Epoch 4/30
+Epoch 00003: val_loss improved from 0.51821 to 0.51627, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.5607 - acc: 0.7121 - val_loss: 0.5163 - val_acc: 0.7388
+Epoch 5/30
+Epoch 00004: val_loss improved from 0.51627 to 0.51150, saving model to .//assayer4.weights_best.h5
+1445s - loss: 0.5591 - acc: 0.7123 - val_loss: 0.5115 - val_acc: 0.7433
+Epoch 6/30
+Epoch 00005: val_loss did not improve
+1445s - loss: 0.5568 - acc: 0.7137 - val_loss: 0.5137 - val_acc: 0.7447
+Epoch 7/30
+Epoch 00006: val_loss improved from 0.51150 to 0.50625, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.5539 - acc: 0.7157 - val_loss: 0.5062 - val_acc: 0.7353
+Epoch 8/30
+Epoch 00007: val_loss improved from 0.50625 to 0.48934, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.5467 - acc: 0.7210 - val_loss: 0.4893 - val_acc: 0.7550
+Epoch 9/30
+Epoch 00008: val_loss improved from 0.48934 to 0.47561, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.5275 - acc: 0.7346 - val_loss: 0.4756 - val_acc: 0.7723
+Epoch 10/30
+Epoch 00009: val_loss improved from 0.47561 to 0.46594, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.5160 - acc: 0.7426 - val_loss: 0.4659 - val_acc: 0.7807
+Epoch 11/30
+Epoch 00010: val_loss did not improve
+1445s - loss: 0.5069 - acc: 0.7489 - val_loss: 0.4673 - val_acc: 0.7809
+Epoch 12/30
+Epoch 00011: val_loss improved from 0.46594 to 0.45734, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4999 - acc: 0.7536 - val_loss: 0.4573 - val_acc: 0.7826
+Epoch 13/30
+Epoch 00012: val_loss improved from 0.45734 to 0.45396, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4945 - acc: 0.7576 - val_loss: 0.4540 - val_acc: 0.7872
+Epoch 14/30
+Epoch 00013: val_loss improved from 0.45396 to 0.45044, saving model to .//assayer4.weights_best.h5
+1445s - loss: 0.4897 - acc: 0.7610 - val_loss: 0.4504 - val_acc: 0.7860
+Epoch 15/30
+Epoch 00014: val_loss improved from 0.45044 to 0.44994, saving model to .//assayer4.weights_best.h5
+1445s - loss: 0.4856 - acc: 0.7636 - val_loss: 0.4499 - val_acc: 0.7894
+Epoch 16/30
+Epoch 00015: val_loss improved from 0.44994 to 0.44317, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4822 - acc: 0.7661 - val_loss: 0.4432 - val_acc: 0.7953
+Epoch 17/30
+Epoch 00016: val_loss improved from 0.44317 to 0.44090, saving model to .//assayer4.weights_best.h5
+1445s - loss: 0.4789 - acc: 0.7682 - val_loss: 0.4409 - val_acc: 0.7971
+Epoch 18/30
+Epoch 00017: val_loss did not improve
+1446s - loss: 0.4762 - acc: 0.7692 - val_loss: 0.4448 - val_acc: 0.7918
+Epoch 19/30
+Epoch 00018: val_loss improved from 0.44090 to 0.43650, saving model to .//assayer4.weights_best.h5
+1447s - loss: 0.4736 - acc: 0.7722 - val_loss: 0.4365 - val_acc: 0.7989
+Epoch 20/30
+Epoch 00019: val_loss did not improve
+1445s - loss: 0.4708 - acc: 0.7735 - val_loss: 0.4398 - val_acc: 0.7944
+Epoch 21/30
+Epoch 00020: val_loss improved from 0.43650 to 0.43206, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4692 - acc: 0.7748 - val_loss: 0.4321 - val_acc: 0.8039
+Epoch 22/30
+Epoch 00021: val_loss did not improve
+1446s - loss: 0.4673 - acc: 0.7756 - val_loss: 0.4364 - val_acc: 0.7982
+Epoch 23/30
+Epoch 00022: val_loss did not improve
+1446s - loss: 0.4650 - acc: 0.7771 - val_loss: 0.4378 - val_acc: 0.7964
+Epoch 24/30
+Epoch 00023: val_loss did not improve
+1446s - loss: 0.4633 - acc: 0.7779 - val_loss: 0.4452 - val_acc: 0.7895
+Epoch 25/30
+Epoch 00024: val_loss improved from 0.43206 to 0.43204, saving model to .//assayer4.weights_best.h5
+1448s - loss: 0.4615 - acc: 0.7789 - val_loss: 0.4320 - val_acc: 0.8003
+Epoch 26/30
+Epoch 00025: val_loss did not improve
+
+Epoch 00025: reducing learning rate to 0.0003000000142492354.
+1447s - loss: 0.4596 - acc: 0.7807 - val_loss: 0.4388 - val_acc: 0.7967
+Epoch 27/30
+Epoch 00026: val_loss improved from 0.43204 to 0.43153, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4539 - acc: 0.7836 - val_loss: 0.4315 - val_acc: 0.7975
+Epoch 28/30
+Epoch 00027: val_loss improved from 0.43153 to 0.43044, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4528 - acc: 0.7852 - val_loss: 0.4304 - val_acc: 0.7951
+Epoch 29/30
+Epoch 00028: val_loss improved from 0.43044 to 0.43027, saving model to .//assayer4.weights_best.h5
+1446s - loss: 0.4526 - acc: 0.7847 - val_loss: 0.4303 - val_acc: 0.8011
+Epoch 30/30
+Epoch 00029: val_loss did not improve
+
+Epoch 00029: reducing learning rate to 9.000000427477062e-05.
+1446s - loss: 0.4520 - acc: 0.7856 - val_loss: 0.4322 - val_acc: 0.7978
+
+ Validation Acc:0.754 -->0.798 , end-loss:0.432  30 epochs, idx=24 , fit time=726.7 min
+save model full to .//assayer4.model.h5
+  closed  hdf5: .//assayer4.model.h5  size=0.31 MB
+  closed  yaml: .//assayer4.history.yml  size=0.00 MB   elaT=0.0 sec
+sss 30 30 30
+sss2 30
+Produce AUC of ROC, domain= val Y shape (75019,) [ 0.  0.  0.  0.  0.  0.]
+AUC: 0.881878 , save: .//val.AUC.csv
+found fpr= 0.100050719415 , tpr= 0.608232600245 , LR+= 6.07924264615
+Graphics saving to .//idx24_assayer4_train_f10 PDF ...
+	Command being timed: "python -u ./train_Plasmid.py --epochs 30 --events 601000 --arrIdx 24 --checkPt --kfoldOffset 4 --verbosity 0 --noXterm --reduceLr --outPath ./"
+	User time (seconds): 467027.94
+	System time (seconds): 95769.19
+	Percent of CPU this job got: 1286%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 12:08:58
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 6683228
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 14457
+	Minor (reclaiming a frame) page faults: 8970966882
+	Voluntary context switches: 7502666876
+	Involuntary context switches: 9933680
+	Swaps: 0
+	File system inputs: 748
+	File system outputs: 7128
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+0e9381d335e4c60cb1427cc503b53562  train_Plasmid.py
+it was JID 11723982
