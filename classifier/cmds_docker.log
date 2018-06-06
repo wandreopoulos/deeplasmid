@@ -498,3 +498,17 @@
   519  ls -latr  ../binning/
   520  history
   521  history > cmds_docker.log
+  351  docker run -it billandreo/keras:latest
+  352  docker run -it billandreo/keras:latest /bin/bash
+  355  docker run -it billandreo/keras:latest /bin/bash
+  357  docker run -it billandreo/keras:latest /bin/bash
+  362  docker run -it billandreo/keras:latest /b
+  365  docker run -it billandreo/keras:latest
+  392  docker run -it billandreo/keras:latest
+  393  docker run -it billandreo/mlplasmid:latest
+  550  docker run -it billandreo/mlplasmid:latest
+  551  docker run -it billandreo/mlplasmid:latest /bin/sh
+  555  docker run -it --entrypoint "/bin/sh" billandreo/mlplasmid:latest
+  594  cat cmds_docker.log  | grep run
+  595  history | grep run
+  596  history | grep run >> cmds_docker.log 
