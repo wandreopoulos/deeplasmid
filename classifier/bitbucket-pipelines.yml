@@ -1,0 +1,13 @@
+image: node:5.11.0
+pipelines:
+  default:
+    - step:
+        script:
+          - echo "This script runs on all branches that don't have any specific pipeline assigned in 'branches', such as develop."
+          - nosetests -w testing
+  branches:
+    master:
+      - step:
+          script:
+            - echo "This script builds the Docker container and runs only on commit to the master branch."
+            - docker build -t billandreo/mlplasmid .

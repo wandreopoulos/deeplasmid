@@ -571,7 +571,7 @@ def run_unsup_binning_test_datasets(binning_cmd, output_path, binning_cmd_params
         os.chmod(BINS_dir, 0775)
     ###   For all files under output directory suffixed with .fa
     ###   cp them under the BINS subdirectory
-    BINS_src_files = os.path.join(output_dir , "*.fa" )
+    BINS_src_files = os.path.join(output_dir , "*bins/*.fa" )
     ###cp BINS_src_files BINS_dir
     files_list  = open(os.path.join(output_dir , "files" ), 'w')
     for filename in glob.glob( BINS_src_files ):
@@ -614,7 +614,8 @@ def run_unsup_binning_test_datasets(binning_cmd, output_path, binning_cmd_params
     clusters = BINS_dir
     i += 1
     '''
-    result_bins =  glob.glob( os.path.join(BINS_dir, "*.fa") )
+    result_bins = glob.glob( os.path.join(BINS_dir, "*.fa") )  ### = glob.glob( BINS_src_files )  ###
+    print("in run_unsup_binning_test_datasets result_bins: %s" % (result_bins))
     
     return (0, result_bins)
 

@@ -1,0 +1,500 @@
+   22  pwd
+   23  ls -latr ../subread/
+   24  pwd
+   25  ls -atlr ..
+   26  cd ../subread/
+   27  ls
+   28  ls -altr
+   29  vi cmds
+   30  vi cmds
+   31  vi cmds.log 
+   32  vi cmds_gitlab.log 
+   33  vi README.md 
+   34  vi Dockerfile 
+   35  pwd
+   36  ls
+   37  ls -latr
+   38  vi cmds_gitlab.log 
+   39  vi .gitlab-ci.yml 
+   40  vi cmds_gitlab.log 
+   41  vi requirements.txt
+   42  grep gitlab .git/*
+   43  vi cmds_gitlab.log 
+   44  pwd
+   45  cd ..
+   46  ls
+   47  cd acdc/
+   48  ls
+   49  cd ..
+   50  ls
+   51  cd khmer/
+   52  ls
+   53  cd ..
+   54  ls
+   55  cd gitlab-advanced/
+   56  l
+   57  ls
+   58  ls -altr
+   59  vi Dockerfile.base 
+   60  vi Dockerfile.full 
+   61  vi Dockerfile.full
+   62  vi Dockerfile.metadata 
+   63  open Advanced\ Gitlab.pdf
+   64  pwd
+   65  vi README.md 
+   66  vi 04_use_metadata_in_containers.md 
+   67  vi 04-gitlab-ci.yml 
+   68  cd ..
+   69  l
+   70  sl -altr
+   71  ls -la
+   72  mkdir ml
+   73  cd ml
+   74  cd ..
+   75  mv ml/ plasmidml
+   76  cd plasmidml/
+   77  l
+   78  ls -ltr
+   79  ls ..
+   80  ls ../gitlab-advanced/
+   81  vi ../gitlab-advanced/01-gitlab-ci.yml 
+   82  vi ../gitlab-advanced/01_using_branches_and_tags_with_gitlab.md 
+   83  git init
+   84  git remote add origin git@gitlab.com:wandreopoulos/plasmidml.git
+   85  git add .
+   86  git commit -m "Initial commit"
+   87  git push -u origin master
+   88  cd ../gitlab-advanced/
+   89  grep nitial *
+   90  l
+   91  ls -altr
+   92  vi .gitlab-ci.yml 
+   93  vi README.md 
+   94  vi .git
+   95  vi .gitlab-ci.yml 
+   96  vi .gitlab-ci.yml 
+   97  vi 01_using_branches_and_tags_with_gitlab.md 
+   98  grep template *
+   99  grep world *
+  100  pwd
+  101  ls ..
+  102  vi README.md 
+  103  cd ../gitlab-advanced/
+  104  ls -latr
+  105  cd ../subread/
+  106  ls -latr
+  107  vi README.md 
+  108  vi cmds
+  109  vi cmds_gitlab.log 
+  110  vi .git
+  111  pwd
+  112  cd ../
+  113  cd plasmidml/
+  114  l
+  115  ls -latr
+  116  vi Makefile 
+  117  vi Dockerfile 
+  118  git add .
+  119  git commit -a
+  120  history
+  121  git push -u origin master
+  122  ls -latr
+  123  vi .gitlab-ci.yml 
+  124  cd ..
+  125  ls
+  126  cd subread/
+  127  ls
+  128  ls -latr
+  129  vi cmds_gitlab.log 
+  130  vi cmds_gitlab.log 
+  131  vi .gitlab-ci.yml 
+  132  vi .gitlab-ci.yml 
+  133  cd ..
+  134  ls
+  135  ls -alt
+  136  cd gitlab-advanced/
+  137  ls
+  138  cd ..
+  139  ls
+  140  pwd
+  141  ls -altr
+  142  cd gitlab-advanced/
+  143  ls -latr
+  144  vi .gitlab-ci.yml 
+  145  vi 02-gitlab-ci.yml 
+  146  vi 02_build_multiple_docker_images.md 
+  147  ls -altr
+  148  vi .git/HEAD
+  149  vi .git/config 
+  150  vi README.md 
+  151  cd ..
+  152  ls
+  153  cd plasmidml/
+  154  ls
+  155  ls -altr
+  156  git config --global user.name "Bill Andreopoulos"
+  157  git config --global user.email "wandreopoulos@lbl.gov"
+  158  cd ..
+  159  rm -rf plasmidml/
+  160  git clone git@gitlab.com:wandreopoulos/plasmidml.git
+  161  cd plasmidml
+  162  touch README.md
+  163  git add README.md
+  164  git commit -m "add README"
+  165  git push -u origin master
+  166  ls -latr
+  167  vi README.md 
+  168  cd ../gitlab-advanced/
+  169  ls
+  170  ls -altr
+  171  cd ../plasmidml/
+  172  ls -altr
+  173  cp ../../tiny-test/tiny-test/.gitlab-ci.yml .
+  174  cp ../../tiny-test/tiny-test/Dockerfile .
+  175  cp ../../tiny-test/tiny-test/Makefile .
+  176  cat ../../tiny-test/tiny-test/README.md 
+  177  ls- latr
+  178  ls -latr
+  179  vi Dockerfile 
+  180  vi Makefile 
+  181  vi .git
+  182  vi .gitlab-ci.yml 
+  183  vi .gitlab-ci.yml 
+  184  ls -altr ../subread/
+  185  ls -altr ../subread/test
+  186  vi ../subread/test/test_main.py
+  187  ls -latr
+  188  mkdir test
+  189  cp ../subread/test/*py test
+  190  vi Dockerfile 
+  191  vi Dockerfile 
+  192  ls -altr ../../tiny-test/tiny-test/
+  193  cp ../../tiny-test/tiny-test/hello.? .
+  194  ls -altr
+  195  vi .gitlab-ci.yml 
+  196  git commit -a -m "first test"
+  197  git add *
+  198  git add test
+  199  git add test/*
+  200  git commit -a -m "first test"
+  201  git push -u origin master
+  202  cat .gitlab-ci.yml 
+  203  ls -latr
+  204  vi predict_Plasmid.py
+  205  vi format_
+  206  vi format_Test.py
+  207  l
+  208  ls -altr
+  209  vi pipeline
+  210  vi features.py
+  211  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/predict_Plasmid.py .
+  212  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/format_Test.py .
+  213  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/feature_DL*.sh  .
+  214  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/read_fasta2_plasmids.py  .
+  215  ls -latr
+  216  rm features.py 
+  217  ls -latr
+  218  rm pipeline 
+  219  git add *
+  220  git commit -a -m "files"
+  221  git push -u origin master
+  222  git add .gitlab-ci.yml 
+  223  git commit -a -m "files gitlab"
+  224  git push -u origin master
+  225  git tag v1.0
+  226  git push --tags
+  227  ls -latr
+  228  vi Dockerfile 
+  229  vi Dockerfile 
+  230  vi Makefile 
+  231  vi .git
+  232  vi .gitlab-ci.yml 
+  233  vi ../gitlab-advanced/05-gitlab-ci.yml 
+  234  vi ../gitlab-advanced/04-gitlab-ci.yml 
+  235  vi ../gitlab-advanced/04-gitlab-ci.yml 
+  236  vi ../gitlab-advanced/04_use_metadata_in_containers.md 
+  237  vi ../gitlab-advanced/04-gitlab-ci.yml 
+  238  vi ../gitlab-advanced/03-gitlab-ci.yml 
+  239  vi ../gitlab-advanced/02-gitlab-ci.yml 
+  240  vi ../gitlab-advanced/01-gitlab-ci.yml 
+  241  vi ../gitlab-advanced/01-gitlab-ci.yml 
+  242  vi ../gitlab-advanced/01a_keeping-forked-repositories-up-to-date.md 
+  243  vi ../gitlab-advanced/01_using_branches_and_tags_with_gitlab.md 
+  244  vi ../subread/Dockerfile 
+  245  vi .gitlab-ci.yml 
+  246  vi .gitlab-ci.yml 
+  247  vi Dockerfile 
+  248  mv Dockerfile Dockerfile.helloworld
+  249  pwd
+  250  cp ../../keras/docker/Dockerfile .
+  251  vi Dockerfile
+  252  vi Dockerfile
+  253  pwd
+  254  vi Dockerfile
+  255  vi ../05-
+  256  ls -la
+  257  ls -la ..
+  258  pwd
+  259  vi ../subread/.gitlab-ci.yml 
+  260  vi Dockerfile.helloworld 
+  261  vi .gitlab-ci.yml 
+  262  vi Dockerfile.helloworld 
+  263  vi Dockerfile
+  264  vi Dockerfile.helloworld 
+  265  vi Dockerfile
+  266  vi Dockerfile.helloworld 
+  267  vi Dockerfile
+  268  vi Dockerfile.helloworld 
+  269  vi Dockerfile
+  270  vi Dockerfile.helloworld 
+  271  vi .gitlab-ci.yml 
+  272  git add *
+  273  git commit -a -m "first try"
+  274  git push -u origin master
+  275  history > cmds.log
+  276  history
+  277  history | grep git
+  278  git tag v2.0
+  279  git push --tags
+  280  vi Dockerfile
+  281  vi .gitlab-ci.yml 
+  282  vi .gitlab-ci.yml 
+  283  vi Dockerfile
+  284  ls
+  285  mv Dockerfile Dockerfile2
+  286  mv Dockerfile.helloworld Dockerfile
+  287  vi Dockerfile
+  288  mv Dockerfile Dockerfile.helloworld
+  289  vi Dockerfile
+  290  git tag v3.0
+  291  git commit -a -m "try"
+  292  git push -u origin master
+  293  vi Dockerfile
+  294  pwd
+  295  vi Dockerfile
+  296  vi Dockerfile.helloworld 
+  297  vi Dockerfile
+  298  vi Dockerfile2
+  299  vi Dockerfile2
+  300  vi Dockerfile
+  301  vi Dockerfile
+  302  ls -latr
+  303  vi predict_Plasmid.py 
+  304  vi .gitlab-ci.yml 
+  305  vi Dockerfile
+  306  vi Dockerfile2
+  307  vi .gitlab-ci.yml 
+  308  vi predict_Plasmid.py 
+  309  mv Dockerfile Dockerfile3
+  310  cp Dockerfile2 Dockerfile
+  311  vi Dockerfile
+  312  vi Dockerfile
+  313  l
+  314  ls -lare
+  315  mv .git .git.BAK
+  316  cd test/
+  317  l
+  318  ls -altr
+  319  vi test_main.py 
+  320  vi ../Dockerfile
+  321  cd ..
+  322  ls -latr
+  323  history | grep snadbox
+  324  history | grep sandbox
+  325  scp Dockerfile* andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier
+  326  l
+  327  ls -latr
+  328  scp  predict_Plasmid.py andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier
+  329  scp  format_Test.py andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier
+  330  pwd
+  331  cd ..
+  332  ls
+  333  mkdir keras
+  334  cd keras/
+  335  scp andreopo@gpint210.nersc.gov
+  336  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/Dockerfile .
+  337  docker login
+  338  docker -t billandreo/keras .
+  339  docker build -t billandreo/keras .
+  340  docker build -t billandreo/keras .
+  341  docker build -t billandreo/keras .
+  342  vi ~/.ssh/id_rsa.pub 
+  343  docker build -t billandreo/keras .
+  344  git clone git@bitbucket.org:wandreopoulos/jgi-ml.git
+  345  vi ~/.ssh/id_rsa..
+  346  vi ~/.ssh/id_rsa.pub 
+  347  git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
+  348  ls
+  349  vi Dockerfile 
+  350  docker build -t billandreo/keras .
+  351  docker run -it billandreo/keras:latest
+  352  docker run -it billandreo/keras:latest /bin/bash
+  353  vi Dockerfile 
+  354  vi Dockerfile 
+  355  docker run -it billandreo/keras:latest /bin/bash
+  356  docker build -t billandreo/keras .
+  357  docker run -it billandreo/keras:latest /bin/bash
+  358  l jgi-ml/classifier/
+  359  ls jgi-ml/classifier/
+  360  vi Dockerfile 
+  361  docker build -t billandreo/keras .
+  362  docker run -it billandreo/keras:latest /b
+  363  vi Dockerfile 
+  364  docker build -t billandreo/keras .
+  365  docker run -it billandreo/keras:latest
+  366  history | grep scp
+  367  scp Dockerfile andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/
+  368  vi ../subread/cmds_gitlab.log 
+  369  docker build -t billandreo/mlplasmid .
+  370  vi Dockerfile 
+  371  docker build -t billandreo/mlplasmid .
+  372  docker image
+  373  docker images
+  374  docker rmi b14fbf7ace36
+  375  docker ps -qa
+  376  docker ps -a
+  377  docker ps -q
+  378  docker kill a0b2a805c5d5
+  379  docker images
+  380  docker images -a -q
+  381  docker images -a
+  382  docker images
+  383  docker rmi f553d00d08ac
+  384  docker rmi b14fbf7ace36
+  385  docker_clean_ps
+  386  docker rm  a0b2a805c5d5
+  387  docker rmi b14fbf7ace36
+  388  docker images
+  389  docker build -t billandreo/mlplasmid .
+  390  docker images
+  391  docker push billandreo/mlplasmid
+  392  docker run -it billandreo/keras:latest
+  393  docker run -it billandreo/mlplasmid:latest
+  394  history > cmds.log
+  395  vi ../subread/cmds_gitlab.log 
+  396  docker tag
+  397  vi ../subread/cmds_gitlab.log 
+  398  docker inspect billandreo/mlplasmid
+  399  docker inspect billandreo/mlplasmid | more
+  400   
+  401  ls -latr
+  402  pwd
+  403  ls
+  404  history | grep ssh
+  405  ssh  -Y  andreopo@cori.nersc.gov
+  406  pwd
+  407  pwd
+  408  vi Dockerfile 
+  409  vi cmds.log 
+  410  vi cmds.log 
+  411  cat cmds.log 
+  412  cat Dockerfile 
+  413  git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
+  414  git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git jgi-ml2
+  415  ls
+  416  ls -lare jgi-ml2
+  417  ls -lart jgi-ml2/classifier/
+  418  cd jgi-ml2
+  419  git branch
+  420  git checkout develop
+  421  ls -latr
+  422  cd classifier/
+  423  ls
+  424  ls -latr
+  425  vi Dockerfile 
+  426  cd testing/
+  427  ls
+  428  vi test_mlplasmids.py 
+  429  cat ../../../cmds.log 
+  430  docker login
+  431  docker build -t billandreo/mlplasmid .
+  432  cd ..
+  433  docker build -t billandreo/mlplasmid .
+  434  vi Dockerfile 
+  435  docker build -t billandreo/mlplasmid .
+  436  vi Dockerfile 
+  437  docker build -t billandreo/mlplasmid .
+  438  docker push billandreo/mlplasmid:latest
+  439  cat Dockerfile 
+  440  mkdir models
+  441  scp -r andreopo@cori.nersc.gov:/global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* ./models/
+  442  rm -rf ./models/plasmid4g-2?/*yml
+  443  rm -rf ./models/plasmid4g-2?/*py
+  444  l
+  445  ls -latr
+  446  ls -latr ./models/
+  447  ls -latr ./models/plasmid4g-20
+  448  ls -latr ./models/plasmid4g-2?/__pycache__
+  449  rm -rf ./models/plasmid4g-2?/__pycache__
+  450  l
+  451  rm -rf ./models/plasmid4g-2?/
+  452  ls -latr ./models/
+  453  scp -r andreopo@cori.nersc.gov:/global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-20 ./models/
+  454  rm -rf models/plasmid4g-20/*pyc
+  455  rm -rf models/plasmid4g-20/*yml
+  456  rm -rf models/plasmid4g-20/__pycache__
+  457  ls -latr models/plasmid4g-20/
+  458  ls -latr models/plasmid4g-20/data/
+  459  rm -rf models/plasmid4g-20/data/
+  460  vi Dockerfile 
+  461  history | grep dock
+  462  docker build -t billandreo/mlplasmid .
+  463  docker build -t billandreo/mlplasmid .
+  464  docker build -t billandreo/mlplasmid .
+  465  docker build -t billandreo/mlplasmid .
+  466  history | grep dock
+  467  docker push billandreo/mlplasmid:latest
+  468  ls -latr
+  469  cat feature_DL_plasmid_predict.sh 
+  470  tail Dockerfile 
+  471  vi feature_DL_plasmid_predict.sh 
+  472  vi Dockerfile 
+  473  vi Dockerfile 
+  474  vi feature_DL_plasmid_predict.sh 
+  475  l models/plasmid4g-20/
+  476  ls models/plasmid4g-20/
+  477  ls -latr
+  478  vi Dockerfile 
+  479  history | grep dock
+  480  docker build -t billandreo/mlplasmid .
+  481  history | grep dock
+  482  docker push billandreo/mlplasmid:latest
+  483  ls -latr
+  484  pwd
+  485  git diff testing/test_mlplasmids.py 
+  486  ls -latr models/
+  487  git add models/
+  488  git add models/plasmid4g-20/
+  489  git add models/plasmid4g-20/*h5
+  490  ls -latr
+  491  git commit -a -m "models"
+  492  git branch
+  493  git push -u origin develop
+  494  pwd
+  495  ls -latr
+  496  docker inspect billandreo/mlplasmid | more
+  497  docker ps
+  498  docker ps -a
+  499  docker images
+  500  ssh andreopo@denovo1.nersc.gov
+  501  pwd
+  502  ls -latr
+  503  ls -lat testing/
+  504  ls -latr
+  505  vi feature_DL_plasmid_predict.sh 
+  506  vi README 
+  507  vi feature_DL_plasmid_predict.sh 
+  508  l models/
+  509  ls models/
+  510  vi predict_Plasmid.py 
+  511  vi feature_DL_plasmid_predict.sh 
+  512  vi predict_Plasmid.py 
+  513  vi feature_DL_plasmid_predict.sh 
+  514  vi Dockerfile 
+  515  vi Dockerfile 
+  516  ls -latr
+  517  ls -latr  ..
+  518  ls -latr  ../bin
+  519  ls -latr  ../binning/
+  520  history
+  521  history > cmds_docker.log

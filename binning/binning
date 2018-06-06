@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+
+'''
+Takes as input a list of BAM files and the fasta file
+
+To test run rqc_metagenome_binning passing the BAM files and the fasta file
+
+fix run.config, run.sh and run_bin.sh
+run.q starts metagenome_binning and run_bin.q creates the BAM files
+'''
+
+
+
+import sys,os.path
+#root = os.path.join(os.path.dirname(__file__), '..')
+#sys.path.append(root)
+
+#from rnaseq_microbe.util.misc import virtual_env
+#virtual_env(root)
+
+import argparse
+desc = 'binning'
+parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-f", "--fasta", dest="fasta", help="Fasta file name of contigs (absolute path)", required=True)
+parser.add_argument("-o", "--output-path", dest="output_path", help = "Output path to write to", required=True)
+parser.add_argument("-b", "--bam-files", dest="bam_files", help = "The bam files with the alignment of the fastqs to the fasta file of contigs. To generate a bam file from a fastq and fasta you can use the run.q, run.sh, run.config files under this directory as a template. To submit a binning job you can use the run_bin.q, run_bin.sh and run.config files under this directory as a template.", required=True)
+parser.add_argument('-n', '--nocleanup', dest="nocleanup", action='store_true', default=False, help = "Do not cleanup files after run")
+parser.add_argument("-r", "-ref-type", dest="ref_type", help = "Specify either n for nt or m for refseq.microbial(refseq.bacteria) or f for refseq.fungi (default n)", required=False)
+parser.add_argument("-t", "-run-type", dest="run_type", help = "Specify either m for metagenome binning or c for contaminant binning (default c)", required=False)
+###parser.add_argument("-h", "-help", dest="help", help = "To generate a bam file from a fastq and fasta you can use the run.q, run.sh, run.config files under this directory as a template. To submit a binning job you can use the run_bin.q, run_bin.sh and run.config files under this directory as a template", required=False)
+'''
+module load bbtools; bbsplitpairs.sh in=fastq.gz out=genome1.fq out2=genome2.fq outsingle=singletons.fq  minlen=45 trimq=10 qtrim=rl ow=t
+module load bwa/0.7.4; bwa index /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/ref/637000234.fna
+module load bwa/0.7.4; bwa mem -M -t 16 /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/ref/637000234.fna /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/10087.6.147939.ATTCAGA-ATAGAGG.anqrpht-genome1.fq /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/10087.6.147939.ATTCAGA-ATAGAGG.anqrpht-genome2.fq > /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/10087.6.147939.ATTCAGA-ATAGAGG.anqrpht-genome.sam
+module load samtools; samtools view -bS /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/10087.6.147939.ATTCAGA-ATAGAGG.anqrpht-genome.sam | samtools sort -m 5G -@ 16 - /global/projectb/scratch/andreopo/test_rnaseq_microbe/SEQQC-7416/Transcriptome_Analysis/AUXGN/10087.6.147939.ATTCAGA-ATAGAGG.anqrpht-genome_sorted
+'''
+
+#TODO specify the supervised binning to use. Options:
+#binning_cmd_sup_blastnt_megan = "binning_cmd_sup_blastnt_megan"
+#binning_cmd_sup_blastfungal_megan = "binning_cmd_sup_blastfungal_megan"
+#binning_cmd_sup_blastmicrob_megan = "binning_cmd_sup_blastmicrob_megan"
+#binning_cmd_sup_blastfungal_taxmapper = "binning_cmd_sup_blastfungal_taxmapper"
+#binning_cmd_sup_blastmicrob_taxmapper = "binning_cmd_sup_blastmicrob_taxmapper"
+
+options = parser.parse_args()
+
+output_path = None
+fasta = None
+bam_files = None
+nocleanup = False
+ref_type = "n"
+run_type = "c"
+
+if (options.ref_type != None) and ((options.ref_type == 'n') or (options.ref_type == 'm') or (options.ref_type == 'f')):
+	ref_type = options.ref_type
+elif (options.ref_type != None):
+	print("Specify either n for nt or m for refseq.microbial(refseq.bacteria) or f for refseq.fungi")
+	exit(1)
+
+if (options.run_type != None) and ((options.run_type == 'c') or (options.run_type == 'm')):
+	run_type = options.run_type
+elif (options.run_type != None):
+	print("Specify either c for contaminant binning or m for metagenome binning")
+	exit(1)
+
+###TODO remove this block when microbial and fungal are implemented
+if (ref_type == 'm') or (ref_type == 'f'):
+	print("The tool has only been tested with nt (default). If you want to use it with refseq.microbial(refseq.bacteria) or refseq.fungi, please contact Bill (wandreopoulos@lbl.gov)")
+	exit(2)
+###TODO remove this block when metagenome binning is implemented
+if (run_type == 'm'):
+	print("The tool has only been tested for contaminant binning (default). If you want to use it for metagenome binning, please contact Bill (wandreopoulos@lbl.gov)")
+	exit(2)
+
+
+###TODO do not allow the output path to have "homes" in it.
+if options.output_path:
+	output_path = options.output_path
+	if not os.path.isabs(output_path):
+		output_path = os.path.join(os.getcwd() , output_path)
+else:
+    ###base = os.path.basename(fastq)
+    output_path = os.getcwd()  ###os.path.join( os.getcwd() , base )
+
+if options.fasta:
+	fasta = options.fasta
+	if not os.path.isabs(fasta):
+		fasta = os.path.join(os.getcwd() , fasta)
+
+if options.bam_files:
+	bam_files = options.bam_files
+	if not os.path.isabs(bam_files):
+		bam_files = os.path.join(os.getcwd() , bam_files)
+
+print "output_path: %s" % (output_path)
+print "fasta: %s" % (fasta)
+print "bam_files: %s" % (bam_files)
+
+if  options.nocleanup:
+	nocleanup = True
+
+if run_type == "c":
+    from main_consensus import main
+    exit(main(output_path, fasta, bam_files, ref_type, nocleanup))
+elif run_type == "m":
+	from main import main
+	exit(main(output_path, fasta, bam_files, nocleanup))
