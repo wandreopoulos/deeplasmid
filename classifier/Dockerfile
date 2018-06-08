@@ -41,6 +41,15 @@ RUN apt-get update -qq \
     python3-pydot \
     # other repositories
     ubuntu-archive-keyring \
+    ca-certificates \
+    gcc \
+    git \
+    libpq-dev \
+    make \
+    python-pip \
+    python2.7 \
+    python2.7-dev \
+    ssh \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
