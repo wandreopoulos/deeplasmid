@@ -50,6 +50,7 @@ RUN apt-get update -qq \
     python-yaml \
     python2.7 \
     python2.7-dev \
+    python-setuptools \
     # ssh \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
@@ -68,7 +69,8 @@ ARG CNTK_VERSION=2.4
 ARG CNTK_DEVICE=CPU-Only
 RUN pip3 --no-cache-dir install https://cntk.ai/PythonWheel/${CNTK_DEVICE}/cntk-${CNTK_VERSION}-cp35-cp35m-linux_x86_64.whl
 
-ARG KERAS_VERSION=2.1.4
+ARG KERAS_VERSION=2.0.8 
+###1.4
 ENV KERAS_BACKEND=cntk
 RUN pip3 --no-cache-dir install --no-dependencies git+https://github.com/fchollet/keras.git@${KERAS_VERSION}
 
@@ -76,6 +78,18 @@ RUN pip3 --no-cache-dir install --no-dependencies git+https://github.com/fcholle
 RUN python3 -c "import cntk; print(cntk.__version__)" \
  && dpkg-query -l > /dpkg-query-l.txt \
  && pip3 freeze > /pip3-freeze.txt
+
+# intall useful and/or required Python libraries to run your script
+RUN pip install wheel \
+                matplotlib \
+                # seaborn \
+                # pandas \
+                numpy \
+                scipy \
+                sklearn
+                # python-dateutil \
+                # gensim
+
 
 WORKDIR /srv/
 

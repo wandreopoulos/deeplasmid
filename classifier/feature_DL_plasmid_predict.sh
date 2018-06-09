@@ -25,14 +25,14 @@ mkdir $OUT/dlDataPath
 chmod 777 $OUT/dlDataPath
 
 #pass fasta and yml directory to format
-python2.7 format_Test.py  --inputfasta $FASTA --inputyml $OUT/$DATETIME/yml --dataPath $OUT/dlDataPath
+python3 format_Test.py  --inputfasta $FASTA --inputyml $OUT/$DATETIME/yml --dataPath $OUT/dlDataPath
 
 if [ $? -ne 0 ];
 then echo "format_Test.py failed"
 exit 1
 fi
 
-python2.7 predict_Plasmid.py --dataPath $OUT/dlDataPath  --given test  --kModelList  20-29  --dataSegment -1  --seedModel  models/plasmid4g-
+python3 predict_Plasmid.py --dataPath $OUT/dlDataPath  --given test  --kModelList  20-29  --dataSegment -1  --seedModel  models/plasmid4g-
 
 if [ $? -ne 0 ];
 then echo "predict_Plasmid.py failed"
