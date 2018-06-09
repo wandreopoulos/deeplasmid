@@ -47,9 +47,10 @@ RUN apt-get update -qq \
     libpq-dev \
     make \
     python-pip \
+    python-yaml \
     python2.7 \
     python2.7-dev \
-    ssh \
+    # ssh \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -89,12 +90,12 @@ WORKDIR /srv/
 RUN git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
 
 #RUN mkdir /srv/jgi-ml/classifier/models/
-WORKDIR /srv/jgi-ml/classifier/models/
+WORKDIR /srv/jgi-ml/classifier/
 #ADD /global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* /srv/jgi-ml/build/
 #ADD models/plasmid4g-* /srv/jgi-ml/classifier/models/
 
 ###ENTRYPOINT feature_DL_plasmid_predict.sh fasta out
 ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh"]
 
-RUN chmod 777 -R /srv/jgi-ml/classifier/
+#RUN chmod 777 -R /srv/jgi-ml/classifier/
 
