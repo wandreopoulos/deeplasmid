@@ -712,566 +712,566 @@ def fourFindLongestHomopolymer(seq):
 
 
 
-def fivesixFindMers(seq, seqin, penalty_value):
-
-    startpointingtime = time()
-
-    ksize = 2 ; lmers_dimer = khmer.Countgraph(ksize, 4**ksize, 1)
-    lmers_indexes_dimer = {}
-    lmers_dimer.set_use_bigcount(True)
-
-    ksize = 3 ; lmers_trimer = khmer.Countgraph(ksize, 4**ksize, 1)
-    lmers_indexes_trimer = {}
-    lmers_trimer.set_use_bigcount(True)
-
-    ksize = 4 ; lmers_tetramer = khmer.Countgraph(ksize, 4**ksize, 1)
-    lmers_indexes_tetramer = {}
-    lmers_tetramer.set_use_bigcount(True)
-
-    ksize = 5 ; lmers_pentamer = khmer.Countgraph(ksize, 4**ksize, 1)
-    lmers_indexes_pentamer = {}
-    lmers_pentamer.set_use_bigcount(True)
-
-    ksize = 6 ; lmers_hexamer = khmer.Countgraph(ksize, 4**ksize, 1)
-    lmers_indexes_hexamer = {}
-    lmers_hexamer.set_use_bigcount(True)
-
-    ksize = 7 ; lmers_heptamer = khmer.Countgraph(ksize, 4**ksize, 1)
-    lmers_indexes_heptamer = {}
-    lmers_heptamer.set_use_bigcount(True)
-
-    '''
-    lmers_octamer = khmer.new_ktable(8)
-    lmers_indexes_octamer = {}
-    lmers_ninemer = khmer.new_ktable(9)
-    lmers_indexes_ninemer = {}
-    lmers_dekamer = khmer.new_ktable(10)
-    lmers_indexes_dekamer = {}
-    '''
-
-    lmers_dimer.consume(seq)
-    lmers_trimer.consume(seq)
-    lmers_tetramer.consume(seq)
-    lmers_pentamer.consume(seq)
-    lmers_hexamer.consume(seq)
-    lmers_heptamer.consume(seq)
-    '''
-    lmers_octamer.consume(seq)
-    lmers_ninemer.consume(seq)
-    lmers_dekamer.consume(seq)
-    '''
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers init: %s \n" % ( runtime ))
-    sys.stdout.flush()
-    startpointingtime = time()
-
-    max_occur_dimer = "Z"
-    max_occur_same_dimer = 0
-    pos_occur_same_dimer = 0
-    '''
-    for l in lmers_dimer.keys():
-        if lmers_dimer.get(l) > max_occur_same_dimer and lmers_dimer.get(l) > 1:
-            max_occur_dimer = l
-            max_occur_same_dimer = lmers_dimer.get(l)
-            pos_occur_same_dimer = len(set(lmers_indexes_dimer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    max_occur_same_dimer = lmers_dimer.get_max_count(seq)
-    for i in range(0, len(lmers_dimer.get_kmer_counts(seq) )):
-       mer = lmers_dimer.get_kmers(seq)[i]
-       n = lmers_dimer.get_kmer_counts(seq)[i]
-       if n == max_occur_same_dimer: ### and n > 1 and mer < max_occur_dimer:
-          max_occur_dimer = mer
-          break
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers dimer: %s \n" % ( runtime ))
-    sys.stdout.flush()
-    startpointingtime = time()
-
-    max_occur_trimer = "Z"
-    max_occur_same_trimer = 0
-    pos_occur_same_trimer = 0
-    '''
-    for l in lmers_trimer.keys():
-        if lmers_trimer.get(l) > max_occur_same_trimer and lmers_trimer.get(l) > 1:
-            max_occur_trimer = l
-            max_occur_same_trimer = lmers_trimer.get(l)
-            pos_occur_same_trimer = len(set(lmers_indexes_trimer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    max_occur_same_trimer = lmers_trimer.get_max_count(seq)
-    for i in range(0, len(lmers_trimer.get_kmer_counts(seq) )):
-       mer = lmers_trimer.get_kmers(seq)[i]
-       n = lmers_trimer.get_kmer_counts(seq)[i]
-       if n == max_occur_same_trimer: ### and n > 1 and mer < max_occur_trimer:
-          max_occur_trimer = mer
-          break
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers trimer: %s \n" % ( runtime ))
-    sys.stdout.flush()
-    startpointingtime = time()
-
-    max_occur_tetramer = "Z"
-    max_occur_same_tetramer = 0
-    pos_occur_same_tetramer = 0
-    '''
-    for l in lmers_tetramer.keys():
-        if lmers_tetramer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_tetramer = l
-            max_occur_same_tetramer = lmers_tetramer.get(l)
-            pos_occur_same_tetramer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    max_occur_same_tetramer = lmers_tetramer.get_max_count(seq)
-    for i in range(0, len(lmers_tetramer.get_kmer_counts(seq) )):
-       mer = lmers_tetramer.get_kmers(seq)[i]
-       n = lmers_tetramer.get_kmer_counts(seq)[i]
-       if n == max_occur_same_tetramer: ### and n > 1 and mer < max_occur_tetramer:
-          max_occur_tetramer = mer
-          break
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers tetramer: %s \n" % ( runtime ))
-    sys.stdout.flush()
-    startpointingtime = time()
-
-    max_occur_pentamer = "Z"
-    max_occur_same_pentamer = 0
-    pos_occur_same_pentamer = 0
-    '''
-    for l in lmers_pentamer.keys():
-        if lmers_pentamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_pentamer = l
-            max_occur_same_pentamer = lmers_tetramer.get(l)
-            pos_occur_same_pentamer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    max_occur_same_pentamer = lmers_pentamer.get_max_count(seq)
-    for i in range(0, len(lmers_pentamer.get_kmer_counts(seq) )):
-       mer = lmers_pentamer.get_kmers(seq)[i]
-       n = lmers_pentamer.get_kmer_counts(seq)[i]
-       if n == max_occur_same_pentamer: ### and n > 1 and mer < max_occur_pentamer:
-          max_occur_pentamer = mer
-          break
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers pentamer: %s \n" % ( runtime ))
-    sys.stdout.flush()
-    startpointingtime = time()
-
-    max_occur_hexamer = "Z"
-    max_occur_same_hexamer = 0
-    pos_occur_same_hexamer = 0
-    '''
-    for l in lmers_hexamer.keys():
-        if lmers_hexamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_hexamer = l
-            max_occur_same_hexamer = lmers_tetramer.get(l)
-            pos_occur_same_hexamer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    max_occur_same_hexamer = lmers_hexamer.get_max_count(seq)
-    for i in range(0, len(lmers_hexamer.get_kmer_counts(seq) )):
-       mer = lmers_hexamer.get_kmers(seq)[i]
-       n = lmers_hexamer.get_kmer_counts(seq)[i]
-       if n == max_occur_same_hexamer: ### and n > 1 and mer < max_occur_hexamer:
-          max_occur_hexamer = mer
-          break
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers hexamer: %s \n" % ( runtime ))
-    sys.stdout.flush()
-    startpointingtime = time()
-
-    max_occur_heptamer = "Z"
-    max_occur_same_heptamer = 0
-    pos_occur_same_heptamer = 0
-    '''
-    for l in lmers_heptamer.keys():
-        if lmers_heptamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_heptamer = l
-            max_occur_same_heptamer = lmers_tetramer.get(l)
-            pos_occur_same_heptamer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    max_occur_same_heptamer = lmers_heptamer.get_max_count(seq)
-    for i in range(0, len(lmers_heptamer.get_kmer_counts(seq) )):
-       mer = lmers_heptamer.get_kmers(seq)[i]
-       n = lmers_heptamer.get_kmer_counts(seq)[i]
-       if n == max_occur_same_heptamer: ### and n > 1 and mer < max_occur_heptamer:
-          max_occur_heptamer = mer
-          break
-
-    runtime = str(time() - startpointingtime)
-    sys.stdout.write("RUNTIME fivesixFindMers heptamer: %s \n" % ( runtime ))
-    sys.stdout.flush()
-
-    max_occur_octamer = ""
-    max_occur_same_octamer = 0
-    pos_occur_same_octamer = 0
-    #'''
-    #for l in lmers_octamer.keys():
-    #    if lmers_octamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-    #        max_occur_octamer = l
-    #        max_occur_same_octamer = lmers_tetramer.get(l)
-    #        pos_occur_same_octamer = len(set(lmers_indexes_tetramer.get(l)))
-    #'''
-    ## run through all entries. if they have nonzero presence, print.
-    #for i in range(0, lmers_octamer.n_entries()):
-    #   n = lmers_octamer.get(i)
-    #   if n > max_occur_same_octamer and n > 1:
-    #      if DEBUG == 1:  print lmers_octamer.reverse_hash(i), "is present", n, "times."
-    #      max_occur_octamer = lmers_octamer.reverse_hash(i)
-    #      max_occur_same_octamer = n
-    #
-    max_occur_ninemer = ""
-    max_occur_same_ninemer = 0
-    pos_occur_same_ninemer = 0
-    #'''
-    #for l in lmers_ninemer.keys():
-    #    if lmers_ninemer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-    #        max_occur_ninemer = l
-    #        max_occur_same_ninemer = lmers_tetramer.get(l)
-    #        pos_occur_same_ninemer = len(set(lmers_indexes_tetramer.get(l)))
-    #'''
-    ## run through all entries. if they have nonzero presence, print.
-    #for i in range(0, lmers_ninemer.n_entries()):
-    #   n = lmers_ninemer.get(i)
-    #   if n > max_occur_same_ninemer and n > 1:
-    #      if DEBUG == 1:  print lmers_ninemer.reverse_hash(i), "is present", n, "times."
-    #      max_occur_ninemer = lmers_ninemer.reverse_hash(i)
-    #      max_occur_same_ninemer = n
-    #
-    max_occur_dekamer = ""
-    max_occur_same_dekamer = 0
-    pos_occur_same_dekamer = 0
-    #'''
-    #for l in lmers_dekamer.keys():
-    #    if lmers_dekamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-    #        max_occur_dekamer = l
-    #        max_occur_same_dekamer = lmers_tetramer.get(l)
-    #        pos_occur_same_dekamer = len(set(lmers_indexes_tetramer.get(l)))
-    #'''
-    ## run through all entries. if they have nonzero presence, print.
-    #for i in range(0, lmers_dekamer.n_entries()):
-    #   n = lmers_dekamer.get(i)
-    #   if n > max_occur_same_dekamer and n > 1:
-    #      if DEBUG == 1:  print lmers_dekamer.reverse_hash(i), "is present", n, "times."
-    #      max_occur_dekamer = lmers_dekamer.reverse_hash(i)
-    #      max_occur_same_dekamer = n
-
-
-    percent_occur_same_dimer = float(pos_occur_same_dimer) / float(len(seq))
-    percent_occur_same_trimer = float(pos_occur_same_trimer) / float(len(seq))
-    percent_occur_same_tetramer = float(pos_occur_same_tetramer) / float(len(seq))
-    percent_occur_same_pentamer = float(pos_occur_same_pentamer) / float(len(seq))
-    percent_occur_same_hexamer = float(pos_occur_same_hexamer) / float(len(seq))
-    percent_occur_same_heptamer = float(pos_occur_same_heptamer) / float(len(seq))
-    percent_occur_same_octamer = float(pos_occur_same_octamer) / float(len(seq))
-    percent_occur_same_ninemer = float(pos_occur_same_ninemer) / float(len(seq))
-    percent_occur_same_dekamer = float(pos_occur_same_dekamer) / float(len(seq))
-
-    if DEBUG == 1:
-        print "max_occur_dimer " + max_occur_dimer + " max_occur_same_dimer " + str(max_occur_same_dimer) + " percent_occur_same_dimer " + str(percent_occur_same_dimer)
-        print "max_occur_trimer " + max_occur_trimer + " max_occur_same_trimer " + str(max_occur_same_trimer) + " percent_occur_same_trimer " + str(percent_occur_same_trimer)
-        print "max_occur_tetramer " + max_occur_tetramer + " max_occur_same_tetramer " + str(max_occur_same_tetramer) + " percent_occur_same_tetramer " + str(percent_occur_same_tetramer)
-
-    return len(seq), max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, \
-            max_occur_trimer, max_occur_same_trimer, percent_occur_same_trimer, \
-            max_occur_tetramer, max_occur_same_tetramer, percent_occur_same_tetramer, \
-            max_occur_pentamer, max_occur_same_pentamer, percent_occur_same_pentamer, \
-            max_occur_hexamer, max_occur_same_hexamer, percent_occur_same_hexamer, \
-            max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
-            max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
-            max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
-            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, \
-            penalty_value
-
-
-
-def fivesixFindMers_Obsolete(seq, seqin, penalty_value):
-    lmers_dimer = khmer.new_ktable(2)
-    lmers_indexes_dimer = {}
-    lmers_trimer = khmer.new_ktable(3)
-    lmers_indexes_trimer = {}
-    lmers_tetramer = khmer.new_ktable(4)
-    lmers_indexes_tetramer = {}
-    lmers_pentamer = khmer.new_ktable(5)
-    lmers_indexes_pentamer = {}
-    lmers_hexamer = khmer.new_ktable(6)
-    lmers_indexes_hexamer = {}
-    lmers_heptamer = khmer.new_ktable(7)
-    lmers_indexes_heptamer = {}
-    '''
-    lmers_octamer = khmer.new_ktable(8)
-    lmers_indexes_octamer = {}
-    lmers_ninemer = khmer.new_ktable(9)
-    lmers_indexes_ninemer = {}
-    lmers_dekamer = khmer.new_ktable(10)
-    lmers_indexes_dekamer = {}
-    '''
-    
-    lmers_dimer.consume(seq)
-    lmers_trimer.consume(seq)
-    lmers_tetramer.consume(seq)
-    lmers_pentamer.consume(seq)
-    lmers_hexamer.consume(seq)
-    lmers_heptamer.consume(seq)
-    '''
-    lmers_octamer.consume(seq)
-    lmers_ninemer.consume(seq)
-    lmers_dekamer.consume(seq)
-    '''
-
-    '''
-    for windowSizeL in [4]:
-        for idx_start in range(0, windowSizeL):
-            idx = idx_start
-            #consec_identical_mers = ''
-            count_consec_identical_mers = 0
-            prev_mer = ''
-            while idx + windowSizeL <= len(seq):
-                subseq = seq[idx : idx + windowSizeL]
-                if subseq == len(subseq) * subseq[0]: ###is a homopolymer:
-                    if DEBUG == 1:
-                        print "subseq is a homopolymer " + subseq
-                    idx += windowSizeL
-                    prev_mer = subseq
-                    continue
-                lmers  = lmers_dimer
-                lmers_indexes = lmers_indexes_dimer
-                if windowSizeL == 3:
-                    lmers  = lmers_trimer
-                    lmers_indexes = lmers_indexes_trimer
-                if windowSizeL == 4:
-                    lmers  = lmers_tetramer
-                    lmers_indexes = lmers_indexes_tetramer
-                lmers[subseq] = lmers.get(subseq, 0) + 1
-                lmers_indexes[subseq] = lmers_indexes.get(subseq, []) + range(idx , idx + windowSizeL)
-                ###print "subseq " + subseq + " prev_mer " + prev_mer
-                
-                if not subseq == prev_mer:
-                    key = str(windowSizeL) + "repeat"
-                    if count_consec_identical_mers > rules.get(key).get("X"):
-                        penalty_value += float( rules.get(key).get("value") )
-                        if  PRINT_SUCC_FAIL: print >>sys.stderr, str( key + " . " + rules.get(key).get("text").format(Sequence=prev_mer) + rules.get(key).get("explanation") )
-                        if  PRINT_SUCC_FAIL: print >>sys.stderr, "    (...) explanation: consec_identical_mers " + prev_mer + " count_consec_identical_mers " + str(count_consec_identical_mers)
-                        if windowSizeL == 2:
-                            if count_consec_identical_mers > max_occur_same_dimer:
-                                max_occur_same_dimer = count_consec_identical_mers
-                                pos_occur_same_dimer = count_consec_identical_mers * 2
-                                max_occur_dimer = prev_mer
-                        elif windowSizeL == 3:
-                            if count_consec_identical_mers > max_occur_same_trimer:
-                                max_occur_same_trimer = count_consec_identical_mers
-                                pos_occur_same_trimer = count_consec_identical_mers * 3
-                                max_occur_trimer = prev_mer
-                        elif windowSizeL == 4:
-                            if count_consec_identical_mers > max_occur_same_tetramer:
-                                max_occur_same_tetramer = count_consec_identical_mers
-                                pos_occur_same_tetramer = count_consec_identical_mers * 4
-                                max_occur_tetramer = prev_mer
-                    count_consec_identical_mers = 1
-                    #consec_identical_mers = subseq
-                else:
-                    count_consec_identical_mers += 1
-                    #consec_identical_mers = subseq
-                    
-                idx += windowSizeL
-                prev_mer = subseq
-    '''
-
-    max_occur_dimer = ""
-    max_occur_same_dimer = 0
-    pos_occur_same_dimer = 0
-    '''
-    for l in lmers_dimer.keys():
-        if lmers_dimer.get(l) > max_occur_same_dimer and lmers_dimer.get(l) > 1:
-            max_occur_dimer = l
-            max_occur_same_dimer = lmers_dimer.get(l)
-            pos_occur_same_dimer = len(set(lmers_indexes_dimer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    for i in range(0, lmers_dimer.n_entries()):
-       n = lmers_dimer.get(i)
-       if n > max_occur_same_dimer and n > 1:
-          if DEBUG == 1:  print lmers_dimer.reverse_hash(i), "is present", n, "times."
-          max_occur_dimer = lmers_dimer.reverse_hash(i)
-          max_occur_same_dimer = n
-          
-    max_occur_trimer = ""
-    max_occur_same_trimer = 0
-    pos_occur_same_trimer = 0
-    '''
-    for l in lmers_trimer.keys():
-        if lmers_trimer.get(l) > max_occur_same_trimer and lmers_trimer.get(l) > 1:
-            max_occur_trimer = l
-            max_occur_same_trimer = lmers_trimer.get(l)
-            pos_occur_same_trimer = len(set(lmers_indexes_trimer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    for i in range(0, lmers_trimer.n_entries()):
-       n = lmers_trimer.get(i)
-       if n > max_occur_same_trimer and n > 1:
-          if DEBUG == 1:  print lmers_trimer.reverse_hash(i), "is present", n, "times."
-          max_occur_trimer = lmers_trimer.reverse_hash(i)
-          max_occur_same_trimer = n
-
-    max_occur_tetramer = ""
-    max_occur_same_tetramer = 0
-    pos_occur_same_tetramer = 0
-    '''
-    for l in lmers_tetramer.keys():
-        if lmers_tetramer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_tetramer = l
-            max_occur_same_tetramer = lmers_tetramer.get(l)
-            pos_occur_same_tetramer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    for i in range(0, lmers_tetramer.n_entries()):
-       n = lmers_tetramer.get(i)
-       if n > max_occur_same_tetramer and n > 1:
-          if DEBUG == 1:  print lmers_tetramer.reverse_hash(i), "is present", n, "times."
-          max_occur_tetramer = lmers_tetramer.reverse_hash(i)
-          max_occur_same_tetramer = n
-
-    max_occur_pentamer = ""
-    max_occur_same_pentamer = 0
-    pos_occur_same_pentamer = 0
-    '''
-    for l in lmers_pentamer.keys():
-        if lmers_pentamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_pentamer = l
-            max_occur_same_pentamer = lmers_tetramer.get(l)
-            pos_occur_same_pentamer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    for i in range(0, lmers_pentamer.n_entries()):
-       n = lmers_pentamer.get(i)
-       if n > max_occur_same_pentamer and n > 1:
-          if DEBUG == 1:  print lmers_pentamer.reverse_hash(i), "is present", n, "times."
-          max_occur_pentamer = lmers_pentamer.reverse_hash(i)
-          max_occur_same_pentamer = n
-
-    max_occur_hexamer = ""
-    max_occur_same_hexamer = 0
-    pos_occur_same_hexamer = 0
-    '''
-    for l in lmers_hexamer.keys():
-        if lmers_hexamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_hexamer = l
-            max_occur_same_hexamer = lmers_tetramer.get(l)
-            pos_occur_same_hexamer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    for i in range(0, lmers_hexamer.n_entries()):
-       n = lmers_hexamer.get(i)
-       if n > max_occur_same_hexamer and n > 1:
-          if DEBUG == 1:  print lmers_hexamer.reverse_hash(i), "is present", n, "times."
-          max_occur_hexamer = lmers_hexamer.reverse_hash(i)
-          max_occur_same_hexamer = n
-
-    max_occur_heptamer = ""
-    max_occur_same_heptamer = 0
-    pos_occur_same_heptamer = 0
-    '''
-    for l in lmers_heptamer.keys():
-        if lmers_heptamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_heptamer = l
-            max_occur_same_heptamer = lmers_tetramer.get(l)
-            pos_occur_same_heptamer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    for i in range(0, lmers_heptamer.n_entries()):
-       n = lmers_heptamer.get(i)
-       if n > max_occur_same_heptamer and n > 1:
-          if DEBUG == 1:  print lmers_heptamer.reverse_hash(i), "is present", n, "times."
-          max_occur_heptamer = lmers_heptamer.reverse_hash(i)
-          max_occur_same_heptamer = n
-
-    max_occur_octamer = ""
-    max_occur_same_octamer = 0
-    pos_occur_same_octamer = 0
-    #'''
-    #for l in lmers_octamer.keys():
-    #    if lmers_octamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-    #        max_occur_octamer = l
-    #        max_occur_same_octamer = lmers_tetramer.get(l)
-    #        pos_occur_same_octamer = len(set(lmers_indexes_tetramer.get(l)))
-    #'''
-    ## run through all entries. if they have nonzero presence, print.
-    #for i in range(0, lmers_octamer.n_entries()):
-    #   n = lmers_octamer.get(i)
-    #   if n > max_occur_same_octamer and n > 1:
-    #      if DEBUG == 1:  print lmers_octamer.reverse_hash(i), "is present", n, "times."
-    #      max_occur_octamer = lmers_octamer.reverse_hash(i)
-    #      max_occur_same_octamer = n
-    #
-    max_occur_ninemer = ""
-    max_occur_same_ninemer = 0
-    pos_occur_same_ninemer = 0
-    #'''
-    #for l in lmers_ninemer.keys():
-    #    if lmers_ninemer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-    #        max_occur_ninemer = l
-    #        max_occur_same_ninemer = lmers_tetramer.get(l)
-    #        pos_occur_same_ninemer = len(set(lmers_indexes_tetramer.get(l)))
-    #'''
-    ## run through all entries. if they have nonzero presence, print.
-    #for i in range(0, lmers_ninemer.n_entries()):
-    #   n = lmers_ninemer.get(i)
-    #   if n > max_occur_same_ninemer and n > 1:
-    #      if DEBUG == 1:  print lmers_ninemer.reverse_hash(i), "is present", n, "times."
-    #      max_occur_ninemer = lmers_ninemer.reverse_hash(i)
-    #      max_occur_same_ninemer = n
-    #
-    max_occur_dekamer = ""
-    max_occur_same_dekamer = 0
-    pos_occur_same_dekamer = 0
-    #'''
-    #for l in lmers_dekamer.keys():
-    #    if lmers_dekamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-    #        max_occur_dekamer = l
-    #        max_occur_same_dekamer = lmers_tetramer.get(l)
-    #        pos_occur_same_dekamer = len(set(lmers_indexes_tetramer.get(l)))
-    #'''
-    ## run through all entries. if they have nonzero presence, print.
-    #for i in range(0, lmers_dekamer.n_entries()):
-    #   n = lmers_dekamer.get(i)
-    #   if n > max_occur_same_dekamer and n > 1:
-    #      if DEBUG == 1:  print lmers_dekamer.reverse_hash(i), "is present", n, "times."
-    #      max_occur_dekamer = lmers_dekamer.reverse_hash(i)
-    #      max_occur_same_dekamer = n
-
-
-    percent_occur_same_dimer = float(pos_occur_same_dimer) / float(len(seq))
-    percent_occur_same_trimer = float(pos_occur_same_trimer) / float(len(seq))
-    percent_occur_same_tetramer = float(pos_occur_same_tetramer) / float(len(seq))
-    percent_occur_same_pentamer = float(pos_occur_same_pentamer) / float(len(seq))
-    percent_occur_same_hexamer = float(pos_occur_same_hexamer) / float(len(seq))
-    percent_occur_same_heptamer = float(pos_occur_same_heptamer) / float(len(seq))
-    percent_occur_same_octamer = float(pos_occur_same_octamer) / float(len(seq))
-    percent_occur_same_ninemer = float(pos_occur_same_ninemer) / float(len(seq))
-    percent_occur_same_dekamer = float(pos_occur_same_dekamer) / float(len(seq))
-
-    if DEBUG == 1:
-        print "max_occur_dimer " + max_occur_dimer + " max_occur_same_dimer " + str(max_occur_same_dimer) + " percent_occur_same_dimer " + str(percent_occur_same_dimer)
-        print "max_occur_trimer " + max_occur_trimer + " max_occur_same_trimer " + str(max_occur_same_trimer) + " percent_occur_same_trimer " + str(percent_occur_same_trimer)
-        print "max_occur_tetramer " + max_occur_tetramer + " max_occur_same_tetramer " + str(max_occur_same_tetramer) + " percent_occur_same_tetramer " + str(percent_occur_same_tetramer)
-
-    return len(seq), max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, \
-            max_occur_trimer, max_occur_same_trimer, percent_occur_same_trimer, \
-            max_occur_tetramer, max_occur_same_tetramer, percent_occur_same_tetramer, \
-            max_occur_pentamer, max_occur_same_pentamer, percent_occur_same_pentamer, \
-            max_occur_hexamer, max_occur_same_hexamer, percent_occur_same_hexamer, \
-            max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
-            max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
-            max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
-            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, \
-            penalty_value
+#def fivesixFindMers(seq, seqin, penalty_value):
+#
+#    startpointingtime = time()
+#
+#    ksize = 2 ; lmers_dimer = khmer.Countgraph(ksize, 4**ksize, 1)
+#    lmers_indexes_dimer = {}
+#    lmers_dimer.set_use_bigcount(True)
+#
+#    ksize = 3 ; lmers_trimer = khmer.Countgraph(ksize, 4**ksize, 1)
+#    lmers_indexes_trimer = {}
+#    lmers_trimer.set_use_bigcount(True)
+#
+#    ksize = 4 ; lmers_tetramer = khmer.Countgraph(ksize, 4**ksize, 1)
+#    lmers_indexes_tetramer = {}
+#    lmers_tetramer.set_use_bigcount(True)
+#
+#    ksize = 5 ; lmers_pentamer = khmer.Countgraph(ksize, 4**ksize, 1)
+#    lmers_indexes_pentamer = {}
+#    lmers_pentamer.set_use_bigcount(True)
+#
+#    ksize = 6 ; lmers_hexamer = khmer.Countgraph(ksize, 4**ksize, 1)
+#    lmers_indexes_hexamer = {}
+#    lmers_hexamer.set_use_bigcount(True)
+#
+#    ksize = 7 ; lmers_heptamer = khmer.Countgraph(ksize, 4**ksize, 1)
+#    lmers_indexes_heptamer = {}
+#    lmers_heptamer.set_use_bigcount(True)
+#
+#    '''
+#    lmers_octamer = khmer.new_ktable(8)
+#    lmers_indexes_octamer = {}
+#    lmers_ninemer = khmer.new_ktable(9)
+#    lmers_indexes_ninemer = {}
+#    lmers_dekamer = khmer.new_ktable(10)
+#    lmers_indexes_dekamer = {}
+#    '''
+#
+#    lmers_dimer.consume(seq)
+#    lmers_trimer.consume(seq)
+#    lmers_tetramer.consume(seq)
+#    lmers_pentamer.consume(seq)
+#    lmers_hexamer.consume(seq)
+#    lmers_heptamer.consume(seq)
+#    '''
+#    lmers_octamer.consume(seq)
+#    lmers_ninemer.consume(seq)
+#    lmers_dekamer.consume(seq)
+#    '''
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers init: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#    startpointingtime = time()
+#
+#    max_occur_dimer = "Z"
+#    max_occur_same_dimer = 0
+#    pos_occur_same_dimer = 0
+#    '''
+#    for l in lmers_dimer.keys():
+#        if lmers_dimer.get(l) > max_occur_same_dimer and lmers_dimer.get(l) > 1:
+#            max_occur_dimer = l
+#            max_occur_same_dimer = lmers_dimer.get(l)
+#            pos_occur_same_dimer = len(set(lmers_indexes_dimer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    max_occur_same_dimer = lmers_dimer.get_max_count(seq)
+#    for i in range(0, len(lmers_dimer.get_kmer_counts(seq) )):
+#       mer = lmers_dimer.get_kmers(seq)[i]
+#       n = lmers_dimer.get_kmer_counts(seq)[i]
+#       if n == max_occur_same_dimer: ### and n > 1 and mer < max_occur_dimer:
+#          max_occur_dimer = mer
+#          break
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers dimer: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#    startpointingtime = time()
+#
+#    max_occur_trimer = "Z"
+#    max_occur_same_trimer = 0
+#    pos_occur_same_trimer = 0
+#    '''
+#    for l in lmers_trimer.keys():
+#        if lmers_trimer.get(l) > max_occur_same_trimer and lmers_trimer.get(l) > 1:
+#            max_occur_trimer = l
+#            max_occur_same_trimer = lmers_trimer.get(l)
+#            pos_occur_same_trimer = len(set(lmers_indexes_trimer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    max_occur_same_trimer = lmers_trimer.get_max_count(seq)
+#    for i in range(0, len(lmers_trimer.get_kmer_counts(seq) )):
+#       mer = lmers_trimer.get_kmers(seq)[i]
+#       n = lmers_trimer.get_kmer_counts(seq)[i]
+#       if n == max_occur_same_trimer: ### and n > 1 and mer < max_occur_trimer:
+#          max_occur_trimer = mer
+#          break
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers trimer: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#    startpointingtime = time()
+#
+#    max_occur_tetramer = "Z"
+#    max_occur_same_tetramer = 0
+#    pos_occur_same_tetramer = 0
+#    '''
+#    for l in lmers_tetramer.keys():
+#        if lmers_tetramer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_tetramer = l
+#            max_occur_same_tetramer = lmers_tetramer.get(l)
+#            pos_occur_same_tetramer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    max_occur_same_tetramer = lmers_tetramer.get_max_count(seq)
+#    for i in range(0, len(lmers_tetramer.get_kmer_counts(seq) )):
+#       mer = lmers_tetramer.get_kmers(seq)[i]
+#       n = lmers_tetramer.get_kmer_counts(seq)[i]
+#       if n == max_occur_same_tetramer: ### and n > 1 and mer < max_occur_tetramer:
+#          max_occur_tetramer = mer
+#          break
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers tetramer: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#    startpointingtime = time()
+#
+#    max_occur_pentamer = "Z"
+#    max_occur_same_pentamer = 0
+#    pos_occur_same_pentamer = 0
+#    '''
+#    for l in lmers_pentamer.keys():
+#        if lmers_pentamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_pentamer = l
+#            max_occur_same_pentamer = lmers_tetramer.get(l)
+#            pos_occur_same_pentamer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    max_occur_same_pentamer = lmers_pentamer.get_max_count(seq)
+#    for i in range(0, len(lmers_pentamer.get_kmer_counts(seq) )):
+#       mer = lmers_pentamer.get_kmers(seq)[i]
+#       n = lmers_pentamer.get_kmer_counts(seq)[i]
+#       if n == max_occur_same_pentamer: ### and n > 1 and mer < max_occur_pentamer:
+#          max_occur_pentamer = mer
+#          break
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers pentamer: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#    startpointingtime = time()
+#
+#    max_occur_hexamer = "Z"
+#    max_occur_same_hexamer = 0
+#    pos_occur_same_hexamer = 0
+#    '''
+#    for l in lmers_hexamer.keys():
+#        if lmers_hexamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_hexamer = l
+#            max_occur_same_hexamer = lmers_tetramer.get(l)
+#            pos_occur_same_hexamer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    max_occur_same_hexamer = lmers_hexamer.get_max_count(seq)
+#    for i in range(0, len(lmers_hexamer.get_kmer_counts(seq) )):
+#       mer = lmers_hexamer.get_kmers(seq)[i]
+#       n = lmers_hexamer.get_kmer_counts(seq)[i]
+#       if n == max_occur_same_hexamer: ### and n > 1 and mer < max_occur_hexamer:
+#          max_occur_hexamer = mer
+#          break
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers hexamer: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#    startpointingtime = time()
+#
+#    max_occur_heptamer = "Z"
+#    max_occur_same_heptamer = 0
+#    pos_occur_same_heptamer = 0
+#    '''
+#    for l in lmers_heptamer.keys():
+#        if lmers_heptamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_heptamer = l
+#            max_occur_same_heptamer = lmers_tetramer.get(l)
+#            pos_occur_same_heptamer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    max_occur_same_heptamer = lmers_heptamer.get_max_count(seq)
+#    for i in range(0, len(lmers_heptamer.get_kmer_counts(seq) )):
+#       mer = lmers_heptamer.get_kmers(seq)[i]
+#       n = lmers_heptamer.get_kmer_counts(seq)[i]
+#       if n == max_occur_same_heptamer: ### and n > 1 and mer < max_occur_heptamer:
+#          max_occur_heptamer = mer
+#          break
+#
+#    runtime = str(time() - startpointingtime)
+#    sys.stdout.write("RUNTIME fivesixFindMers heptamer: %s \n" % ( runtime ))
+#    sys.stdout.flush()
+#
+#    max_occur_octamer = ""
+#    max_occur_same_octamer = 0
+#    pos_occur_same_octamer = 0
+#    #'''
+#    #for l in lmers_octamer.keys():
+#    #    if lmers_octamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#    #        max_occur_octamer = l
+#    #        max_occur_same_octamer = lmers_tetramer.get(l)
+#    #        pos_occur_same_octamer = len(set(lmers_indexes_tetramer.get(l)))
+#    #'''
+#    ## run through all entries. if they have nonzero presence, print.
+#    #for i in range(0, lmers_octamer.n_entries()):
+#    #   n = lmers_octamer.get(i)
+#    #   if n > max_occur_same_octamer and n > 1:
+#    #      if DEBUG == 1:  print lmers_octamer.reverse_hash(i), "is present", n, "times."
+#    #      max_occur_octamer = lmers_octamer.reverse_hash(i)
+#    #      max_occur_same_octamer = n
+#    #
+#    max_occur_ninemer = ""
+#    max_occur_same_ninemer = 0
+#    pos_occur_same_ninemer = 0
+#    #'''
+#    #for l in lmers_ninemer.keys():
+#    #    if lmers_ninemer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#    #        max_occur_ninemer = l
+#    #        max_occur_same_ninemer = lmers_tetramer.get(l)
+#    #        pos_occur_same_ninemer = len(set(lmers_indexes_tetramer.get(l)))
+#    #'''
+#    ## run through all entries. if they have nonzero presence, print.
+#    #for i in range(0, lmers_ninemer.n_entries()):
+#    #   n = lmers_ninemer.get(i)
+#    #   if n > max_occur_same_ninemer and n > 1:
+#    #      if DEBUG == 1:  print lmers_ninemer.reverse_hash(i), "is present", n, "times."
+#    #      max_occur_ninemer = lmers_ninemer.reverse_hash(i)
+#    #      max_occur_same_ninemer = n
+#    #
+#    max_occur_dekamer = ""
+#    max_occur_same_dekamer = 0
+#    pos_occur_same_dekamer = 0
+#    #'''
+#    #for l in lmers_dekamer.keys():
+#    #    if lmers_dekamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#    #        max_occur_dekamer = l
+#    #        max_occur_same_dekamer = lmers_tetramer.get(l)
+#    #        pos_occur_same_dekamer = len(set(lmers_indexes_tetramer.get(l)))
+#    #'''
+#    ## run through all entries. if they have nonzero presence, print.
+#    #for i in range(0, lmers_dekamer.n_entries()):
+#    #   n = lmers_dekamer.get(i)
+#    #   if n > max_occur_same_dekamer and n > 1:
+#    #      if DEBUG == 1:  print lmers_dekamer.reverse_hash(i), "is present", n, "times."
+#    #      max_occur_dekamer = lmers_dekamer.reverse_hash(i)
+#    #      max_occur_same_dekamer = n
+#
+#
+#    percent_occur_same_dimer = float(pos_occur_same_dimer) / float(len(seq))
+#    percent_occur_same_trimer = float(pos_occur_same_trimer) / float(len(seq))
+#    percent_occur_same_tetramer = float(pos_occur_same_tetramer) / float(len(seq))
+#    percent_occur_same_pentamer = float(pos_occur_same_pentamer) / float(len(seq))
+#    percent_occur_same_hexamer = float(pos_occur_same_hexamer) / float(len(seq))
+#    percent_occur_same_heptamer = float(pos_occur_same_heptamer) / float(len(seq))
+#    percent_occur_same_octamer = float(pos_occur_same_octamer) / float(len(seq))
+#    percent_occur_same_ninemer = float(pos_occur_same_ninemer) / float(len(seq))
+#    percent_occur_same_dekamer = float(pos_occur_same_dekamer) / float(len(seq))
+#
+#    if DEBUG == 1:
+#        print "max_occur_dimer " + max_occur_dimer + " max_occur_same_dimer " + str(max_occur_same_dimer) + " percent_occur_same_dimer " + str(percent_occur_same_dimer)
+#        print "max_occur_trimer " + max_occur_trimer + " max_occur_same_trimer " + str(max_occur_same_trimer) + " percent_occur_same_trimer " + str(percent_occur_same_trimer)
+#        print "max_occur_tetramer " + max_occur_tetramer + " max_occur_same_tetramer " + str(max_occur_same_tetramer) + " percent_occur_same_tetramer " + str(percent_occur_same_tetramer)
+#
+#    return len(seq), max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, \
+#            max_occur_trimer, max_occur_same_trimer, percent_occur_same_trimer, \
+#            max_occur_tetramer, max_occur_same_tetramer, percent_occur_same_tetramer, \
+#            max_occur_pentamer, max_occur_same_pentamer, percent_occur_same_pentamer, \
+#            max_occur_hexamer, max_occur_same_hexamer, percent_occur_same_hexamer, \
+#            max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
+#            max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
+#            max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
+#            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, \
+#            penalty_value
+#
+#
+#
+#def fivesixFindMers_Obsolete(seq, seqin, penalty_value):
+#    lmers_dimer = khmer.new_ktable(2)
+#    lmers_indexes_dimer = {}
+#    lmers_trimer = khmer.new_ktable(3)
+#    lmers_indexes_trimer = {}
+#    lmers_tetramer = khmer.new_ktable(4)
+#    lmers_indexes_tetramer = {}
+#    lmers_pentamer = khmer.new_ktable(5)
+#    lmers_indexes_pentamer = {}
+#    lmers_hexamer = khmer.new_ktable(6)
+#    lmers_indexes_hexamer = {}
+#    lmers_heptamer = khmer.new_ktable(7)
+#    lmers_indexes_heptamer = {}
+#    '''
+#    lmers_octamer = khmer.new_ktable(8)
+#    lmers_indexes_octamer = {}
+#    lmers_ninemer = khmer.new_ktable(9)
+#    lmers_indexes_ninemer = {}
+#    lmers_dekamer = khmer.new_ktable(10)
+#    lmers_indexes_dekamer = {}
+#    '''
+#    
+#    lmers_dimer.consume(seq)
+#    lmers_trimer.consume(seq)
+#    lmers_tetramer.consume(seq)
+#    lmers_pentamer.consume(seq)
+#    lmers_hexamer.consume(seq)
+#    lmers_heptamer.consume(seq)
+#    '''
+#    lmers_octamer.consume(seq)
+#    lmers_ninemer.consume(seq)
+#    lmers_dekamer.consume(seq)
+#    '''
+#
+#    '''
+#    for windowSizeL in [4]:
+#        for idx_start in range(0, windowSizeL):
+#            idx = idx_start
+#            #consec_identical_mers = ''
+#            count_consec_identical_mers = 0
+#            prev_mer = ''
+#            while idx + windowSizeL <= len(seq):
+#                subseq = seq[idx : idx + windowSizeL]
+#                if subseq == len(subseq) * subseq[0]: ###is a homopolymer:
+#                    if DEBUG == 1:
+#                        print "subseq is a homopolymer " + subseq
+#                    idx += windowSizeL
+#                    prev_mer = subseq
+#                    continue
+#                lmers  = lmers_dimer
+#                lmers_indexes = lmers_indexes_dimer
+#                if windowSizeL == 3:
+#                    lmers  = lmers_trimer
+#                    lmers_indexes = lmers_indexes_trimer
+#                if windowSizeL == 4:
+#                    lmers  = lmers_tetramer
+#                    lmers_indexes = lmers_indexes_tetramer
+#                lmers[subseq] = lmers.get(subseq, 0) + 1
+#                lmers_indexes[subseq] = lmers_indexes.get(subseq, []) + range(idx , idx + windowSizeL)
+#                ###print "subseq " + subseq + " prev_mer " + prev_mer
+#                
+#                if not subseq == prev_mer:
+#                    key = str(windowSizeL) + "repeat"
+#                    if count_consec_identical_mers > rules.get(key).get("X"):
+#                        penalty_value += float( rules.get(key).get("value") )
+#                        if  PRINT_SUCC_FAIL: print >>sys.stderr, str( key + " . " + rules.get(key).get("text").format(Sequence=prev_mer) + rules.get(key).get("explanation") )
+#                        if  PRINT_SUCC_FAIL: print >>sys.stderr, "    (...) explanation: consec_identical_mers " + prev_mer + " count_consec_identical_mers " + str(count_consec_identical_mers)
+#                        if windowSizeL == 2:
+#                            if count_consec_identical_mers > max_occur_same_dimer:
+#                                max_occur_same_dimer = count_consec_identical_mers
+#                                pos_occur_same_dimer = count_consec_identical_mers * 2
+#                                max_occur_dimer = prev_mer
+#                        elif windowSizeL == 3:
+#                            if count_consec_identical_mers > max_occur_same_trimer:
+#                                max_occur_same_trimer = count_consec_identical_mers
+#                                pos_occur_same_trimer = count_consec_identical_mers * 3
+#                                max_occur_trimer = prev_mer
+#                        elif windowSizeL == 4:
+#                            if count_consec_identical_mers > max_occur_same_tetramer:
+#                                max_occur_same_tetramer = count_consec_identical_mers
+#                                pos_occur_same_tetramer = count_consec_identical_mers * 4
+#                                max_occur_tetramer = prev_mer
+#                    count_consec_identical_mers = 1
+#                    #consec_identical_mers = subseq
+#                else:
+#                    count_consec_identical_mers += 1
+#                    #consec_identical_mers = subseq
+#                    
+#                idx += windowSizeL
+#                prev_mer = subseq
+#    '''
+#
+#    max_occur_dimer = ""
+#    max_occur_same_dimer = 0
+#    pos_occur_same_dimer = 0
+#    '''
+#    for l in lmers_dimer.keys():
+#        if lmers_dimer.get(l) > max_occur_same_dimer and lmers_dimer.get(l) > 1:
+#            max_occur_dimer = l
+#            max_occur_same_dimer = lmers_dimer.get(l)
+#            pos_occur_same_dimer = len(set(lmers_indexes_dimer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    for i in range(0, lmers_dimer.n_entries()):
+#       n = lmers_dimer.get(i)
+#       if n > max_occur_same_dimer and n > 1:
+#          if DEBUG == 1:  print lmers_dimer.reverse_hash(i), "is present", n, "times."
+#          max_occur_dimer = lmers_dimer.reverse_hash(i)
+#          max_occur_same_dimer = n
+#          
+#    max_occur_trimer = ""
+#    max_occur_same_trimer = 0
+#    pos_occur_same_trimer = 0
+#    '''
+#    for l in lmers_trimer.keys():
+#        if lmers_trimer.get(l) > max_occur_same_trimer and lmers_trimer.get(l) > 1:
+#            max_occur_trimer = l
+#            max_occur_same_trimer = lmers_trimer.get(l)
+#            pos_occur_same_trimer = len(set(lmers_indexes_trimer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    for i in range(0, lmers_trimer.n_entries()):
+#       n = lmers_trimer.get(i)
+#       if n > max_occur_same_trimer and n > 1:
+#          if DEBUG == 1:  print lmers_trimer.reverse_hash(i), "is present", n, "times."
+#          max_occur_trimer = lmers_trimer.reverse_hash(i)
+#          max_occur_same_trimer = n
+#
+#    max_occur_tetramer = ""
+#    max_occur_same_tetramer = 0
+#    pos_occur_same_tetramer = 0
+#    '''
+#    for l in lmers_tetramer.keys():
+#        if lmers_tetramer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_tetramer = l
+#            max_occur_same_tetramer = lmers_tetramer.get(l)
+#            pos_occur_same_tetramer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    for i in range(0, lmers_tetramer.n_entries()):
+#       n = lmers_tetramer.get(i)
+#       if n > max_occur_same_tetramer and n > 1:
+#          if DEBUG == 1:  print lmers_tetramer.reverse_hash(i), "is present", n, "times."
+#          max_occur_tetramer = lmers_tetramer.reverse_hash(i)
+#          max_occur_same_tetramer = n
+#
+#    max_occur_pentamer = ""
+#    max_occur_same_pentamer = 0
+#    pos_occur_same_pentamer = 0
+#    '''
+#    for l in lmers_pentamer.keys():
+#        if lmers_pentamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_pentamer = l
+#            max_occur_same_pentamer = lmers_tetramer.get(l)
+#            pos_occur_same_pentamer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    for i in range(0, lmers_pentamer.n_entries()):
+#       n = lmers_pentamer.get(i)
+#       if n > max_occur_same_pentamer and n > 1:
+#          if DEBUG == 1:  print lmers_pentamer.reverse_hash(i), "is present", n, "times."
+#          max_occur_pentamer = lmers_pentamer.reverse_hash(i)
+#          max_occur_same_pentamer = n
+#
+#    max_occur_hexamer = ""
+#    max_occur_same_hexamer = 0
+#    pos_occur_same_hexamer = 0
+#    '''
+#    for l in lmers_hexamer.keys():
+#        if lmers_hexamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_hexamer = l
+#            max_occur_same_hexamer = lmers_tetramer.get(l)
+#            pos_occur_same_hexamer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    for i in range(0, lmers_hexamer.n_entries()):
+#       n = lmers_hexamer.get(i)
+#       if n > max_occur_same_hexamer and n > 1:
+#          if DEBUG == 1:  print lmers_hexamer.reverse_hash(i), "is present", n, "times."
+#          max_occur_hexamer = lmers_hexamer.reverse_hash(i)
+#          max_occur_same_hexamer = n
+#
+#    max_occur_heptamer = ""
+#    max_occur_same_heptamer = 0
+#    pos_occur_same_heptamer = 0
+#    '''
+#    for l in lmers_heptamer.keys():
+#        if lmers_heptamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#            max_occur_heptamer = l
+#            max_occur_same_heptamer = lmers_tetramer.get(l)
+#            pos_occur_same_heptamer = len(set(lmers_indexes_tetramer.get(l)))
+#    '''
+#    # run through all entries. if they have nonzero presence, print.
+#    for i in range(0, lmers_heptamer.n_entries()):
+#       n = lmers_heptamer.get(i)
+#       if n > max_occur_same_heptamer and n > 1:
+#          if DEBUG == 1:  print lmers_heptamer.reverse_hash(i), "is present", n, "times."
+#          max_occur_heptamer = lmers_heptamer.reverse_hash(i)
+#          max_occur_same_heptamer = n
+#
+#    max_occur_octamer = ""
+#    max_occur_same_octamer = 0
+#    pos_occur_same_octamer = 0
+#    #'''
+#    #for l in lmers_octamer.keys():
+#    #    if lmers_octamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#    #        max_occur_octamer = l
+#    #        max_occur_same_octamer = lmers_tetramer.get(l)
+#    #        pos_occur_same_octamer = len(set(lmers_indexes_tetramer.get(l)))
+#    #'''
+#    ## run through all entries. if they have nonzero presence, print.
+#    #for i in range(0, lmers_octamer.n_entries()):
+#    #   n = lmers_octamer.get(i)
+#    #   if n > max_occur_same_octamer and n > 1:
+#    #      if DEBUG == 1:  print lmers_octamer.reverse_hash(i), "is present", n, "times."
+#    #      max_occur_octamer = lmers_octamer.reverse_hash(i)
+#    #      max_occur_same_octamer = n
+#    #
+#    max_occur_ninemer = ""
+#    max_occur_same_ninemer = 0
+#    pos_occur_same_ninemer = 0
+#    #'''
+#    #for l in lmers_ninemer.keys():
+#    #    if lmers_ninemer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#    #        max_occur_ninemer = l
+#    #        max_occur_same_ninemer = lmers_tetramer.get(l)
+#    #        pos_occur_same_ninemer = len(set(lmers_indexes_tetramer.get(l)))
+#    #'''
+#    ## run through all entries. if they have nonzero presence, print.
+#    #for i in range(0, lmers_ninemer.n_entries()):
+#    #   n = lmers_ninemer.get(i)
+#    #   if n > max_occur_same_ninemer and n > 1:
+#    #      if DEBUG == 1:  print lmers_ninemer.reverse_hash(i), "is present", n, "times."
+#    #      max_occur_ninemer = lmers_ninemer.reverse_hash(i)
+#    #      max_occur_same_ninemer = n
+#    #
+#    max_occur_dekamer = ""
+#    max_occur_same_dekamer = 0
+#    pos_occur_same_dekamer = 0
+#    #'''
+#    #for l in lmers_dekamer.keys():
+#    #    if lmers_dekamer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
+#    #        max_occur_dekamer = l
+#    #        max_occur_same_dekamer = lmers_tetramer.get(l)
+#    #        pos_occur_same_dekamer = len(set(lmers_indexes_tetramer.get(l)))
+#    #'''
+#    ## run through all entries. if they have nonzero presence, print.
+#    #for i in range(0, lmers_dekamer.n_entries()):
+#    #   n = lmers_dekamer.get(i)
+#    #   if n > max_occur_same_dekamer and n > 1:
+#    #      if DEBUG == 1:  print lmers_dekamer.reverse_hash(i), "is present", n, "times."
+#    #      max_occur_dekamer = lmers_dekamer.reverse_hash(i)
+#    #      max_occur_same_dekamer = n
+#
+#
+#    percent_occur_same_dimer = float(pos_occur_same_dimer) / float(len(seq))
+#    percent_occur_same_trimer = float(pos_occur_same_trimer) / float(len(seq))
+#    percent_occur_same_tetramer = float(pos_occur_same_tetramer) / float(len(seq))
+#    percent_occur_same_pentamer = float(pos_occur_same_pentamer) / float(len(seq))
+#    percent_occur_same_hexamer = float(pos_occur_same_hexamer) / float(len(seq))
+#    percent_occur_same_heptamer = float(pos_occur_same_heptamer) / float(len(seq))
+#    percent_occur_same_octamer = float(pos_occur_same_octamer) / float(len(seq))
+#    percent_occur_same_ninemer = float(pos_occur_same_ninemer) / float(len(seq))
+#    percent_occur_same_dekamer = float(pos_occur_same_dekamer) / float(len(seq))
+#
+#    if DEBUG == 1:
+#        print "max_occur_dimer " + max_occur_dimer + " max_occur_same_dimer " + str(max_occur_same_dimer) + " percent_occur_same_dimer " + str(percent_occur_same_dimer)
+#        print "max_occur_trimer " + max_occur_trimer + " max_occur_same_trimer " + str(max_occur_same_trimer) + " percent_occur_same_trimer " + str(percent_occur_same_trimer)
+#        print "max_occur_tetramer " + max_occur_tetramer + " max_occur_same_tetramer " + str(max_occur_same_tetramer) + " percent_occur_same_tetramer " + str(percent_occur_same_tetramer)
+#
+#    return len(seq), max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, \
+#            max_occur_trimer, max_occur_same_trimer, percent_occur_same_trimer, \
+#            max_occur_tetramer, max_occur_same_tetramer, percent_occur_same_tetramer, \
+#            max_occur_pentamer, max_occur_same_pentamer, percent_occur_same_pentamer, \
+#            max_occur_hexamer, max_occur_same_hexamer, percent_occur_same_hexamer, \
+#            max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
+#            max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
+#            max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
+#            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, \
+#            penalty_value
 
 
 def fivesixFindMers_BBtoolsCommonKmers(seq, seqin, penalty_value):
