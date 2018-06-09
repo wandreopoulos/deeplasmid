@@ -14,7 +14,7 @@ chmod 777 $OUT
 
 DATETIME=`date "+%Y-%m-%d_%H:%M:%S"`
 
-python2.7 read_fasta2_plasmids.py  -i $FASTA -o $OUT/$DATETIME.$FASTA 
+python2.7 read_fasta2_plasmids.py  -i $FASTA -o $OUT/$DATETIME
 
 if [ $? -ne 0 ];
 then echo "read_fasta2_plasmids.py failed"
@@ -25,7 +25,7 @@ mkdir $OUT/dlDataPath
 chmod 777 $OUT/dlDataPath
 
 #pass fasta and yml directory to format
-python2.7 format_Test.py  --inputfasta $FASTA --inputyml $OUT/$DATETIME.$FASTA/yml --dataPath $OUT/dlDataPath
+python2.7 format_Test.py  --inputfasta $FASTA --inputyml $OUT/$DATETIME/yml --dataPath $OUT/dlDataPath
 
 if [ $? -ne 0 ];
 then echo "format_Test.py failed"
