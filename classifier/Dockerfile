@@ -95,7 +95,7 @@ WORKDIR /srv/jgi-ml/classifier/
 #ADD models/plasmid4g-* /srv/jgi-ml/classifier/models/
 
 ###ENTRYPOINT feature_DL_plasmid_predict.sh fasta out
-ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh"]
+ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh", "/srv/jgi-ml/classifier/testing/ALL.fasta", "/srv/jgi-ml/classifier/OUT"]
 
 #RUN chmod 777 -R /srv/jgi-ml/classifier/
 
