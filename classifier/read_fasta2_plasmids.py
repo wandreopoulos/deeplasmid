@@ -49,7 +49,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 '''
 
-import khmer
+###import khmer
 import shutil
 
 from JGI_Pipeline import JGI_Pipeline
