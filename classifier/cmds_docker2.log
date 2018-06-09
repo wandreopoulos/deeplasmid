@@ -1,0 +1,500 @@
+  212  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/format_Test.py .
+  213  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/feature_DL*.sh  .
+  214  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/read_fasta2_plasmids.py  .
+  215  ls -latr
+  216  rm features.py 
+  217  ls -latr
+  218  rm pipeline 
+  219  git add *
+  220  git commit -a -m "files"
+  221  git push -u origin master
+  222  git add .gitlab-ci.yml 
+  223  git commit -a -m "files gitlab"
+  224  git push -u origin master
+  225  git tag v1.0
+  226  git push --tags
+  227  ls -latr
+  228  vi Dockerfile 
+  229  vi Dockerfile 
+  230  vi Makefile 
+  231  vi .git
+  232  vi .gitlab-ci.yml 
+  233  vi ../gitlab-advanced/05-gitlab-ci.yml 
+  234  vi ../gitlab-advanced/04-gitlab-ci.yml 
+  235  vi ../gitlab-advanced/04-gitlab-ci.yml 
+  236  vi ../gitlab-advanced/04_use_metadata_in_containers.md 
+  237  vi ../gitlab-advanced/04-gitlab-ci.yml 
+  238  vi ../gitlab-advanced/03-gitlab-ci.yml 
+  239  vi ../gitlab-advanced/02-gitlab-ci.yml 
+  240  vi ../gitlab-advanced/01-gitlab-ci.yml 
+  241  vi ../gitlab-advanced/01-gitlab-ci.yml 
+  242  vi ../gitlab-advanced/01a_keeping-forked-repositories-up-to-date.md 
+  243  vi ../gitlab-advanced/01_using_branches_and_tags_with_gitlab.md 
+  244  vi ../subread/Dockerfile 
+  245  vi .gitlab-ci.yml 
+  246  vi .gitlab-ci.yml 
+  247  vi Dockerfile 
+  248  mv Dockerfile Dockerfile.helloworld
+  249  pwd
+  250  cp ../../keras/docker/Dockerfile .
+  251  vi Dockerfile
+  252  vi Dockerfile
+  253  pwd
+  254  vi Dockerfile
+  255  vi ../05-
+  256  ls -la
+  257  ls -la ..
+  258  pwd
+  259  vi ../subread/.gitlab-ci.yml 
+  260  vi Dockerfile.helloworld 
+  261  vi .gitlab-ci.yml 
+  262  vi Dockerfile.helloworld 
+  263  vi Dockerfile
+  264  vi Dockerfile.helloworld 
+  265  vi Dockerfile
+  266  vi Dockerfile.helloworld 
+  267  vi Dockerfile
+  268  vi Dockerfile.helloworld 
+  269  vi Dockerfile
+  270  vi Dockerfile.helloworld 
+  271  vi .gitlab-ci.yml 
+  272  git add *
+  273  git commit -a -m "first try"
+  274  git push -u origin master
+  275  history > cmds.log
+  276  history
+  277  history | grep git
+  278  git tag v2.0
+  279  git push --tags
+  280  vi Dockerfile
+  281  vi .gitlab-ci.yml 
+  282  vi .gitlab-ci.yml 
+  283  vi Dockerfile
+  284  ls
+  285  mv Dockerfile Dockerfile2
+  286  mv Dockerfile.helloworld Dockerfile
+  287  vi Dockerfile
+  288  mv Dockerfile Dockerfile.helloworld
+  289  vi Dockerfile
+  290  git tag v3.0
+  291  git commit -a -m "try"
+  292  git push -u origin master
+  293  vi Dockerfile
+  294  pwd
+  295  vi Dockerfile
+  296  vi Dockerfile.helloworld 
+  297  vi Dockerfile
+  298  vi Dockerfile2
+  299  vi Dockerfile2
+  300  vi Dockerfile
+  301  vi Dockerfile
+  302  ls -latr
+  303  vi predict_Plasmid.py 
+  304  vi .gitlab-ci.yml 
+  305  vi Dockerfile
+  306  vi Dockerfile2
+  307  vi .gitlab-ci.yml 
+  308  vi predict_Plasmid.py 
+  309  mv Dockerfile Dockerfile3
+  310  cp Dockerfile2 Dockerfile
+  311  vi Dockerfile
+  312  vi Dockerfile
+  313  l
+  314  ls -lare
+  315  mv .git .git.BAK
+  316  cd test/
+  317  l
+  318  ls -altr
+  319  vi test_main.py 
+  320  vi ../Dockerfile
+  321  cd ..
+  322  ls -latr
+  323  history | grep snadbox
+  324  history | grep sandbox
+  325  scp Dockerfile* andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier
+  326  l
+  327  ls -latr
+  328  scp  predict_Plasmid.py andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier
+  329  scp  format_Test.py andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier
+  330  pwd
+  331  cd ..
+  332  ls
+  333  mkdir keras
+  334  cd keras/
+  335  scp andreopo@gpint210.nersc.gov
+  336  scp andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/Dockerfile .
+  337  docker login
+  338  docker -t billandreo/keras .
+  339  docker build -t billandreo/keras .
+  340  docker build -t billandreo/keras .
+  341  docker build -t billandreo/keras .
+  342  vi ~/.ssh/id_rsa.pub 
+  343  docker build -t billandreo/keras .
+  344  git clone git@bitbucket.org:wandreopoulos/jgi-ml.git
+  345  vi ~/.ssh/id_rsa..
+  346  vi ~/.ssh/id_rsa.pub 
+  347  git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
+  348  ls
+  349  vi Dockerfile 
+  350  docker build -t billandreo/keras .
+  351  docker run -it billandreo/keras:latest
+  352  docker run -it billandreo/keras:latest /bin/bash
+  353  vi Dockerfile 
+  354  vi Dockerfile 
+  355  docker run -it billandreo/keras:latest /bin/bash
+  356  docker build -t billandreo/keras .
+  357  docker run -it billandreo/keras:latest /bin/bash
+  358  l jgi-ml/classifier/
+  359  ls jgi-ml/classifier/
+  360  vi Dockerfile 
+  361  docker build -t billandreo/keras .
+  362  docker run -it billandreo/keras:latest /b
+  363  vi Dockerfile 
+  364  docker build -t billandreo/keras .
+  365  docker run -it billandreo/keras:latest
+  366  history | grep scp
+  367  scp Dockerfile andreopo@gpint210.nersc.gov:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/
+  368  vi ../subread/cmds_gitlab.log 
+  369  docker build -t billandreo/mlplasmid .
+  370  vi Dockerfile 
+  371  docker build -t billandreo/mlplasmid .
+  372  docker image
+  373  docker images
+  374  docker rmi b14fbf7ace36
+  375  docker ps -qa
+  376  docker ps -a
+  377  docker ps -q
+  378  docker kill a0b2a805c5d5
+  379  docker images
+  380  docker images -a -q
+  381  docker images -a
+  382  docker images
+  383  docker rmi f553d00d08ac
+  384  docker rmi b14fbf7ace36
+  385  docker_clean_ps
+  386  docker rm  a0b2a805c5d5
+  387  docker rmi b14fbf7ace36
+  388  docker images
+  389  docker build -t billandreo/mlplasmid .
+  390  docker images
+  391  docker push billandreo/mlplasmid
+  392  docker run -it billandreo/keras:latest
+  393  docker run -it billandreo/mlplasmid:latest
+  394  history > cmds.log
+  395  vi ../subread/cmds_gitlab.log 
+  396  docker tag
+  397  vi ../subread/cmds_gitlab.log 
+  398  docker inspect billandreo/mlplasmid
+  399  docker inspect billandreo/mlplasmid | more
+  400   
+  401  ls -latr
+  402  pwd
+  403  ls
+  404  history | grep ssh
+  405  ssh  -Y  andreopo@cori.nersc.gov
+  406  pwd
+  407  pwd
+  408  vi Dockerfile 
+  409  vi cmds.log 
+  410  vi cmds.log 
+  411  cat cmds.log 
+  412  cat Dockerfile 
+  413  git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
+  414  git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git jgi-ml2
+  415  ls
+  416  ls -lare jgi-ml2
+  417  ls -lart jgi-ml2/classifier/
+  418  cd jgi-ml2
+  419  git branch
+  420  git checkout develop
+  421  ls -latr
+  422  cd classifier/
+  423  ls
+  424  ls -latr
+  425  vi Dockerfile 
+  426  cd testing/
+  427  ls
+  428  vi test_mlplasmids.py 
+  429  cat ../../../cmds.log 
+  430  docker login
+  431  docker build -t billandreo/mlplasmid .
+  432  cd ..
+  433  docker build -t billandreo/mlplasmid .
+  434  vi Dockerfile 
+  435  docker build -t billandreo/mlplasmid .
+  436  vi Dockerfile 
+  437  docker build -t billandreo/mlplasmid .
+  438  docker push billandreo/mlplasmid:latest
+  439  cat Dockerfile 
+  440  mkdir models
+  441  scp -r andreopo@cori.nersc.gov:/global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* ./models/
+  442  rm -rf ./models/plasmid4g-2?/*yml
+  443  rm -rf ./models/plasmid4g-2?/*py
+  444  l
+  445  ls -latr
+  446  ls -latr ./models/
+  447  ls -latr ./models/plasmid4g-20
+  448  ls -latr ./models/plasmid4g-2?/__pycache__
+  449  rm -rf ./models/plasmid4g-2?/__pycache__
+  450  l
+  451  rm -rf ./models/plasmid4g-2?/
+  452  ls -latr ./models/
+  453  scp -r andreopo@cori.nersc.gov:/global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-20 ./models/
+  454  rm -rf models/plasmid4g-20/*pyc
+  455  rm -rf models/plasmid4g-20/*yml
+  456  rm -rf models/plasmid4g-20/__pycache__
+  457  ls -latr models/plasmid4g-20/
+  458  ls -latr models/plasmid4g-20/data/
+  459  rm -rf models/plasmid4g-20/data/
+  460  vi Dockerfile 
+  461  history | grep dock
+  462  docker build -t billandreo/mlplasmid .
+  463  docker build -t billandreo/mlplasmid .
+  464  docker build -t billandreo/mlplasmid .
+  465  docker build -t billandreo/mlplasmid .
+  466  history | grep dock
+  467  docker push billandreo/mlplasmid:latest
+  468  ls -latr
+  469  cat feature_DL_plasmid_predict.sh 
+  470  tail Dockerfile 
+  471  vi feature_DL_plasmid_predict.sh 
+  472  vi Dockerfile 
+  473  vi Dockerfile 
+  474  vi feature_DL_plasmid_predict.sh 
+  475  l models/plasmid4g-20/
+  476  ls models/plasmid4g-20/
+  477  ls -latr
+  478  vi Dockerfile 
+  479  history | grep dock
+  480  docker build -t billandreo/mlplasmid .
+  481  history | grep dock
+  482  docker push billandreo/mlplasmid:latest
+  483  ls -latr
+  484  pwd
+  485  git diff testing/test_mlplasmids.py 
+  486  ls -latr models/
+  487  git add models/
+  488  git add models/plasmid4g-20/
+  489  git add models/plasmid4g-20/*h5
+  490  ls -latr
+  491  git commit -a -m "models"
+  492  git branch
+  493  git push -u origin develop
+  494  pwd
+  495  ls -latr
+  496  docker inspect billandreo/mlplasmid | more
+  497  docker ps
+  498  docker ps -a
+  499  docker images
+  500  ssh andreopo@denovo1.nersc.gov
+  501  pwd
+  502  ls -latr
+  503  git pull
+  504  pwd
+  505  ls -latr
+  506  vi Dockerfile 
+  507  vi cmds_docker.log 
+  508  vi feature_DL_plasmid_predict.sh 
+  509  vi Dockerfile 
+  510  vi feature_DL_plasmid_predict.sh 
+  511  git pull
+  512  ls -latr
+  513  vi feature_DL_plasmid_predict.sh 
+  514  vi Dockerfile 
+  515  git stash
+  516  git pull
+  517  vi Dockerfile 
+  518  vi feature_DL_plasmid_predict.sh 
+  519  vi feature_DL_plasmid_predict.sh 
+  520  history
+  521  history | grep build
+  522  docker build -t billandreo/mlplasmid .
+  523  docker build -t billandreo/mlplasmid .
+  524  docker build -t billandreo/mlplasmid .
+  525  docker build -t billandreo/mlplasmid .
+  526  docker build -t billandreo/mlplasmid .
+  527                                                                                                                                                                                                           
+  528  docker
+  529  docker build -t billandreo/mlplasmid .
+  530  docker build -t billandreo/mlplasmid .
+  531  docker system prune
+  532  ls -latr
+  533  docker build -t billandreo/mlplasmid .
+  534  docker system prune
+  535  docker system prune
+  536  docker system prune
+  537  docker system prune
+  538  docker system prune
+  539  docker build -t billandreo/mlplasmid .
+  540  docker images
+  541  docker images
+  542  docker images
+  543  cat cmds_docker.log 
+  544  docker run -it --entrypoint "/bin/sh" billandreo/mlplasmid:latest
+  545  docker images
+  546  docker ps
+  547  docker ps -a
+  548  docker rm 741ca4b0cd6c
+  549  docker rm 0d465b51571e
+  550  docker images -a
+  551  docker images -A
+  552  docker images -f dangling=true
+  553  docker images purge
+  554  docker images -f dangling=true
+  555  docker images -a -q
+  556  docker images -a 
+  557  docker images
+  558  docker rmi 5c53b818974b
+  559  docker rmi 719ee13fd91c719ee13fd91c
+  560  docker rmi 719ee13fd91c
+  561  docker images
+  562  docker rmi f3e4934628ce
+  563  docker images
+  564  cat cmds_docker.log 
+  565  cat cmds_docker.log   |  grep build
+  566  docker build -t billandreo/mlplasmid .
+  567  docker build -t billandreo/mlplasmid .
+  568  docker images
+  569  docker images
+  570  docker images
+  571  docker images
+  572  docker images
+  573  docker rmi aa93ed0b3693
+  574  docker -f rmi aa93ed0b3693
+  575  docker rmi -f aa93ed0b3693
+  576  docker images
+  577  docker ps
+  578  docker ps -a
+  579  docker rm fcc58a66d46b
+  580  docker ps -a
+  581  history 
+  582  docker build -t billandreo/mlplasmid .
+  583  docker ps -a
+  584  docker images
+  585  vi Dockerfile 
+  586  cp Dockerfile Dockerfile.BAK
+  587  vi Dockerfile 
+  588  vi Dockerfile 
+  589  docker build -t billandreo/mlplasmid .
+  590  docker images
+  591  vi cmds_docker.log 
+  592  vi feature_DL_plasmid_predict.sh 
+  593  cat cmds_docker.log 
+  594  docker run -it billandreo/mlplasmid:latest
+  595  vi Dockerfile
+  596  docker run -it --entrypoint "/bin/sh" billandreo/mlplasmid:latest
+  597  vi Dockerfile
+  598  docker run -it billandreo/mlplasmid:latest
+  599  history
+  600  docker images
+  601  docker rmi a636c15d729c
+  602  docker ps -a
+  603  docker rm 4c5f8553ce03 3d5ffa61336d 61836cc7ed95
+  604  docker rmi a636c15d729c
+  605  docker images
+  606  history
+  607  docker build -t billandreo/mlplasmid .
+  608  docker run -it billandreo/mlplasmid:latest
+  609  vi Dockerfile
+  610  vi Dockerfile
+  611  docker images
+  612  docker rmi 51b5165e584c
+  613  docker ps
+  614  docker ps -a
+  615  docker rm c630801b0550
+  616  docker rmi 51b5165e584c
+  617  docker images
+  618  ls -altr
+  619  ls -altr
+  620  history
+  621  docker build -t billandreo/mlplasmid .
+  622  docker images
+  623  docker images
+  624  docker images
+  625  l
+  626  docker images
+  627  docker ps
+  628  docker ps -a
+  629  history
+  630  docker build -t billandreo/mlplasmid .
+  631  history
+  632  docker run -it billandreo/mlplasmid:latest
+  633  git branch
+  634  cp testing/ALL.fasta .
+  635  mkdir OUT
+  636  docker run -it billandreo/mlplasmid:latest  -v testing/:/temp/ -v OUT/:/OUT/  testing/ALL.fasta  OUT/
+  637  docker run -it  -v testing/:/temp/ -v OUT/:/OUT/  billandreo/mlplasmid:latest  testing/ALL.fasta  OUT/
+  638  docker run -it  -v testing:/temp/ -v OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL.fasta  OUT/
+  639  vi cmds_docker.log 
+  640  docker run -it   --entrypoint "/bin/sh"   -v testing:/temp/ -v OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL.fasta  OUT/
+  641  docker run -it     -v testing:/temp/ -v OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL.fasta  OUT/
+  642  vi read_fasta2_plasmids.py
+  643  git commit -a
+  644  git push -u origin develop
+  645  pwd
+  646  history
+  647  docker build -t billandreo/mlplasmid .
+  648  docker build -t billandreo/mlplasmid .
+  649  docker run -it     -v testing:/temp/ -v OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL.fasta  OUT/
+  650  vi read_fasta2_plasmids.py
+  651  vi read_fasta2_plasmids.py
+  652  history
+  653  git commit -a
+  654  git push -u origin develop
+  655  docker build -t billandreo/mlplasmid .
+  656  docker run -it     -v testing:/temp/ -v OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL.fasta  OUT/
+  657  history > cmds_docker2.log 
+  658  egrep "^>" ALL.fasta |wc
+  659  cd testing/
+  660  cp ALL.fasta ALL2.fasta 
+  661  vi ALL2.fasta 
+  662  cd ..
+  663  ls -altr OUT/
+  664  docker run -it     -v testing:/temp/ -v OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL2.fasta  OUT/
+  665  ls testing/
+  666  cd testing/
+  667  ls
+  668  ls- latr
+  669  cd yml
+  670  ls -latr
+  671  cd ..
+  672  ls -latr
+  673  cd ..
+  674  ls -latr
+  675  pwd
+  676  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing:/temp/ -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:/OUT/  billandreo/mlplasmid:latest  /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta  /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT/
+  677  vi feature_DL_plasmid_predict.sh 
+  678  vi feature_DL_plasmid_predict.sh 
+  679  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:$FASTA  -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:$OUT/  billandreo/mlplasmid:latest  testing/ALL2.fasta   OUT/
+  680  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:/FASTA  -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:/OUT/  billandreo/mlplasmid:latest  testing/ALL2.fasta   OUT/
+  681  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:/FASTA  -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:/OUT  billandreo/mlplasmid:latest  testing/ALL2.fasta   OUT/
+  682  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:FASTA  -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:OUT  billandreo/mlplasmid:latest  testing/ALL2.fasta   OUT/
+  683  vi feature_DL_plasmid_predict.sh 
+  684  git diff feature_DL_plasmid_predict.sh 
+  685  vi feature_DL_plasmid_predict.sh 
+  686  git diff feature_DL_plasmid_predict.sh 
+  687  git diff feature_DL_plasmid_predict.sh 
+  688  vi Dockerfile
+  689  vi Dockerfile
+  690  vi Dockerfile
+  691  tail Dp
+  692  tail Dockerfile
+  693  history
+  694  history | grep docker
+  695  docker build -t billandreo/mlplasmid .
+  696  history | grep docker
+  697  vi Dockerfile
+  698  docker run -it     -v testing/ALL2.fasta:/srv/jgi-ml/classifier/testing/ALL.fasta -v OUT:/srv/jgi-ml/classifier/OUT/  billandreo/mlplasmid:latest  testing/ALL2.fasta  OUT/
+  699  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:/srv/jgi-ml/classifier/testing/ALL.fasta -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:/srv/jgi-ml/classifier/OUT/  billandreo/mlplasmid:latest  testing/ALL2.fasta  OUT/
+  700  ls -altr
+  701  ls -altr OUT
+  702  ls -altr OUT/2018-06-09_12\:17\:33./
+  703  ls -altr OUT/2018-06-09_12\:17\:33./srv/jgi-ml/classifier/testing/ALL.fasta/
+  704  history > cmds_docker2.log 
+  705  vi cmds_docker2.log 
+  706  vi Dockerfile
+  707  tail cmds_docker2.log 
+  708  egrep "^>" testing/ALL2.fasta | wc
+  709  egrep "^>" testing/ALL.fasta | wc
+  710  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:/srv/jgi-ml/classifier/testing/ALL.fasta -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:/srv/jgi-ml/classifier/OUT/  billandreo/mlplasmid:latest
+  711  history > cmds_docker2.log 

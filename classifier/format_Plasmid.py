@@ -28,10 +28,6 @@ def get_parser():
     parser.add_argument( "-X","--no-Xterm", dest='noXterm',
                          action='store_true', default=False,
                          help="disable X-term for batch mode")
-    parser.add_argument("-i","--inputfasta", dest='inputfasta',
-                         help="The input fasta file", required=False)
-    parser.add_argument("-y","--inputyml", dest='inputyml',
-                         help="The input yml directory", required=False)
     args = parser.parse_args()
     for arg in vars(args):  print( 'myArg:',arg, getattr(args, arg))
     args.arrIdx=0 # for plotter, not needed here
@@ -41,36 +37,41 @@ def get_parser():
 
 
 # plasmids/main
-commPath='/global/projectb/scratch/andreopo/AsafPlasmids/'  ###'/global/projectb/scratch/andreopo/AsafPlasmids/IMG_plasmids/'  ###651053060/'  ###20180425.651053060.fna/global/projectb/sandbox/rqc/andreopo/Jan_genome_plasmid/v1_apr62018/'
-plasmFN=commPath+'genome_list.fasta' ###genome_listb.fasta' ###'651053060.genes.fna'
-plasmGFDir=commPath+'yml/'  ###'yml2/' ###'yml.Asaf_Plasmid.fasta/' ###CP002622.yml' ###features.txt'  ###plasmid/yml/'
+commPath='/global/projectb/sandbox/rqc/andreopo/Jan_genome_plasmid/v1_apr62018/'
+plasmFN=commPath+'plasmid/aclame_plasmid_sequences.fasta'
+plasmGFDir=commPath+'plasmid/yml/'
 
+mainFN=commPath+'genomic/refseq.bacteria.nonplasmid.nonmito.fasta.subsam40kreads.fasta'
+mainGFDir=commPath+'genomic/yml/'
 #=================================
 #=================================
 #  M A I N 
 #=================================
 #=================================
 args=get_parser()
-if args.inputfasta:
-    plasmFN=args.inputfasta
-if args.inputyml:
-    plasmGFDir=args.inputyml
 
 ppp=Plotter_Plasmid(args )
 deep=Deep_Plasmid(args)
 
 plasmGFD=get_glob_info_files(plasmGFDir)
+mainGFD=get_glob_info_files(mainGFDir)
 
-mxScaf=122000 # set it below 1k for testing
+mxScaf=1000 # set it below 1k for testing
 
 recP=deep.read_scaffolds_fasta(plasmFN,plasmGFD,mxScaf)
 
-recPP=deep.split_species(recP,'test',info=[plasmFN,mxScaf])
-ppp.plot_float_featuresA(deep,recPP,'test',16)
+recPP=deep.split_species(recP,'plasm',info=[plasmFN,mxScaf])
+ppp.plot_float_featuresA(deep,recPP,'plasm',16)
 #ppp.pause(args,'format')
 
+mxScaf*=10
+recM=deep.read_scaffolds_fasta(mainFN,mainGFD,mxScaf,nPresc=2)
+
+recMM=deep.split_species(recM,'main',info=[mainFN,mxScaf])
 #print('skip plots, ok'); exit(1)  
-ppp.plot_scaff_len(deep,recPP,'test',6)
+ppp.plot_scaff_len(deep,recPP,'plasm',6)
+ppp.plot_scaff_len(deep,recMM,'main',7)
+ppp.plot_float_featuresA(deep,recMM,'main',17)
 ppp.pause(args,'format')
 
 # - -- - - ver 4f was the last which used it
