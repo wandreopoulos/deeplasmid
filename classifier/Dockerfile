@@ -54,6 +54,7 @@ RUN apt-get update -qq \
     # ssh \
     python-numpy python-scipy \
     build-essential python-dev python-setuptools \
+    python3-tk \
     # libatlas-dev libatlas3gf-base \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*

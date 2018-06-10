@@ -23,6 +23,10 @@ fi
 
 mkdir $OUT/dlDataPath
 chmod 777 $OUT/dlDataPath
+mkdir out
+mkdir outPR
+mkdir outKF
+mkdir plotKF
 
 #pass fasta and yml directory to format
 python3 format_Test.py  --inputfasta $FASTA --inputyml $OUT/$DATETIME/yml --dataPath $OUT/dlDataPath
