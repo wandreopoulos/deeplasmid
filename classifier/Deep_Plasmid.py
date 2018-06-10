@@ -11,7 +11,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint ,ReduceLROnPlateau, C
 from keras.layers import Dense, Dropout,  LSTM, Input, concatenate
 from keras.models import Model, load_model
 import keras.backend as K
-import tensorflow as tf
+#import tensorflow as tf
 
 import random
 import numpy as np
@@ -20,7 +20,7 @@ from scipy.stats import truncnorm
 
 from Util_Plasmid import write_yaml, read_yaml ,normalize_features
 
-print('deep-libs2 imported, TF.ver=%s, elaT=%.1f sec'%(tf.__version__,(time.time() - start)))
+#print('deep-libs2 imported, TF.ver=%s, elaT=%.1f sec'%(tf.__version__,(time.time() - start)))
 
 __author__ = "Jan Balewski"
 __email__ = "janstar1122@gmail.com"
