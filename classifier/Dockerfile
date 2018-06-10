@@ -50,8 +50,11 @@ RUN apt-get update -qq \
     python-yaml \
     python2.7 \
     python2.7-dev \
-    python-setuptools \
+    # python-setuptools \
     # ssh \
+    python-numpy python-scipy \
+    build-essential python-dev python-setuptools \
+    # libatlas-dev libatlas3gf-base \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -79,13 +82,18 @@ RUN python3 -c "import cntk; print(cntk.__version__)" \
  && dpkg-query -l > /dpkg-query-l.txt \
  && pip3 freeze > /pip3-freeze.txt
 
+# https://github.com/treyd/docker-python-setuptools/blob/master/Dockerfile
+RUN pip install setuptools-scm && pip install --upgrade setuptools
+
+# http://tlfvincent.github.io/2016/04/30/data-science-with-docker/
 # intall useful and/or required Python libraries to run your script
-RUN pip install wheel \
+RUN pip3 install wheel \
                 matplotlib \
                 # seaborn \
                 # pandas \
                 numpy \
                 scipy \
+                scikit-learn \
                 sklearn
                 # python-dateutil \
                 # gensim
