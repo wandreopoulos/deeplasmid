@@ -66,12 +66,13 @@ mxScaf=122000 # set it below 1k for testing
 recP=deep.read_scaffolds_fasta(plasmFN,plasmGFD,mxScaf)
 
 recPP=deep.split_species(recP,'test',info=[plasmFN,mxScaf])
-ppp.plot_float_featuresA(deep,recPP,'test',16)
+
+#ppp.plot_float_featuresA(deep,recPP,'test',16)
 #ppp.pause(args,'format')
 
 #print('skip plots, ok'); exit(1)  
-ppp.plot_scaff_len(deep,recPP,'test',6)
-ppp.pause(args,'format')
+#ppp.plot_scaff_len(deep,recPP,'test',6)
+#ppp.pause(args,'format')
 
 # - -- - - ver 4f was the last which used it
 # plasmids/main
