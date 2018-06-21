@@ -117,8 +117,11 @@ WORKDIR /srv/jgi-ml/classifier/
 #ADD /global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* /srv/jgi-ml/build/
 #ADD models/plasmid4g-* /srv/jgi-ml/classifier/models/
 
+ENV PYTHONPATH="/srv/jgi-ml/classifier:${PYTHONPATH}"
+ENV PATH="/srv/jgi-ml/classifier:${PATH}"
+
 ###ENTRYPOINT feature_DL_plasmid_predict.sh fasta out
-ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh", "/srv/jgi-ml/classifier/testing/ALL.fasta", "/srv/jgi-ml/classifier/OUT"]
+###ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh", "/srv/jgi-ml/classifier/testing/ALL.fasta", "/srv/jgi-ml/classifier/OUT"]
 
 #RUN chmod 777 -R /srv/jgi-ml/classifier/
 
