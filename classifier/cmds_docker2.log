@@ -498,3 +498,6 @@
   709  egrep "^>" testing/ALL.fasta | wc
   710  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/testing/ALL2.fasta:/srv/jgi-ml/classifier/testing/ALL.fasta -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier/OUT:/srv/jgi-ml/classifier/OUT/  billandreo/mlplasmid:latest
   711  history > cmds_docker2.log 
+
+wandreo-lm:classifier andreopo$ docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier:/srv/jgi-ml/classifier   --entrypoint=/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh   billandreo/mlplasmid:latest  testing/ALL2.fasta OUT
+
