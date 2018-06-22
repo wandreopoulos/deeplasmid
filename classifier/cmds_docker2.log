@@ -501,3 +501,6 @@
 
 wandreo-lm:classifier andreopo$ docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier:/srv/jgi-ml/classifier   --entrypoint=/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh   billandreo/mlplasmid:latest  testing/ALL2.fasta OUT
 
+  590  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier:/srv/jgi-ml/classifier   billandreo/mlplasmid:latest  /srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh  testing/ALL2.fasta OUT
+  591  docker run -it     -v /Users/andreopo/Downloads/gitlab-advanced/keras/jgi-ml2/classifier:/srv/jgi-ml/classifier   billandreo/mlplasmid:latest  feature_DL_plasmid_predict.sh  testing/ALL2.fasta OUT
+
