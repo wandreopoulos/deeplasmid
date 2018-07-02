@@ -107,8 +107,8 @@ class Deep_Plasmid(Oracle_Plasmid):
                 lineL=line[1:].split()
                 #print('r2',lineL)
                 scafN = lineL[0]
-                assert len(lineL)>=2
-                text=' '.join(lineL[1:])
+                #assert len(lineL)>=2
+                text=' '.join(lineL)
                 
             else:    # - - - - it is the sequence
                 line=line.upper()
