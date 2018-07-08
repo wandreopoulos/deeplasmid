@@ -12,7 +12,8 @@
 # docker-keras - Keras in Docker with Python 3 and CNTK on CPU
 
 FROM debian:stretch
-MAINTAINER gw0 [http://gw.tnode.com/] <gw.2018@ena.one>
+MAINTAINER Bill Andreopoulos
+#Former gw0 [http://gw.tnode.com/] <gw.2018@ena.one>
 
 # install debian packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -68,6 +69,11 @@ RUN apt-get update -qq \
     openmpi-common=1.10.2-8ubuntu1 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y \
+curl
+
+
 
 ARG CNTK_VERSION=2.4
 ARG CNTK_DEVICE=CPU-Only
