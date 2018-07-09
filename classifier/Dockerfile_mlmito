@@ -123,6 +123,13 @@ RUN conda install -c bioconda khmer
 
 
 
+RUN apt-get update && apt-get install -y default-jre
+
+
+
+
+
+
 WORKDIR /srv/
 
 
