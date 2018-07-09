@@ -59,7 +59,12 @@ fi
 # read contigs.fa as command line option
 
 # run read_fasta.py against contigs.fa
-export CLASSPATH=/global/projectb/sandbox/rqc/andreopo/GAA-1330_fungal/weka-3-6-12:$CLASSPATH
+
+DIR=`pwd`
+DIR2="$( dirname ${0})"
+
+#export CLASSPATH=/global/projectb/sandbox/rqc/andreopo/GAA-1330_fungal/weka-3-6-12:$CLASSPATH
+export CLASSPATH=$DIR2/weka-3-6-12/weka.jar:$CLASSPATH
 
 export PYTHONPATH=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/assemblyqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/readqc/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/lib/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-pipeline/tools/:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc/:$PYTHONPATH
 
@@ -127,7 +132,7 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i '/^id.*
 
 for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do sed -i 's/,,/,?,/g' $i ; done
 
-for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml/classifier/header_mito_fungi2 $i > $i.tmp && mv $i.tmp $i ; done
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat $DIR2/header_mito_fungi2 $i > $i.tmp && mv $i.tmp $i ; done
 # /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/header_mito_fungi2
 
 
@@ -136,7 +141,9 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff` ; do cat /global/pr
 ###For the full sequence of commands to make the model see: /global/scratch2/sd/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/cmds.log
 ML=weka.classifiers.bayes.NaiveBayes
 
-MODEL=/global/projectb/sandbox/rqc/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/mainfungal_mito_jgi_releases_ALLFEATURESmanymers_BALANCED.NB.model
+#MODEL=/global/projectb/sandbox/rqc/andreopo/GAA-1330_fungal/weka-3-6-12/MODEL/mainfungal_mito_jgi_releases_ALLFEATURESmanymers_BALANCED.NB.model
+MODEL=$DIR2/weka-3-6-12/MODEL/mainfungal_mito_jgi_releases_ALLFEATURESmanymers_BALANCED.NB.model
+
 
 ###Do the prediction
 #run weka NB against saved model
