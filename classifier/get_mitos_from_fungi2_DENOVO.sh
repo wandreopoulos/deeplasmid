@@ -1,4 +1,5 @@
-#!/bin/bash -l
+#!/usr/bin/env bash
+####/bin/bash -l
 #get_mitos_from_fungi2.sh <in fasta file>
 
 usage(){
