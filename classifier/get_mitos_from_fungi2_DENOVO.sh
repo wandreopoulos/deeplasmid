@@ -158,8 +158,8 @@ for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.MITOLINES` ;
 
 ###module load jigsaw
 
-###for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.MITOLINES.MITOCONTIGS` ; do iDIR=$(dirname $i); ~jfroula/Tools/Jazz/screen_list.pl $i $iDIR/contigs.fa keep > $i.fa ; done
-for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.MITOLINES.MITOCONTIGS` ; do iDIR=$(dirname $i); shifter --image=bryce911/bbtools  filterbyname.sh names=$i in=$iDIR/contigs.fa  out=$i.fa  include=t ; done
+for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.MITOLINES.MITOCONTIGS` ; do iDIR=$(dirname $i); $DIR2/screen_list.pl $i $iDIR/contigs.fa keep > $i.fa ; done
+###for i in `find $DIR/$FASTA_FILE -name features.txt-NEW.arff.NB.pred.MITOLINES.MITOCONTIGS` ; do iDIR=$(dirname $i); shifter --image=bryce911/bbtools  filterbyname.sh names=$i in=$iDIR/contigs.fa  out=$i.fa  include=t ; done
 
 NUMCONTIGS=`wc -l $DIR/$FASTA_FILE/features.txt-NEW.arff.NB.pred.MITOLINES | sed 's/ .*$//'`
 
