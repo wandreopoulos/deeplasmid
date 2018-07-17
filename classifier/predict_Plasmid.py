@@ -114,6 +114,7 @@ for scaffN in scaffD:
     
     sampFact= 0.5 + 0.5*math.sqrt(len(seqStr)/1e4)
     sampL=ora.sample_scaffold(seqStr,args.events*sampFact)
+    print("len(sampL) %s" % ( len(sampL) ))
     assert len(sampL) >10 # must ahve few samples to compute the average
 
     floatD=scaffD[scaffN]['features']
