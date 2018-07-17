@@ -60,6 +60,13 @@ class Deep_Plasmid(Oracle_Plasmid):
         minNucleoLen=2e3    
         maxNucleoLen= 300e3   
     
+        #timestamp = strftime("%m%d%Y-%H%M%S")
+        rootdir = os.getcwd()
+        output_predix = os.path.join( rootdir , "predictions.txt" )
+        f_predix = open(output_predix, 'a')
+        f_predix.write("name,pred,conf\n")
+        
+
         bSet=self.basesSet | set(self.bases2L)
         scafDBL=[]     
         scafN=''
@@ -80,12 +87,15 @@ class Deep_Plasmid(Oracle_Plasmid):
 
                     if seqLen<= minNucleoLen:
                         cnt['short']+=1 
+                        f_predix.write("%s,%s,%s\n" %(scafN,"TOOSHORT",1))
                     elif seqLen >= maxNucleoLen:
                         cnt['long']+=1
+                        f_predix.write("%s,%s,%s\n" %(scafN,"TOOLONG",1))
                     elif  cnt['any']% nPresc!=0:
                         cnt['presc']+=1
                     elif  scafN not in globFD:
                         cnt['noFeatures']+=1 
+                        f_predix.write("%s,%s,%s\n" %(scafN,"NOFEATURE",1))
                     else:
                         gloftRaw=self.read_global_features(scafN,globFD) 
                         eps=np.abs(gloftRaw['len_sequence']-seqLen)
@@ -127,12 +137,15 @@ class Deep_Plasmid(Oracle_Plasmid):
 
             if seqLen<= minNucleoLen:
                 cnt['short']+=1
+                f_predix.write("%s,%s,%s\n" %(scafN,"TOOSHORT",1))
             elif seqLen >= maxNucleoLen:
                 cnt['long']+=1
+                f_predix.write("%s,%s,%s\n" %(scafN,"TOOLONG",1))
             elif  cnt['any']% nPresc!=0:
                 cnt['presc']+=1
             elif  scafN not in globFD:
                 cnt['noFeatures']+=1
+                f_predix.write("%s,%s,%s\n" %(scafN,"NOFEATURE",1))
             else:
                 gloftRaw=self.read_global_features(scafN,globFD)
                 eps=np.abs(gloftRaw['len_sequence']-seqLen)
@@ -147,7 +160,7 @@ class Deep_Plasmid(Oracle_Plasmid):
                 if cnt['accept']%1000==0:
                     print(len(scafDBL),seqLen,scafN,featureV,seq[:100],'...')
 
-
+        f_predix.close()
         fp.close()
         
         xar=np.array(seqLenL)
