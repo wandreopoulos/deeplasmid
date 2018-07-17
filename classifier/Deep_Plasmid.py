@@ -12,7 +12,6 @@ from keras.layers import Dense, Dropout,  LSTM, Input, concatenate
 from keras.models import Model, load_model
 import keras.backend as K
 #import tensorflow as tf
-from time import strftime
 
 import random
 import numpy as np
