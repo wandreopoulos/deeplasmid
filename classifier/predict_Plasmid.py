@@ -106,6 +106,12 @@ Yclass = []  #Known class based on header text
 
 #import numpy as np
 cnt={'inp':0,'plasmid':0,'main':0,'NNjunk':0,'ambig':0}
+
+rootdir = os.getcwd()
+output_predix = os.path.join( rootdir , "predictions.txt" )
+f_predix = open(output_predix, 'a')
+#f_predix.write("name,pred,conf\n")
+
 for scaffN in scaffD:
     if cnt['inp'] >=max_scaff: break
     cnt['inp']+=1
@@ -123,6 +129,7 @@ for scaffN in scaffD:
     
     if len(sampL)< args.events/3. :
         cnt['NNjunk']+=1
+        f_predix.write("%s,%s,%s\n" %(txt,"NNJUNK",1))
         continue
     rec={'data_info':{'size':len(seqStr),'scaffName':scaffN,'given':role}}
     XhotA,XfloatA=ora.build_data_one(sampL,Xfloat)
@@ -144,12 +151,15 @@ for scaffN in scaffD:
     if rec1['avr']>score_thr+rec1['err']*2:
         decision='PLASM'
         cnt['plasmid']+=1
+        f_predix.write("%s,%s,%s\n" %(txt,"PLASMID",avr_str))
     elif rec1['avr']<score_thr-rec1['err']*2:
         decision= 'MAIN'
         cnt['main']+=1
+        f_predix.write("%s,%s,%s\n" %(txt,"GENOME",avr_str))
     else:
         decision= 'AMBIG'
         cnt['ambig']+=1
+        f_predix.write("%s,%s,%s\n" %(txt,"AMBIGUOUS",avr_str))
 
     print(cnt['inp'],scaffN,'decision=%s, avr score:'%decision, avr_str,' len=%.1fk sampl=%d'%(len(seqStr)/1000.,len(sampL)))
     rec['score']=rec1
@@ -161,6 +171,8 @@ for scaffN in scaffD:
 nClass=cnt['plasmid']+cnt['main']+cnt['ambig']
 #print('M:%s endCnt:'%role,cnt,'  fraction: Plasm=%.3f Ambig=%.3f  Main=%.3f'%(cnt['plasmid']/nClass,cnt['ambig']/nClass,cnt['main']/nClass))
 print('Counts: Plasm=%s  Ambig=%s  Main=%s  nCount=%s'%(cnt['plasmid'],cnt['ambig'],cnt['main'],nClass))
+
+f_predix.close()
 
 # make plot of all scores
 #ROC curve
