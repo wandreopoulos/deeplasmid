@@ -118,6 +118,36 @@ class Deep_Plasmid(Oracle_Plasmid):
                 assert bSet.issuperset(set(line))
                 assert len(scafN)>0
                 seq+=  line
+
+
+        if len(scafN)>0:
+            #archive last protein
+            cnt['any']+=1
+            seqLen=len(seq)
+
+            if seqLen<= minNucleoLen:
+                cnt['short']+=1
+            elif seqLen >= maxNucleoLen:
+                cnt['long']+=1
+            elif  cnt['any']% nPresc!=0:
+                cnt['presc']+=1
+            elif  scafN not in globFD:
+                cnt['noFeatures']+=1
+            else:
+                gloftRaw=self.read_global_features(scafN,globFD)
+                eps=np.abs(gloftRaw['len_sequence']-seqLen)
+                if eps>5:
+                    print(scafN,len(scafDBL),'bad eps=%.1g'% eps,gloftRaw['len_sequence'],seqLen)
+                # accpeted scaffold
+                cnt['accept']+=1
+                featureV=normalize_features(gloftRaw)
+                seqLenL.append(seqLen)
+                scafDBL.append( [scafN,text,featureV,seq])
+
+                if cnt['accept']%1000==0:
+                    print(len(scafDBL),seqLen,scafN,featureV,seq[:100],'...')
+
+
         fp.close()
         
         xar=np.array(seqLenL)
