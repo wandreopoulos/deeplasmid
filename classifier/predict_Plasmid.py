@@ -158,7 +158,8 @@ for scaffN in scaffD:
     write_yaml(rec,args.outPath+'/%s.assayer.yml'%(scaffN),0)
     
 nClass=cnt['plasmid']+cnt['main']+cnt['ambig']
-print('M:%s endCnt:'%role,cnt,'  fraction: Plasm=%.3f Ambig=%.3f  Main=%.3f'%(cnt['plasmid']/nClass,cnt['ambig']/nClass,cnt['main']/nClass))
+#print('M:%s endCnt:'%role,cnt,'  fraction: Plasm=%.3f Ambig=%.3f  Main=%.3f'%(cnt['plasmid']/nClass,cnt['ambig']/nClass,cnt['main']/nClass))
+print('Counts: Plasm=%s  Ambig=%s  Main=%s  nCount=%s'%(cnt['plasmid'],cnt['ambig'],cnt['main'],nClass))
 
 # make plot of all scores
 #ROC curve
