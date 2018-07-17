@@ -3,7 +3,7 @@
 echo "Running feature_DL_plasmid_predict.sh
 Plasmid finder
 Author: Bill Andreopoulos
-Last maintained: May 10, 2018"
+Last maintained: July 17, 2018"
 
 FASTA=$1
 
