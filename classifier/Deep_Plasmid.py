@@ -63,7 +63,7 @@ class Deep_Plasmid(Oracle_Plasmid):
         #timestamp = strftime("%m%d%Y-%H%M%S")
         rootdir = os.getcwd()
         output_predix = os.path.join( rootdir , "predictions.txt" )
-        f_predix = open(output_predix, 'a')
+        f_predix = open(output_predix, 'w')
         f_predix.write("name,pred,conf\n")
         
 
