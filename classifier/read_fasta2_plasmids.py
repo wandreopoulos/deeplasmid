@@ -200,11 +200,11 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     features_file_excel = open(os.path.join(output_path, 'features.txt'), 'a')
     if not os.path.exists(os.path.join(output_path, 'yml')):
         os.makedirs(os.path.join(output_path, 'yml'))
-    header_start = header.split(" ")[0].rstrip("|").replace("/", "_")
+    header_start = header.split()[0].replace("/", "_")
     ###suff = header_start[-3:]
     ###if not os.path.exists(os.path.join(output_path, 'yml/' + suff)):
     ###    os.makedirs(os.path.join(output_path, 'yml/' + suff))
-    features_file_yml = open(os.path.join(output_path, 'yml'+ '/' + header_start.split("|")[-1]+'.yml'), 'a')
+    features_file_yml = open(os.path.join(output_path, 'yml', header_start + '.yml'), 'a')
     yml_dict = {}
     
     line = ""

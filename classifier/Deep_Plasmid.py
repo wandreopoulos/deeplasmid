@@ -87,10 +87,10 @@ class Deep_Plasmid(Oracle_Plasmid):
 
                     if seqLen<= minNucleoLen:
                         cnt['short']+=1 
-                        f_predix.write("%s,%s,%s\n" %(scafN,"TOOSHORT",1))
+                        f_predix.write("%s,%s,%s\n" %(scafN,"SHORTER_%s"%(minNucleoLen),1))
                     elif seqLen >= maxNucleoLen:
                         cnt['long']+=1
-                        f_predix.write("%s,%s,%s\n" %(scafN,"TOOLONG",1))
+                        f_predix.write("%s,%s,%s\n" %(scafN,"LONGER_%s"%(maxNucleoLen),1))
                     elif  cnt['any']% nPresc!=0:
                         cnt['presc']+=1
                     elif  scafN not in globFD:
@@ -116,7 +116,7 @@ class Deep_Plasmid(Oracle_Plasmid):
                 # header is different for mito/main vs. plasmid/main
                 lineL=line[1:].split()
                 #print('r2',lineL)
-                scafN = lineL[0]
+                scafN = lineL[0].replace("/", "_")
                 #assert len(lineL)>=2
                 text=' '.join(lineL)
                 
@@ -137,10 +137,10 @@ class Deep_Plasmid(Oracle_Plasmid):
 
             if seqLen<= minNucleoLen:
                 cnt['short']+=1
-                f_predix.write("%s,%s,%s\n" %(scafN,"TOOSHORT",1))
+                f_predix.write("%s,%s,%s\n" %(scafN,"SHORTER_%s"%(minNucleoLen),1))
             elif seqLen >= maxNucleoLen:
                 cnt['long']+=1
-                f_predix.write("%s,%s,%s\n" %(scafN,"TOOLONG",1))
+                f_predix.write("%s,%s,%s\n" %(scafN,"LONGER_%s"%(maxNucleoLen),1))
             elif  cnt['any']% nPresc!=0:
                 cnt['presc']+=1
             elif  scafN not in globFD:
