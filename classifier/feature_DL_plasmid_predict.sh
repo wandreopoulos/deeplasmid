@@ -36,7 +36,7 @@ then echo "format_Test.py failed"
 exit 1
 fi
 
-python3 /srv/jgi-ml/classifier/predict_Plasmid.py --dataPath $OUT/dlDataPath  --given test  --kModelList  20-29  --dataSegment -1  --seedModel  /srv/jgi-ml/classifier/models/plasmid4g-
+python3 /srv/jgi-ml/classifier/predict_Plasmid.py --dataPath $OUT/dlDataPath  --given test  --kModelList  18-29  --dataSegment -1  --seedModel  /srv/jgi-ml/classifier/models/plasmid4k-
 
 if [ $? -ne 0 ];
 then echo "predict_Plasmid.py failed"
