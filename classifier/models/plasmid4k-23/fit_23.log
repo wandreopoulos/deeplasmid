@@ -1,0 +1,296 @@
+Using TensorFlow backend.
+deep-libs1 imported elaT=0.0 sec
+deep-libs2 imported, TF.ver=1.3.0, elaT=0.0 sec
+myArg: arrIdx 23
+myArg: verb 0
+myArg: prjName assayer4
+myArg: dataPath data
+myArg: outPath ./
+myArg: seedModel None
+myArg: seedWeights None
+myArg: kfoldOffset 5
+myArg: noXterm True
+myArg: epochs 20
+myArg: batch_size 200
+myArg: events 601000
+myArg: dropFrac 0.1
+myArg: earlyStopPatience 10
+myArg: checkPtOn True
+myArg: reduceLearn True
+disable Xterm
+Plotter_Plasmid : Graphics started
+Deep_Plasmid , prj: assayer4
+oneHot base, size= 15 , sample:
+base: A 1-hot: [1.0, 0.0, 0.0, 0.0]
+base: C 1-hot: [0.0, 1.0, 0.0, 0.0]
+base: T 1-hot: [0.0, 0.0, 1.0, 0.0]
+base: G 1-hot: [0.0, 0.0, 0.0, 1.0]
+all bases : ['A', 'C', 'T', 'G', 'N', 'Y', 'K', 'M', 'V', 'S', 'H', 'R', 'W', 'B', 'D']
+use seqLenCut= 300
+Deep_Plasmid , prj: assayer4
+globFeatureL 10 fixed order: ['gc_content', 'len_sequence', 'A_longestHomopol', 'A_totalLongHomopol', 'C_longestHomopol', 'C_totalLongHomopol', 'T_longestHomopol', 'T_totalLongHomopol', 'G_longestHomopol', 'G_totalLongHomopol']
+
+prep_labeled scaffolds from: data/assayer4.plasm-scaff-split.yml
+  read  yaml: data/assayer4.plasm-scaff-split.yml  size=7   elaT=0.9 sec
+  role: plasm segL: 4  dom: val , numSpec: 181 , kfoldOffset= 5
+sum3= 99997  numScaff= 181
+   request  numSamples= 37562 val plasm
+1 scaff: NC_000914.2 plasm size/B=536165 numSampl=719 got=719=719
+2 scaff: NC_000952.1 plasm size/B=30800 numSampl=204 got=204=204
+3 scaff: NC_000956.1 plasm size/B=52971 numSampl=254 got=254=254
+4 scaff: NC_001382.1 plasm size/B=1717 numSampl=80 got=80=80
+   completed role= plasm ,got numSamples= 37554
+prep: val plasm  completed, elaT=1.2 sec , gotSamples= 37554
+
+prep_labeled scaffolds from: data/assayer4.plasm-scaff-split.yml
+  read  yaml: data/assayer4.plasm-scaff-split.yml  size=7   elaT=1.0 sec
+  role: plasm segL: [0, 1, 2, 3]  dom: train , numSpec: 710 , kfoldOffset= 5
+sum3= 100008  numScaff= 710
+   request  numSamples= 300500 train plasm
+1 scaff: NC_000905.1 plasm size/B=6205 numSampl=228 got=228=228
+2 scaff: NC_000938.1 plasm size/B=3498 numSampl=192 got=192=192
+3 scaff: NC_000954.1 plasm size/B=30651 numSampl=403 got=403=403
+4 scaff: NC_000957.1 plasm size/B=5228 numSampl=216 got=216=216
+500 scaff: NC_008350.1 plasm size/B=5413 numSampl=218 got=218=218
+   completed role= plasm ,got numSamples= 300497
+prep: train plasm  completed, elaT=2.2 sec , gotSamples= 300497
+
+prep_labeled scaffolds from: data/assayer4.main-scaff-split.yml
+  read  yaml: data/assayer4.main-scaff-split.yml  size=7   elaT=28.7 sec
+  role: main segL: 4  dom: val , numSpec: 6679 , kfoldOffset= 5
+sum3= 99922  numScaff= 6679
+   request  numSamples= 37562 val main
+1 scaff: NZ_AAEO01000027.3 main size/B=254048 numSampl=16 got=16=16
+2 scaff: NZ_AAFA03000026.1 main size/B=23771 numSampl=6 got=6=6
+3 scaff: NZ_AAGP01000020.1 main size/B=77662 numSampl=9 got=9=9
+4 scaff: NZ_AAMJ02000112.1 main size/B=2949 numSampl=3 got=3=3
+500 scaff: NZ_AMXS02000134.1 main size/B=9595 numSampl=4 got=1=1
+1000 scaff: NZ_AZSS01000230.1 main size/B=3302 numSampl=3 got=3=3
+1500 scaff: NZ_CIHI01000024.1 main size/B=39591 numSampl=7 got=7=7
+2000 scaff: NZ_CSSI01000512.1 main size/B=1621 numSampl=2 got=2=2
+2500 scaff: NZ_FANT01000218.1 main size/B=7675 numSampl=4 got=4=4
+3000 scaff: NZ_FRXU01000023.1 main size/B=27749 numSampl=6 got=6=6
+3500 scaff: NZ_JHRF01000027.1 main size/B=30189 numSampl=6 got=6=6
+4000 scaff: NZ_JVCN01000017.1 main size/B=14049 numSampl=5 got=5=5
+4500 scaff: NZ_KV789591.1 main size/B=18031 numSampl=5 got=5=5
+5000 scaff: NZ_LM997373.1 main size/B=3866 numSampl=3 got=3=3
+5500 scaff: NZ_LXUE01000014.1 main size/B=26198 numSampl=6 got=6=6
+6000 scaff: NZ_MSLY01000731.1 main size/B=3582 numSampl=3 got=3=3
+6500 scaff: NZ_NGWA01000266.1 main size/B=1846 numSampl=2 got=2=2
+   completed role= main ,got numSamples= 37433
+prep: val main  completed, elaT=33.3 sec , gotSamples= 37433
+
+prep_labeled scaffolds from: data/assayer4.main-scaff-split.yml
+  read  yaml: data/assayer4.main-scaff-split.yml  size=7   elaT=27.5 sec
+  role: main segL: [0, 1, 2, 3]  dom: train , numSpec: 26560 , kfoldOffset= 5
+sum3= 101214  numScaff= 26560
+   request  numSamples= 300500 train main
+1 scaff: NG_047939.1 main size/B=2207 numSampl=5 got=5=5
+2 scaff: NG_048558.1 main size/B=1812 numSampl=5 got=5=5
+3 scaff: NZ_AAAK03000021.1 main size/B=30138 numSampl=12 got=12=12
+4 scaff: NZ_AACK01000062.1 main size/B=9049 numSampl=8 got=7=7
+500 scaff: NZ_ANJK01000240.1 main size/B=3135 numSampl=6 got=6=6
+1000 scaff: NZ_BADL01000069.1 main size/B=14042 numSampl=9 got=9=9
+1500 scaff: NZ_CKCC01000037.1 main size/B=4739 numSampl=6 got=6=6
+2000 scaff: NZ_CTQS01000048.1 main size/B=1902 numSampl=5 got=5=5
+2500 scaff: NZ_FDOA01000021.1 main size/B=5722 numSampl=7 got=7=7
+3000 scaff: NZ_FTZH01000233.1 main size/B=4271 numSampl=6 got=6=6
+3500 scaff: NZ_JMOY01000003.1 main size/B=103815 numSampl=21 got=21=21
+4000 scaff: NZ_JWEI01000071.1 main size/B=16939 numSampl=10 got=10=10
+4500 scaff: NZ_LATT01000028.1 main size/B=29760 numSampl=12 got=11=11
+5000 scaff: NZ_LOCV01000054.1 main size/B=4084 numSampl=6 got=6=6
+5500 scaff: NZ_LYRT01000034.1 main size/B=162476 numSampl=26 got=26=26
+6000 scaff: NZ_MSNV01000080.1 main size/B=54568 numSampl=16 got=16=16
+6500 scaff: NZ_NFVD01000457.1 main size/B=17410 numSampl=10 got=10=10
+7000 scaff: NZ_AIAU01000059.1 main size/B=18007 numSampl=10 got=10=10
+7500 scaff: NZ_AUXY01000067.1 main size/B=35990 numSampl=13 got=13=13
+8000 scaff: NZ_CDHF01000032.1 main size/B=11551 numSampl=9 got=8=8
+8500 scaff: NZ_COTV01000003.1 main size/B=229402 numSampl=30 got=30=30
+9000 scaff: NZ_CXKF01000280.1 main size/B=2225 numSampl=5 got=5=5
+9500 scaff: NZ_FPFX01000002.1 main size/B=35702 numSampl=13 got=13=13
+10000 scaff: NZ_JFGK01000167.1 main size/B=19651 numSampl=10 got=10=10
+10500 scaff: NZ_JTHV01000207.1 main size/B=1732 numSampl=5 got=5=5
+11000 scaff: NZ_KK064194.1 main size/B=17390 numSampl=10 got=10=10
+11500 scaff: NZ_LKVJ01000100.1 main size/B=24344 numSampl=11 got=11=11
+12000 scaff: NZ_LVPV01000016.1 main size/B=2532 numSampl=5 got=5=5
+12500 scaff: NZ_MLVQ01000014.1 main size/B=149875 numSampl=25 got=25=25
+13000 scaff: NZ_MZNH01000110.1 main size/B=8158 numSampl=8 got=8=8
+13500 scaff: NZ_ADSW01000958.1 main size/B=6043 numSampl=7 got=7=7
+14000 scaff: NZ_APSZ01000006.1 main size/B=19989 numSampl=11 got=11=11
+14500 scaff: NZ_BCND01000099.1 main size/B=22451 numSampl=11 got=11=11
+15000 scaff: NZ_CLTL01000026.1 main size/B=23986 numSampl=11 got=11=11
+15500 scaff: NZ_CVQE01000045.1 main size/B=7896 numSampl=7 got=7=7
+16000 scaff: NZ_FFQA01000009.1 main size/B=139307 numSampl=24 got=24=24
+16500 scaff: NZ_FVER01000010.1 main size/B=189380 numSampl=28 got=28=28
+17000 scaff: NZ_JPQU01000035.1 main size/B=77890 numSampl=19 got=19=19
+17500 scaff: NZ_JXHV01000087.1 main size/B=106473 numSampl=21 got=21=21
+18000 scaff: NZ_LEKC01000107.1 main size/B=2149 numSampl=5 got=5=5
+18500 scaff: NZ_LQSY01000181.1 main size/B=24389 numSampl=11 got=11=11
+19000 scaff: NZ_MCBU01000231.1 main size/B=1848 numSampl=5 got=3=3
+19500 scaff: NZ_MWZH01000208.1 main size/B=4848 numSampl=6 got=6=6
+20000 scaff: NZ_NQKZ01000047.1 main size/B=3113 numSampl=6 got=6=6
+20500 scaff: NZ_AOJT01001286.1 main size/B=14301 numSampl=9 got=9=9
+21000 scaff: NZ_BBAA01000116.1 main size/B=1999 numSampl=5 got=5=5
+21500 scaff: NZ_CKUS01000039.1 main size/B=16084 numSampl=10 got=10=10
+22000 scaff: NZ_CVLC01000015.1 main size/B=42124 numSampl=14 got=14=14
+22500 scaff: NZ_FGDW01000033.1 main size/B=14938 numSampl=9 got=9=9
+23000 scaff: NZ_FXIY01000020.1 main size/B=53372 numSampl=16 got=16=16
+23500 scaff: NZ_JPYC01000943.1 main size/B=3501 numSampl=6 got=6=6
+24000 scaff: NZ_JXNV01000051.1 main size/B=10116 numSampl=8 got=8=8
+24500 scaff: NZ_LDTP01000082.1 main size/B=3080 numSampl=6 got=6=6
+25000 scaff: NZ_LPNT01000042.1 main size/B=67828 numSampl=18 got=18=18
+25500 scaff: NZ_MANO01000559.1 main size/B=2604 numSampl=5 got=5=5
+26000 scaff: NZ_MVNC01000009.1 main size/B=175629 numSampl=27 got=27=27
+26500 scaff: NZ_NMSQ01000069.1 main size/B=3638 numSampl=6 got=6=6
+   completed role= main ,got numSamples= 300196
+prep: train main  completed, elaT=48.0 sec , gotSamples= 300196
+   build_training_data: val plasm  numSeq=37554 ...
+   build_training_data: val main  numSeq=37433 ...
+build_training_data for dom: val Xs,Xf,Y: (74987, 300, 4) (74987, 10) (74987,) SNR=1.003 done
+ add noise  0.01  to gloft in val
+   build_training_data: train plasm  numSeq=300497 ...
+   build_training_data: train main  numSeq=300196 ...
+build_training_data for dom: train Xs,Xf,Y: (600693, 300, 4) (600693, 10) (600693,) SNR=1.001 done
+ add noise  0.05  to gloft in train
+start fresh model
+build_model inpA: (?, 300, 4)   inpB: (?, 10)
+Dens act= relu  recurDropFrac= 0.05  layerDropFrac= 0.1  idx= 23
+ (re)Compile model
+____________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+seq_300_x_4 (InputLayer)         (None, 300, 4)        0                                            
+____________________________________________________________________________________________________
+globF_10 (InputLayer)            (None, 10)            0                                            
+____________________________________________________________________________________________________
+A_40 (LSTM)                      (None, 300, 40)       7200        seq_300_x_4[0][0]                
+____________________________________________________________________________________________________
+G_4 (Dense)                      (None, 4)             44          globF_10[0][0]                   
+____________________________________________________________________________________________________
+B_40 (LSTM)                      (None, 40)            12960       A_40[0][0]                       
+____________________________________________________________________________________________________
+H_4 (Dense)                      (None, 4)             20          G_4[0][0]                        
+____________________________________________________________________________________________________
+seq_glob (Concatenate)           (None, 44)            0           B_40[0][0]                       
+                                                                   H_4[0][0]                        
+____________________________________________________________________________________________________
+C_40 (Dense)                     (None, 40)            1800        seq_glob[0][0]                   
+____________________________________________________________________________________________________
+fr_0.1 (Dropout)                 (None, 40)            0           C_40[0][0]                       
+____________________________________________________________________________________________________
+D_20 (Dense)                     (None, 20)            820         fr_0.1[0][0]                     
+____________________________________________________________________________________________________
+fr_same (Dropout)                (None, 20)            0           D_20[0][0]                       
+____________________________________________________________________________________________________
+score (Dense)                    (None, 1)             21          fr_same[0][0]                    
+====================================================================================================
+Total params: 22,865
+Trainable params: 22,865
+Non-trainable params: 0
+____________________________________________________________________________________________________
+model (re)compiled elaT=0.0 sec
+save model full to .//assayer4.model.h5
+  closed  hdf5: .//assayer4.model.h5  size=0.12 MB
+train for epochs: 20
+enabled EarlyStopping, patience= 10
+enabled ModelCheckpoint, period= 1
+enabled ReduceLROnPlateau
+
+Train_model X: (600693, 300, 4)  earlyStop= 10  epochs= 20  batch= 200 , data SNR(train)=1.0010, SNR(valid)=1.0032
+Train on 600693 samples, validate on 74987 samples
+Epoch 1/20
+Epoch 00000: val_loss improved from inf to 0.53353, saving model to .//assayer4.weights_best.h5
+1595s - loss: 0.5700 - acc: 0.6942 - val_loss: 0.5335 - val_acc: 0.7390
+Epoch 2/20
+Epoch 00001: val_loss improved from 0.53353 to 0.53351, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.5447 - acc: 0.7141 - val_loss: 0.5335 - val_acc: 0.7422
+Epoch 3/20
+Epoch 00002: val_loss improved from 0.53351 to 0.52960, saving model to .//assayer4.weights_best.h5
+1593s - loss: 0.5379 - acc: 0.7191 - val_loss: 0.5296 - val_acc: 0.7451
+Epoch 4/20
+Epoch 00003: val_loss did not improve
+1592s - loss: 0.5316 - acc: 0.7247 - val_loss: 0.5327 - val_acc: 0.7295
+Epoch 5/20
+Epoch 00004: val_loss improved from 0.52960 to 0.52004, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.5259 - acc: 0.7297 - val_loss: 0.5200 - val_acc: 0.7506
+Epoch 6/20
+Epoch 00005: val_loss improved from 0.52004 to 0.51157, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.5201 - acc: 0.7352 - val_loss: 0.5116 - val_acc: 0.7535
+Epoch 7/20
+Epoch 00006: val_loss improved from 0.51157 to 0.50968, saving model to .//assayer4.weights_best.h5
+1593s - loss: 0.5151 - acc: 0.7388 - val_loss: 0.5097 - val_acc: 0.7606
+Epoch 8/20
+Epoch 00007: val_loss did not improve
+1591s - loss: 0.5046 - acc: 0.7474 - val_loss: 0.5112 - val_acc: 0.7546
+Epoch 9/20
+Epoch 00008: val_loss improved from 0.50968 to 0.48886, saving model to .//assayer4.weights_best.h5
+1593s - loss: 0.4934 - acc: 0.7550 - val_loss: 0.4889 - val_acc: 0.7715
+Epoch 10/20
+Epoch 00009: val_loss improved from 0.48886 to 0.47097, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.4844 - acc: 0.7611 - val_loss: 0.4710 - val_acc: 0.7823
+Epoch 11/20
+Epoch 00010: val_loss improved from 0.47097 to 0.46589, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.4759 - acc: 0.7667 - val_loss: 0.4659 - val_acc: 0.7836
+Epoch 12/20
+Epoch 00011: val_loss improved from 0.46589 to 0.46430, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.4686 - acc: 0.7718 - val_loss: 0.4643 - val_acc: 0.7842
+Epoch 13/20
+Epoch 00012: val_loss did not improve
+1593s - loss: 0.4631 - acc: 0.7760 - val_loss: 0.4791 - val_acc: 0.7800
+Epoch 14/20
+Epoch 00013: val_loss improved from 0.46430 to 0.45550, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.4586 - acc: 0.7790 - val_loss: 0.4555 - val_acc: 0.7874
+Epoch 15/20
+Epoch 00014: val_loss improved from 0.45550 to 0.45525, saving model to .//assayer4.weights_best.h5
+1591s - loss: 0.4550 - acc: 0.7811 - val_loss: 0.4552 - val_acc: 0.7918
+Epoch 16/20
+Epoch 00015: val_loss did not improve
+1593s - loss: 0.4521 - acc: 0.7831 - val_loss: 0.4639 - val_acc: 0.7826
+Epoch 17/20
+Epoch 00016: val_loss improved from 0.45525 to 0.45281, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.4491 - acc: 0.7854 - val_loss: 0.4528 - val_acc: 0.7916
+Epoch 18/20
+Epoch 00017: val_loss improved from 0.45281 to 0.44980, saving model to .//assayer4.weights_best.h5
+1592s - loss: 0.4472 - acc: 0.7860 - val_loss: 0.4498 - val_acc: 0.7937
+Epoch 19/20
+Epoch 00018: val_loss did not improve
+1593s - loss: 0.4453 - acc: 0.7876 - val_loss: 0.4542 - val_acc: 0.7880
+Epoch 20/20
+Epoch 00019: val_loss did not improve
+1590s - loss: 0.4433 - acc: 0.7884 - val_loss: 0.4514 - val_acc: 0.7877
+
+ Validation Acc:0.739 -->0.788 , end-loss:0.451  20 epochs, idx=23 , fit time=533.8 min
+save model full to .//assayer4.model.h5
+  closed  hdf5: .//assayer4.model.h5  size=0.31 MB
+  closed  yaml: .//assayer4.history.yml  size=0.00 MB   elaT=0.0 sec
+sss 20 20 20
+sss2 20
+Produce AUC of ROC, domain= val Y shape (74987,) [ 0.  0.  0.  0.  0.  0.]
+AUC: 0.873026 , save: .//val.AUC.csv
+found fpr= 0.100045414474 , tpr= 0.628668051339 , LR+= 6.28382674654
+Graphics saving to .//idx23_assayer4_train_f10 PDF ...
+	Command being timed: "python -u ./train_Plasmid.py --epochs 20 --events 601000 --arrIdx 23 --checkPt --kfoldOffset 5 --verbosity 0 --noXterm --reduceLr --outPath ./"
+	User time (seconds): 311917.83
+	System time (seconds): 75363.16
+	Percent of CPU this job got: 1203%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:56:16
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 7630680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 300
+	Minor (reclaiming a frame) page faults: 6212198787
+	Voluntary context switches: 4107674387
+	Involuntary context switches: 4736801
+	Swaps: 0
+	File system inputs: 740
+	File system outputs: 5408
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+0e9381d335e4c60cb1427cc503b53562  train_Plasmid.py
+it was JID 14374556

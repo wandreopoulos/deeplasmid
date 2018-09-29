@@ -6,6 +6,7 @@ Author: Bill Andreopoulos
 Last maintained: July 17, 2018"
 
 module load deeplearning
+#module load python/3.6-anaconda-4.4
 
 FASTA=$1
 
