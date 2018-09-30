@@ -1,0 +1,42 @@
+Sun Aug 26 11:14:58 PDT 2018
+fit-nid00396-arrIdx-18 start-jid 14374551
+SLURM_CLUSTER_NAME=cori kfoldOff=0
+0e9381d335e4c60cb1427cc503b53562  train_Plasmid.py
+PWD=/global/cscratch1/sd/andreopo/plasmid4k-18
+total 7
+-rw-rw---- 1 andreopo andreopo 20799 Jul 29 18:10 Deep_Plasmid.py
+-rw-rw-r-- 1 andreopo andreopo  8105 Apr 30 14:17 Oracle_Plasmid.py
+-rw-rw-r-- 1 andreopo andreopo 12280 May  7 06:42 Plotter_Plasmid.py
+-rw-rw-r-- 1 andreopo andreopo  2881 Apr 30 12:20 Util_Plasmid.py
+-rw-rw-r-- 1 andreopo andreopo  1661 Aug 26 11:04 batchTrain.slr
+drwxrwx--- 2 andreopo andreopo  4096 Aug 26 09:48 data
+-rwxrwxr-x 1 andreopo andreopo  4000 Apr 30 12:20 train_Plasmid.py
+Sun Aug 26 11:18:10 PDT 2018
+             total       used       free     shared    buffers     cached
+Mem:           125         24        101          0          0         18
+-/+ buffers/cache:          6        119
+Swap:            0          0          0
+top - 11:18:10 up 5 days, 11:42,  0 users,  load average: 0.97, 0.49, 0.23
+Tasks: 874 total,   2 running, 872 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  9.4 us,  0.3 sy,  0.0 ni, 90.2 id,  0.1 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:  13189961+total, 25832376 used, 10606724+free,     9200 buffers
+KiB Swap:        0 total,        0 used,        0 free. 19016632 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S   %CPU  %MEM     TIME+ COMMAND
+41014 andreopo  20   0 5601604 4.310g  45604 R 94.118 3.426   2:47.07 python
+41122 andreopo  20   0   32920   3040   2012 R  5.882 0.002   0:00.03 top
+Sun Aug 26 11:35:10 PDT 2018
+             total       used       free     shared    buffers     cached
+Mem:           125         27         98          0          0         18
+-/+ buffers/cache:          9        116
+Swap:            0          0          0
+top - 11:35:10 up 5 days, 11:59,  0 users,  load average: 10.25, 12.58, 9.04
+Tasks: 872 total,   1 running, 871 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  9.4 us,  0.3 sy,  0.0 ni, 90.2 id,  0.1 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:  13189961+total, 28534776 used, 10336484+free,     9200 buffers
+KiB Swap:        0 total,        0 used,        0 free. 19019332 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S   %CPU  %MEM     TIME+ COMMAND
+41014 andreopo  20   0 15.749g 6.845g  51804 S 1344.4 5.442 216:36.55 python
+41801 andreopo  20   0   32912   3040   2012 R 11.111 0.002   0:00.04 top
+done-Sun Aug 26 18:56:16 PDT 2018

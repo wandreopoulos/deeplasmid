@@ -66,6 +66,25 @@ test_fastas = [
 GOLD_features_yml = ['/global/projectb/scratch/andreopo/AsafPlasmids/MockFASTAs/yml']
 GOLD_formatting = ['/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/dataTest_MockFASTAs/assayer4.test-scaff-split.yml']
 GOLD_DL = ['/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/typescript.data_MockFASTAs']
+GOLD_predictions = ['/global/projectb/sandbox/rqc/andreopo/src/bitbucket/plasmidoraclev6/dataTest_MockFASTAs.predictions.txt']
+ 
+ 
+def compare_predictions(txt1, txt2):
+    a = {}
+    b = {}
+    with open(txt1, 'r') as f1:
+       for l1 in f1:
+          n = l1.split(',')
+          a[n[0]] = n[1]
+
+    with open(txt2, 'r') as f2:
+       for l2 in f2:
+          n = l2.split(',')
+          b[n[0]] = n[1]
+
+    for i in a:
+       assert i in b
+       assert a[i] == b[i]
 
 
 def compare_yaml(yaml1, yaml2):
@@ -131,6 +150,8 @@ def test_assembly():
         formatted_yaml = glob.glob(output_path + "/dlDataPath/")[0]
 
         compare_yaml(GOLD_formatting[i], formatted_yaml)
+
+        compare_predictions(GOLD_predictions[i], "predictions.txt")
 
         i += 1
         '''
