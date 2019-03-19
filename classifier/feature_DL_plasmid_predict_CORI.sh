@@ -37,7 +37,10 @@ mkdir outKF
 mkdir plotKF
 
 module unload python
-module load python/3.6-anaconda-4.4
+module load python/3.6-anaconda-5.2
+
+export HDF5_USE_FILE_LOCKING=FALSE
+
 
 #pass fasta and yml directory to format
 python3 $PARENT/format_Test.py  --inputfasta $FASTA --inputyml $OUT/$DATETIME/yml --dataPath $OUT/dlDataPath
