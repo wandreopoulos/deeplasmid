@@ -138,7 +138,7 @@ class Plotter_Plasmid(object):
         fig=self.plt.figure(figId,facecolor='white', figsize=(12,6))
         print('plot_float_featuresB y_true=',y_true,dom)
         
-        XA,XB,Y=deep.data[dom]
+        XA,XB,Y=deep.trainvalid_1hot_data[dom]
         num_gloft=len(Constants.globFeatureL)
         nrow,ncol=3,4
         assert nrow*ncol >= num_gloft
@@ -194,8 +194,8 @@ class Plotter_Plasmid(object):
         tit1='%s, train %.2f h, end-val-loss=%.3f'%(deep.name,deep.train_sec/3600.,loss)
 
         try:
-            nTrain=deep.data['train'][2].shape[0]
-            nValid=deep.data['val'][2].shape[0]
+            nTrain=deep.trainvalid_1hot_data['train'][2].shape[0]
+            nValid=deep.trainvalid_1hot_data['val'][2].shape[0]
         except:
             nTrain=nValid=-1
 
@@ -243,7 +243,7 @@ class Plotter_Plasmid(object):
             self.plt.figure(figId,facecolor='white', figsize=(12,6))
             self.figL.append(figId)
         nrow,ncol=self.nr_nc
-        (Xs,Xf,y_true)=deep.data[dom]
+        (Xs,Xf,y_true)=deep.trainvalid_1hot_data[dom]
     
         print('Produce AUC of ROC, domain=',name,'Y shape',y_true.shape,y_true[:6])
         m=len(y_true)
