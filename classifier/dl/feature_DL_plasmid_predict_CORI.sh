@@ -53,7 +53,8 @@ then echo "format_predict.py failed"
 exit 1
 fi
 
-MODEL=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml2/classifier/models/plasmid4k-
+MODEL=/global/dna/shared/data/functests/Assembly/models/plasmid4k-
+###/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml2/classifier/models/plasmid4k-
 echo "Model used for prediction: $MODEL" 
 echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
 
