@@ -53,7 +53,13 @@ then echo "format_predict.py failed"
 exit 1
 fi
 
-python3 $PARENT/predict_Plasmid.py --dataPath $OUT/dlDataFormattedPred.$DATETIME   --outPath  $OUT/outPR.$DATETIME  --given test  --kModelList  18-29  --seedModel  /global/dna/shared/data/functests/Assembly/models/plasmid4k-
+MODEL=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml2/classifier/models/plasmid4k-
+echo "Model used for prediction: $MODEL" 
+echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
+
+python3 $PARENT/predict_Plasmid.py --dataPath $OUT/dlDataFormattedPred.$DATETIME   --outPath  $OUT/outPR.$DATETIME   --dataSegment -1   --given test  --kModelList  18-29  --seedModel  $MODEL 
+# /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml2/classifier/models/plasmid4k-
+### /global/cscratch1/sd/andreopo/plasmid4p-
 ### /global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_rqcprod/classifier/models/plasmid4k-
 ### /global/cscratch1/sd/andreopo/plasmid4o-  
 ###$PARENT/models/plasmid4k-

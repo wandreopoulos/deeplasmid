@@ -200,17 +200,19 @@ class DL_Model(object):
     def classify_one_scaffold(self,Xs,Xf,verb=1):
 
         nK=len(self.model)
-        #print('clsf  inputs shapes:',Xs.shape,Xf.shape,' using kModel=%d models'%(nK))
+        if verb>0: print('clsf  inputs shapes:',Xs.shape,Xf.shape,' using kModel=%d models'%(nK),' - Xs %s Xf %s'%(Xs,Xf))
         start = time.time()
 
         Yscore=np.array(0)  # accumulator
         for k in self.model:
             Yscore=np.add(Yscore,self.model[k].predict([Xs,Xf]).flatten())
-            if verb>1: print(k,' kModel done, score[0].sum=',Yscore[0])
+            if verb>0: print(k,' kModel done, score[0].sum=',Yscore[0],' Yscore=',Yscore)
         #print('   prediction  done,  elaT=%.1f sec'%((time.time() - start)))
         # renormalize score if multi-model predictionw as made
         if nK>1:
             Yscore=np.multiply(Yscore, 1./nK)
+
+        if verb>0: print('   prediction  done,  elaT=%.1f sec'%((time.time() - start)),' Yscore=',Yscore)
 
         avr=float(Yscore.mean())
         std=float(Yscore.std())

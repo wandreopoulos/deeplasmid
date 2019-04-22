@@ -70,7 +70,7 @@ print('use seqLenCut=',seqLenCut)
 
 #Feature names
 globFeatureL=['gc_content','len_sequence']
-for x in basesSet:
+for x in basesL: #Note dont change this to the basesSet, which is unordered! Keep basesL
     globFeatureL.append(x+'_longestHomopol')
     globFeatureL.append(x+'_totalLongHomopol')
 

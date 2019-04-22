@@ -31,7 +31,7 @@ def get_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("-v","--verbosity",type=int,choices=[0, 1, 2],
-                        help="increase output verbosity", default=1, dest='verb') 
+                        help="increase output verbosity", default=0, dest='verb') 
 
     parser.add_argument("--dataPath",
                         default='dataBig',help="path to input")
@@ -134,6 +134,7 @@ for scaffN in all_scaffolds:
     sampling_rate= 0.5 + 0.5*math.sqrt(len(sequenceString)/1e4)
     sampList=deep.sample_scaffold(sequenceString,Constants.target_samples_per_contig_pred*sampling_rate)
     print("len(sampList) %s" % ( len(sampList) ))
+    if args.verb > 0: print("sample: %s" % (sampList), Constants.target_samples_per_contig_pred, sampling_rate)
     assert len(sampList) >1 #0 # must ahve few samples to compute the average
 
     floatD=all_scaffolds[scaffN]['features']
@@ -155,7 +156,7 @@ for scaffN in all_scaffolds:
     #dump_ana_details(scaffN,sampList,featureListXsamples,sampListHotEncodedA,featureListXsamplesA)
 
     classif_details_yaml['ora_inp']={'nSample':sampListHotEncodedA.shape[0],'seqLen':sampListHotEncodedA.shape[1],'featureListen':featureListXsamplesA.shape[1]}
-    Yscores_samples,classif_avrg_score_str,classif_score=deep.classify_one_scaffold(sampListHotEncodedA,featureListXsamplesA,verb=0)
+    Yscores_samples,classif_avrg_score_str,classif_score=deep.classify_one_scaffold(sampListHotEncodedA,featureListXsamplesA,verb=args.verb)
 
     scores_scaffs_list.append(classif_score['avr'])
     if txt.find('plasmid') > -1:
@@ -178,7 +179,9 @@ for scaffN in all_scaffolds:
         cnt['ambig']+=1
         f_predix.write("%s,%s,%s\n" %(txt,"AMBIGUOUS",classif_avrg_score_str))
 
-    print(cnt['inp'],scaffN,'decision=%s, avr score:'%decision, classif_avrg_score_str,' len=%.1fk sampl=%d'%(len(sequenceString)/1000.,len(sampList)))
+    print(cnt['inp'],scaffN,'decision=%s, avr score:'%decision, classif_avrg_score_str,' len=%.1fk samples=%d'%(len(sequenceString)/1000.,len(sampList)))
+    if args.verb > 0: print(Yscores_samples,classif_avrg_score_str,classif_score  , scores_samples_list_class1, scores_samples_list_class0, scores_scaffs_list, Yclass , sampListHotEncodedA,featureListXsamplesA)
+
     classif_details_yaml['score']=classif_score
     classif_details_yaml['model_info']=deep.info
     #print('out classif_details_yaml='); pprint(classif_details_yaml)
