@@ -21,7 +21,7 @@ arrIdx=${SLURM_ARRAY_TASK_ID}
 kfoldOff=$(( ${arrIdx} % 6 ))
 
 taskExe=train_Plasmid.py
-coreN='plasmid4q'
+coreN='plasmid4v'
 
 codeList="Constants.py DL_Model.py Plotter_Plasmid.py  batchTrain.slr Util_Plasmid.py  $taskExe"
 dataDir="delplasmid_data4train"

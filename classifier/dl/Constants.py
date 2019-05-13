@@ -40,8 +40,8 @@ seqLenCut=300
 
 
 #The minimum and maximum sequence lengths
-minSeqLen = 2e3
-maxSeqLen = 300e3
+minSeqLen = 1e3
+maxSeqLen = 330e3
 
 
 #Names of bases

@@ -54,6 +54,10 @@ exit 1
 fi
 
 MODEL=/global/dna/shared/data/functests/Assembly/models/plasmid4k-
+MODEL=/global/cscratch1/sd/andreopo/plasmid4t-
+MODEL=/global/cscratch1/sd/andreopo/plasmid4u-
+MODEL=/global/cscratch1/sd/andreopo/plasmid4v-
+MODEL=/global/dna/shared/data/functests/Assembly/models/plasmid4v-
 ###/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml2/classifier/models/plasmid4k-
 echo "Model used for prediction: $MODEL" 
 echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
