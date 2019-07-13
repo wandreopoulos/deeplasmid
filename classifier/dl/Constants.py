@@ -11,7 +11,7 @@ __email__ = "wandreopoulos@lbl.gov"
 
 
 #Number of processes to use.
-PROCESSES = 32 ### multiprocessing.cpu_count() ###32
+PROCESSES = 16 ### multiprocessing.cpu_count() ###32
 
 
 
@@ -69,7 +69,7 @@ print('all bases :', list(oneHotBase.keys()))
 print('use seqLenCut=',seqLenCut)
 
 #Feature names
-globFeatureL=['gc_content','len_sequence']
+globFeatureL=['gc_content','len_sequence','plassketch', 'plasORIsketch', 'chromsketch', 'genecount', 'genesperMB'] #'max_occur_pentamer_1hot'
 for x in basesL: #Note dont change this to the basesSet, which is unordered! Keep basesL
     globFeatureL.append(x+'_longestHomopol')
     globFeatureL.append(x+'_totalLongHomopol')

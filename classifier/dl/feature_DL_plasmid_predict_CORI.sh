@@ -3,7 +3,7 @@
 echo "Running feature_DL_plasmid_predict.sh . This version is meant for Cori.
 DelPlasmid - Plasmid finder
 Author: Bill Andreopoulos
-Last maintained: April 1, 2019"
+Last maintained: June 12, 2019"
 
 #module load deeplearning
 
@@ -58,7 +58,11 @@ MODEL=/global/cscratch1/sd/andreopo/plasmid4t-
 MODEL=/global/cscratch1/sd/andreopo/plasmid4u-
 MODEL=/global/cscratch1/sd/andreopo/plasmid4v-
 MODEL=/global/dna/shared/data/functests/Assembly/models/plasmid4v-
+MODEL=/global/cscratch1/sd/andreopo/plasmid4w-
+MODEL=/global/cscratch1/sd/andreopo/plasmid4x-newfeat2-
 ###/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml2/classifier/models/plasmid4k-
+MODEL=/global/cscratch1/sd/andreopo/plasmid4x-newfeat3-
+MODEL=/global/cscratch1/sd/andreopo/plasmidml_tests/plasmid4x-newfeat4-
 echo "Model used for prediction: $MODEL" 
 echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
 

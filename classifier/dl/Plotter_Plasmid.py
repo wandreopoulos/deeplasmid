@@ -109,7 +109,7 @@ class Plotter_Plasmid(object):
         self.figL.append(figId)
         fig=self.plt.figure(figId,facecolor='white', figsize=(12,6))
 
-        num_gloft=len(Constants.globFeatureL)
+        num_gloft=len(Constants.globFeatureL)#+19 #TODO change 19!
         nrow,ncol=3,4
         assert nrow*ncol >= num_gloft
         #  grid is (yN,xN) - y=0 is at the top,  so dumm
@@ -139,7 +139,7 @@ class Plotter_Plasmid(object):
         print('plot_float_featuresB y_true=',y_true,dom)
         
         XA,XB,Y=deep.trainvalid_1hot_data[dom]
-        num_gloft=len(Constants.globFeatureL)
+        num_gloft=len(Constants.globFeatureL)#+19 #TODO change 19!
         nrow,ncol=3,4
         assert nrow*ncol >= num_gloft
         #  grid is (yN,xN) - y=0 is at the top,  so dumm

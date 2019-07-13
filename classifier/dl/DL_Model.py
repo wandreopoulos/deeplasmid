@@ -180,7 +180,7 @@ class DL_Model(object):
         numSamples=len(sampList)
         sampleSeqLen=Constants.seqLenCut
         num_bases=len(Constants.basesSet)
-        num_features=len(Constants.globFeatureL)
+        num_features=len(Constants.globFeatureL)#+19 #TODO change 19!
 
         # clever list-->numpy conversion, Thorsten's idea
         # First turn into np.zeros of desired size, then fill with data
@@ -614,7 +614,7 @@ class DL_Model(object):
     #       How many samples in total could be subsampled.
     ##############################
     def sample_labeled_scaffolds(self, currentWrkSegment,sampling_rate,classif,target_samples):
-
+        flatten = lambda l: [float(item) for sublist in l for item in sublist]
         if target_samples < len(currentWrkSegment): # at least 1 sample per scaff on average
             print('Abort: partition_labeled_scaffold: samples:',target_samples ,', num scafold:',len(currentWrkSegment),', Hint: increase number of events\n')
             assert 1==2
@@ -624,7 +624,10 @@ class DL_Model(object):
             j+=1
             seqStr=currentWrkSegment[specN]['seq']
             floatD=currentWrkSegment[specN]['features']
-            floatL=[ floatD[x] for x in Constants.globFeatureL ]
+            #floatL=[ floatD[x] for x in Constants.globFeatureL ]
+            b=flatten( [ list(floatD[x]) for x in Constants.globFeatureL if type(floatD[x]) is not float ] )
+            a=[ floatD[x] for x in Constants.globFeatureL if type(floatD[x]) is float ]
+            featureList=a+b #[ floatD[x] for x in Constants.globFeatureL if type(floatD[x]) is float else list(floatD[x]) ]
 
             ############################
             ###The number of sequences to sample depends on sampling_rate (length-dependent)
@@ -633,7 +636,7 @@ class DL_Model(object):
             numSamples=int(target_samples * sampling_rate[specN] +0.5)
             sequence_samples=self.sample_scaffold(seqStr,numSamples)
 
-            feature_vector=[floatL]*len(sequence_samples) # the same scaffold features for all samples
+            feature_vector=[featureList]*len(sequence_samples) # the same scaffold features for all samples
             #tmpL3=[specN]*len(sequence_samples)
 
             outSequences[0:0]=sequence_samples
@@ -642,7 +645,7 @@ class DL_Model(object):
 
 
             if j<5 or j%500==0:
-                print(j,'scaff: %s %s size/B=%d numSampl=%d got=%d=%d'%(specN,classif, len(seqStr),numSamples,len(sequence_samples),len(feature_vector)))
+                print(j,'scaff: %s %s size/B=%d numSampl=%d got=%d=%d featureList=%s'%(specN,classif, len(seqStr),numSamples,len(sequence_samples),len(feature_vector), featureList))
 
 
             #exit(1)
@@ -669,7 +672,7 @@ class DL_Model(object):
             num_plasm_seqs=len(self.trainvalid_data[dataset_trainval]['plasm'][0])
             seq_len=Constants.seqLenCut
             num_bases=len(Constants.basesSet)
-            num_features=len(Constants.globFeatureL)
+            num_features=len(Constants.globFeatureL)#+19 #TODO change 19!
 
             # clever list-->numpy conversion, Thorsten's idea
             XhotAll=np.zeros([num_main_seqs+num_plasm_seqs,seq_len,num_bases],dtype=np.float32)
@@ -690,12 +693,20 @@ class DL_Model(object):
                 #print('tt dom=',dom,' classif=',classif,' len=',len(seqL))
 
             print('build_training_data for dataset_trainval:',dataset_trainval,'Xs,Xf,Y:',XhotAll.shape,XfloatAll.shape,YAll.shape,'SNR=%.3f'%(num_plasm_seqs/num_main_seqs),'done')
+            print('build_training_data0 tt',len(XfloatAll[0]))
+            for i in range(len(Constants.globFeatureL)): #TODO check numfeatures
+                 print('build_training_data0 i=%d ff=%f'%(i,XfloatAll[0][i]))
+
 
             if self.trainNoise>0:
                 sigNoise= self.trainNoise
                 if dataset_trainval=='val' :  sigNoise=0.01
                 print(' add noise ',sigNoise,' to gloft in',dataset_trainval)
                 XfloatAll+=truncnorm.rvs(-2, 2, loc=0, scale=sigNoise, size=XfloatAll.shape)
+
+            print('build_training_data1 tt',len(XfloatAll[0]))
+            for i in range(len(Constants.globFeatureL)): #TODO check numfeatures
+                 print('build_training_data1 i=%d ff=%f'%(i,XfloatAll[0][i]))
 
             self.trainvalid_1hot_data[dataset_trainval]=[XhotAll,XfloatAll,YAll]
 
@@ -715,7 +726,7 @@ class DL_Model(object):
         print('build_model inpA:',inputA.get_shape(),'  inpB:',inputB.get_shape())
         
         lstm_dim=40
-        dens_dim=20
+        dens_dim=10
         densAct='relu'
 
         layerDropFrac=Constants.dropFrac
@@ -728,8 +739,8 @@ class DL_Model(object):
         net= LSTM(lstm_dim, activation='tanh',recurrent_dropout=recDropFrac,dropout=layerDropFrac,name='B_%d'%lstm_dim) (net)
 
         #inputB is the statistical features and it goes into a Dense (CNN) network.
-        net2=Dense(4, activation='tanh', name='G_4')(inputB)
-        net2=Dense(4, activation='tanh', name='H_4')(net2)
+        net2=Dense(dens_dim, activation='tanh', name='G_4')(inputB)
+        net2=Dense(dens_dim, activation='tanh', name='H_4')(net2)
  
         #the two above get concatenated.
         net = concatenate([net,net2],name='seq_glob')
@@ -769,7 +780,10 @@ class DL_Model(object):
     def train_model(self,args):
         X_1hot_seqsamples,X_features_floats,Y=self.trainvalid_1hot_data['train']
         X_1hot_seqsamples_val,X_features_floats_val,Y_val=self.trainvalid_1hot_data['val']
-
+        print('train_model tt',len(X_features_floats[0]))
+        for i in range(len(Constants.globFeatureL)): #TODO check numfeatures
+               print('train_model i=%d ff=%f'%(i,X_features_floats[0][i]))
+        #ok99
         epochs=Constants.epochs
  
         if args.verb==0:
