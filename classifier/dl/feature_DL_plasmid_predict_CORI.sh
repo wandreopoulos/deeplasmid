@@ -68,7 +68,7 @@ MODEL=/global/dna/shared/data/functests/Assembly/models/plasmid4z-newfeat5-
 echo "Model used for prediction: $MODEL" 
 echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
 echo "Command used: $0 $1 $2"
-echo "Command used: $0 $1 $2" > $OUT/outPR.$DATETIME/model_path.txt
+echo "Command used: $0 $1 $2" >> $OUT/outPR.$DATETIME/model_path.txt
 
 
 python3 $PARENT/predict_Plasmid.py --dataPath $OUT/dlDataFormattedPred.$DATETIME   --outPath  $OUT/outPR.$DATETIME   --dataSegment -1   --given test  --kModelList  18-29  --seedModel  $MODEL 
