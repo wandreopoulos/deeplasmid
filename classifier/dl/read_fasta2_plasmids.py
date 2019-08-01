@@ -51,8 +51,9 @@ from threading import Timer
 #https://riccomini.name/kill-subprocesses-linux-bash
 #https://www.blog.pythonlibrary.org/2016/05/17/python-101-how-to-timeout-a-subprocess/
 
+srcdir = os.path.dirname(__file__)
+
 '''
-dir = os.path.dirname(__file__)
 sys.path.append(os.path.join(dir, './mpld3/mpld3'))
 
 import mpld3
@@ -71,8 +72,6 @@ from JGI_Pipeline import JGI_Pipeline
 COGs = ["COG0009"]
 
 DEBUG = 0
-USE_PRODIGAL = 1
-USE_PROT_SKETCH = 1
 
 
 '''
@@ -84,9 +83,10 @@ comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
 def run_chromsketch(sequence, seqin, penalty_value):
         FASTA = seqin
-        cmd = ["/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/run_chromsketch.sh", FASTA]
+        cmd = [os.path.join(srcdir, "run_chromsketch.sh"), FASTA]
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print "CHROMFINDER cmd: " + str(cmd)
+        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
         #subprocess.check_call(cmd)
         proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -102,9 +102,9 @@ def run_chromsketch(sequence, seqin, penalty_value):
         print "CHROMFINDER std_out: " + str(std_out)
         #std_out = subprocess.check_output(cmd)
 
-        results=0
+        results=1
         if std_out.find("No hits") >= 0:
-            results=1
+            results=0
 
         #proc1.kill()
         #proc1.terminate()
@@ -123,9 +123,10 @@ comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
 def run_plassketch(sequence, seqin, penalty_value):
         FASTA = seqin
-        cmd = ["/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/run_plassketch.sh", FASTA] 
+        cmd = [ os.path.join(srcdir, "run_plassketch.sh"), FASTA] 
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print "PLASMIDFINDER cmd: " + str(cmd)
+        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
         #subprocess.check_call(cmd)
         proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -141,9 +142,9 @@ def run_plassketch(sequence, seqin, penalty_value):
         print "PLASMIDFINDER std_out: " + str(std_out)
         #std_out = subprocess.check_output(cmd)
 
-        results=0
+        results=1
         if std_out.find("No hits") >= 0:
-            results=1
+            results=0
 
         #proc1.kill()
         #proc1.terminate()
@@ -161,9 +162,10 @@ comparesketch.sh in=contigs.fa ref=x.sketch persequence
 '''
 def run_plasORIsketch(sequence, seqin, penalty_value):
         FASTA = seqin
-        cmd = ["/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/run_plasORIsketch.sh", FASTA]
+        cmd = [ os.path.join(srcdir, "run_plasORIsketch.sh"), FASTA]
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print "PLASMIDORIFINDER cmd: " + str(cmd)
+        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
         #subprocess.check_call(cmd)
         proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -179,9 +181,9 @@ def run_plasORIsketch(sequence, seqin, penalty_value):
         print "PLASMIDORIFINDER std_out: " + str(std_out)
         #std_out = subprocess.check_output(cmd)
 
-        results=0
+        results=1
         if std_out.find("No hits") >= 0:
-            results=1
+            results=0
 
         #proc1.kill()
         #proc1.terminate()
@@ -208,7 +210,8 @@ def prodigal(sequence, seqin, penalty_value):
             return
         '''
         ###/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal
-        cmd = ["shifter", "--image=registry.services.nersc.gov/jgi/prodigal:latest", "prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
+        ###cmd = ["shifter", "--image=registry.services.nersc.gov/jgi/prodigal:latest", "prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
+        cmd = [ os.path.join(srcdir, "run_prodigal.sh"), FASTA]
         subprocess.check_call(cmd)
 
         prodigalFile = open(FASTA + ".prodigal.out", "r")
@@ -319,12 +322,22 @@ def prodigal(sequence, seqin, penalty_value):
         ###os.remove(FASTA + ".gene.faa.rpsblast.log")
         if os.path.getsize(FASTA + ".gene.faa") > 0:
             os.remove(FASTA + ".COG.hmm.hmmsearch.domtblout.txt")
+        '''
+        countaa = 0
+        countprot = 0
+        for line in fileinput.input( FASTA + ".gene.faa" ): ###READS####READS: ###:
+            line = line.strip()
+            if line.startswith(">"):
+                 countprot += 1
+            else:
+                 countaa += len(line)
+        aalenavg = countaa / float(countprot)
+                 
         os.remove(FASTA + ".gene.faa")
         os.remove(FASTA + ".gene.fasta")
-        '''
         os.remove(FASTA + ".prodigal.out")
         
-        return genesperMB, genecount
+        return genesperMB, genecount, aalenavg
 
 
 '''
@@ -336,7 +349,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
             max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
             max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
             max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
-            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, genesperMB, genecount, plassketch, plasORIsketch, chromsketch, header):
+            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, genesperMB, genecount, aalenavg, plassketch, plasORIsketch, chromsketch, header):
     
     features_file = open(os.path.join(output_path, 'features.svn'), 'a')
     ###Space separated file (for possible input to excel :)
@@ -663,54 +676,61 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(percent_occur_same_heptamer)
     yml_dict["percent_occur_same_heptamer"] = str(percent_occur_same_heptamer)
 
-    if USE_PRODIGAL:
-        '''
-        for i in COGs:
-            line += " " + str(feature_index) + ":" + str(coghits.get(i))
-            if DEBUG == 1:
-                print "COG " + i + " " + str(coghits.get(i))
-            feature_index += 1
-            line_excel += " " + str(coghits.get(i))
-            yml_dict["COG_"+i] = str(coghits.get(i))
-        '''
-        line += " " + str(feature_index) + ":" + str(genesperMB)
+    #if USE_PRODIGAL: # It was deciced to print 0s for these fields if PRODIGAL is not installed or not used.
+    '''
+    for i in COGs:
+        line += " " + str(feature_index) + ":" + str(coghits.get(i))
         if DEBUG == 1:
-            print "genesperMB " + str(genesperMB)
+            print "COG " + i + " " + str(coghits.get(i))
         feature_index += 1
-        line_excel += " " + str(genesperMB)
-        yml_dict["genesperMB"] = float(genesperMB)
-        
-        line += " " + str(feature_index) + ":" + str(genecount)
-        if DEBUG == 1:
-            print "genecount " + str(genecount)
-        feature_index += 1
-        line_excel += " " + str(genecount)
-        yml_dict["genecount"] = float(genecount)
+        line_excel += " " + str(coghits.get(i))
+        yml_dict["COG_"+i] = str(coghits.get(i))
+    '''
+    line += " " + str(feature_index) + ":" + str(genesperMB)
+    if DEBUG == 1:
+        print "genesperMB " + str(genesperMB)
+    feature_index += 1
+    line_excel += " " + str(genesperMB)
+    yml_dict["genesperMB"] = float(genesperMB)
+    
+    line += " " + str(feature_index) + ":" + str(genecount)
+    if DEBUG == 1:
+        print "genecount " + str(genecount)
+    feature_index += 1
+    line_excel += " " + str(genecount)
+    yml_dict["genecount"] = float(genecount)
 
-    if USE_PROT_SKETCH:
-        #if plassketch is not None:
-        line += " " + str(feature_index) + ":" + str(plassketch)
-        if DEBUG == 1:
-            print "plassketch " + str(plassketch)
-        feature_index += 1
-        line_excel += " " + str(plassketch)
-        yml_dict["plassketch"] = str(plassketch)
+    line += " " + str(feature_index) + ":" + str(aalenavg)
+    if DEBUG == 1:
+        print "aalenavg " + str(aalenavg)
+    feature_index += 1
+    line_excel += " " + str(aalenavg)
+    yml_dict["aalenavg"] = float(aalenavg)
 
-        #if plasORIsketch is not None:
-        line += " " + str(feature_index) + ":" + str(plasORIsketch)
-        if DEBUG == 1:
-            print "plasORIsketch " + str(plasORIsketch)
-        feature_index += 1
-        line_excel += " " + str(plasORIsketch)
-        yml_dict["plasORIsketch"] = str(plasORIsketch)
+    #if USE_PROT_SKETCH: # It was deciced to print 0s for these fields if sketch is not installed or not used.
+    #if plassketch is not None:
+    line += " " + str(feature_index) + ":" + str(plassketch)
+    if DEBUG == 1:
+        print "plassketch " + str(plassketch)
+    feature_index += 1
+    line_excel += " " + str(plassketch)
+    yml_dict["plassketch"] = str(plassketch)
 
-        #if chromsketch is not None:
-        line += " " + str(feature_index) + ":" + str(chromsketch)
-        if DEBUG == 1:
-            print "chromsketch " + str(chromsketch)
-        feature_index += 1
-        line_excel += " " + str(chromsketch)
-        yml_dict["chromsketch"] = str(chromsketch)
+    #if plasORIsketch is not None:
+    line += " " + str(feature_index) + ":" + str(plasORIsketch)
+    if DEBUG == 1:
+        print "plasORIsketch " + str(plasORIsketch)
+    feature_index += 1
+    line_excel += " " + str(plasORIsketch)
+    yml_dict["plasORIsketch"] = str(plasORIsketch)
+
+    #if chromsketch is not None:
+    line += " " + str(feature_index) + ":" + str(chromsketch)
+    if DEBUG == 1:
+        print "chromsketch " + str(chromsketch)
+    feature_index += 1
+    line_excel += " " + str(chromsketch)
+    yml_dict["chromsketch"] = str(chromsketch)
 
 
     '''
@@ -956,7 +976,7 @@ def fivesixFindPentamer(seq, seqin, penalty_value):
     max_occur_same_pentamer = 0
     pos_occur_same_pentamer = 0
 
-    cmd = ["/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/run_pentamer.sh", str(seqin)] #"shifter", "--image=bryce911/bbtools", "commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=5", "display=3", "count"]
+    cmd = [ os.path.join(srcdir, "run_pentamer.sh"), str(seqin)] #"shifter", "--image=bryce911/bbtools", "commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=5", "display=3", "count"]
     proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     std_out, std_err = proc1.communicate()
     #std_out = subprocess.check_output(cmd)
@@ -1647,8 +1667,9 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     coghits = None
                     genesperMB = 0
                     genecount = 0
-                    if USE_PRODIGAL:
-                       genesperMB, genecount = prodigal(sequence, seqin, penalty_value);
+                    aalenavg = 0
+                    if Constants.USE_PRODIGAL:
+                       genesperMB, genecount, aalenavg = prodigal(sequence, seqin, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME cogs: " + runtime
                     #if DEBUG == 1:
@@ -1658,7 +1679,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     plassketch = 0
                     plasORIsketch = 0
                     chromsketch = 0
-                    if USE_PROT_SKETCH:
+                    if Constants.USE_PROT_SKETCH:
                        plassketch = run_plassketch(sequence, seqin, penalty_value);
                        plasORIsketch = run_plasORIsketch(sequence, seqin, penalty_value);
                        chromsketch = run_chromsketch(sequence, seqin, penalty_value);
@@ -1690,7 +1711,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
             max_occur_heptamer, max_occur_same_heptamer, percent_occur_same_heptamer, \
             max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
             max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
-            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, genesperMB, genecount, plassketch, plasORIsketch, chromsketch, header);
+            max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer, coghits, genesperMB, genecount, aalenavg, plassketch, plasORIsketch, chromsketch, header);
                     
                     return penalty_value;
 
@@ -1845,7 +1866,7 @@ if __name__ == "__main__":
         input_path = [ input_path ]
         
     
-    colheaders = "id_run,gc_content,mingc,maxgc,AlongestHomopol,AtotalLongHomopol,ClongestHomopol,CtotalLongHomopol,GlongestHomopol,GtotalLongHomopol,TlongestHomopol,TtotalLongHomopol,longestHomopolSum,totalLongHomopolSum,longest_repeat,occur_longest_repeat,longest_rev_repeat,occur_longest_rev_repeat,longest_revcompl_repeat,occur_longest_revcompl_repeat,longest_revcompl_repeat_s2,occur_longest_revcompl_repeat_s2,len_sequence,longest_id_ecoli,longest_id_vector,energy,max_occur_dimer,max_occur_same_dimer,percent_occur_same_dimer,max_occur_trimer,max_occur_same_trimer,percent_occur_same_trimer,max_occur_tetramer,max_occur_same_tetramer,percent_occur_same_tetramer,max_occur_pentamer,max_occur_pentamer_1hot,max_occur_same_pentamer,percent_occur_same_pentamer,max_occur_hexamer,max_occur_same_hexamer,percent_occur_same_hexamer,max_occur_heptamer,max_occur_same_heptamer,percent_occur_same_heptamer,COGS,genesperMB,genecount"
+    colheaders = "id_run,gc_content,mingc,maxgc,AlongestHomopol,AtotalLongHomopol,ClongestHomopol,CtotalLongHomopol,GlongestHomopol,GtotalLongHomopol,TlongestHomopol,TtotalLongHomopol,longestHomopolSum,totalLongHomopolSum,longest_repeat,occur_longest_repeat,longest_rev_repeat,occur_longest_rev_repeat,longest_revcompl_repeat,occur_longest_revcompl_repeat,longest_revcompl_repeat_s2,occur_longest_revcompl_repeat_s2,len_sequence,longest_id_ecoli,longest_id_vector,energy,max_occur_dimer,max_occur_same_dimer,percent_occur_same_dimer,max_occur_trimer,max_occur_same_trimer,percent_occur_same_trimer,max_occur_tetramer,max_occur_same_tetramer,percent_occur_same_tetramer,max_occur_pentamer,max_occur_pentamer_1hot,max_occur_same_pentamer,percent_occur_same_pentamer,max_occur_hexamer,max_occur_same_hexamer,percent_occur_same_hexamer,max_occur_heptamer,max_occur_same_heptamer,percent_occur_same_heptamer,COGS,genesperMB,genecount,aalenavg,plassketch,plasORIsketch,chromsketch"
     if len(input_path) >0:
         features_file = open(os.path.join(output_path, 'features.svn'), 'w')
         features_file.write(colheaders + "\n")

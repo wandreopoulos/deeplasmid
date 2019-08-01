@@ -32,7 +32,8 @@ fi
 kfoldOff=$(( ${arrIdx} % 6 ))
 
 taskExe=$PARENT/train_Plasmid.py
-coreN='plasmid4x-newfeat4'
+coreN='plasmid4z-newfeat5'
+#coreN='plasmid4test-newfeat5'
 
 codeList="$PARENT/Constants.py $PARENT/DL_Model.py $PARENT/Plotter_Plasmid.py  $PARENT/batchTrain.slr $PARENT/Util_Plasmid.py  $taskExe"
 dataDir="delplasmid_data4train"

@@ -3,7 +3,7 @@
 echo "Running feature_DL_plasmid_train.sh . This version is meant for Cori.
 DelPlasmid - Plasmid finder
 Author: Bill Andreopoulos
-Last maintained: June 26, 2019"
+Last maintained: July 30, 2019"
 
 
 

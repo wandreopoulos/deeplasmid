@@ -89,10 +89,13 @@ def normalize_features(rawD):
             elif xN=='genecount':
                 xx=min(1.,val/1e3) #1k is the max genecount
                 val=max(0.007,xx) #0.007 is the min accepted value for this feature
+            elif xN=='aalenavg':
+                xx=min(1.,val/1e3) #1k is the max aalenavg
+                val=max(0.007,xx) #0.007 is the min accepted value for this feature
             elif 'longestHomopol' in xN:
                 val=min(1,val/15)  #we don't expect homopols of length >15 and 1 is the max accepted value for this feature
             elif 'totalLongHomopol'  in xN:
-                val=min(1,val/1000.)
+                val=min(1,val/1000.)   #we don't expect homopols of length >1000 and 1 is the max accepted value for this feature
             else: 
                 #val-=0.5
                 outD[xN]=val #other vals such as GC plassketch pentamer are normalized from [0,1] to [-0.5,0.5]
