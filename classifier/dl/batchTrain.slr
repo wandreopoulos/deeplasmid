@@ -18,12 +18,24 @@ arrIdx=${SLURM_ARRAY_TASK_ID}
 #nCpu=$[ $SLURM_CPUS_ON_NODE / 4 ]
 #dropFrac=0.${arrIdx}
 
+#PARENT is passed in from the calling script. It is used for cp'ing src files for archiving.
+#PARENT=`dirname "$(readlink -f "$0")"`
+#PARENT=`dirname $0`
+#PARENT=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl
+if [[ -z "${PARENT}" ]]; then
+  echo "PARENT envvar must be defined as the src code location. It is used for copying src files for archiving. Rerun with export PARENT=....; sbatch --export=PARENT batchTrain.slr"
+  exit 1
+else
+  echo "PARENT envvar is defined as the src code location $PARENT"
+fi
+
 kfoldOff=$(( ${arrIdx} % 6 ))
 
-taskExe=train_Plasmid.py
-coreN='plasmid4v'
+taskExe=$PARENT/train_Plasmid.py
+coreN='plasmid4z-newfeat5'
+#coreN='plasmid4test-newfeat5'
 
-codeList="Constants.py DL_Model.py Plotter_Plasmid.py  batchTrain.slr Util_Plasmid.py  $taskExe"
+codeList="$PARENT/Constants.py $PARENT/DL_Model.py $PARENT/Plotter_Plasmid.py  $PARENT/batchTrain.slr $PARENT/Util_Plasmid.py  $taskExe"
 dataDir="delplasmid_data4train"
 
 date
@@ -33,7 +45,7 @@ md5sum $taskExe
 #env|grep SLURM
 
 srcDir=`pwd`
-wrkDir=$CSCRATCH/${coreN}-${arrIdx}
+wrkDir=./${coreN}-${arrIdx}
 mkdir -p $wrkDir
 cp -rp $codeList  $wrkDir
 cp -rp $dataDir ${wrkDir}/data
@@ -45,7 +57,7 @@ module load python/3.6-anaconda-5.2
 ( sleep 180; date; free -g; top ibn1)&
 ( sleep 1200; date;  free -g; top ibn1)&
 
-/usr/bin/time -v python -u ./$taskExe     --arrIdx $arrIdx   --kfoldOffset $kfoldOff --verbosity 0  --noXterm   --outPath ./   >&fit_${arrIdx}.log
+/usr/bin/time -v python -u $taskExe     --arrIdx $arrIdx   --kfoldOffset $kfoldOff --verbosity 0  --noXterm   --outPath ./   >&fit_${arrIdx}.log
 
 # re-train: --seedModel $seedModel
 

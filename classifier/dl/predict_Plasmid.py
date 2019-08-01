@@ -138,7 +138,11 @@ for scaffN in all_scaffolds:
     assert len(sampList) >1 #0 # must ahve few samples to compute the average
 
     floatD=all_scaffolds[scaffN]['features']
-    featureList=[ floatD[x] for x in Constants.globFeatureL ]
+    flatten = lambda l: [float(item) for sublist in l for item in sublist]
+    b=flatten( [ list(floatD[x]) for x in Constants.globFeatureL if type(floatD[x]) is not float ] )
+    a=[ floatD[x] for x in Constants.globFeatureL if type(floatD[x]) is float ]
+    featureList=a+b #[ floatD[x] for x in Constants.globFeatureL if type(floatD[x]) is float else list(floatD[x]) ]
+    print("featureList %s" % (featureList))
     # replicate the same scaffold features for all samples (for sequence scaffN)
     featureListXsamples=[featureList]*len(sampList)
     

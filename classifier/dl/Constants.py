@@ -11,7 +11,7 @@ __email__ = "wandreopoulos@lbl.gov"
 
 
 #Number of processes to use.
-PROCESSES = 32 ### multiprocessing.cpu_count() ###32
+PROCESSES = 16 ### multiprocessing.cpu_count() ###32
 
 
 
@@ -69,7 +69,7 @@ print('all bases :', list(oneHotBase.keys()))
 print('use seqLenCut=',seqLenCut)
 
 #Feature names
-globFeatureL=['gc_content','len_sequence']
+globFeatureL=['gc_content','len_sequence','plassketch', 'plasORIsketch', 'chromsketch', 'genecount', 'genesperMB', 'aalenavg'] #'max_occur_pentamer_1hot'
 for x in basesL: #Note dont change this to the basesSet, which is unordered! Keep basesL
     globFeatureL.append(x+'_longestHomopol')
     globFeatureL.append(x+'_totalLongHomopol')
@@ -116,4 +116,15 @@ target_samples_per_contig_training=601000
 
 #approx num samples per contig for prediction
 target_samples_per_contig_pred=100
+
+
+# If prodigal is used to include gene content in the features, please check the command used in run_prodigal.sh
+USE_PRODIGAL = 1
+
+# If sketch is used to include chromosome and protein-specific genes in the features, please check the command used in run_*sketch.sh
+USE_PROT_SKETCH = 1
+
+
+
+
 
