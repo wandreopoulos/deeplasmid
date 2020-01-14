@@ -228,46 +228,48 @@ plt.legend(loc="lower right")
 plt.savefig("roc_curve.png")
 '''
 
-plt.figure()
-#Histogram plot. This hist plots the per-scaffold scores for each class (plasmid vs. chrom) with different colors.
-bins = np.linspace(0, 1, 100)
-y_score_plas = np.array(scores_scaffs_list)[np.array(Yclass) == 1]
-y_score_gen = np.array(scores_scaffs_list)[np.array(Yclass) == 0]
-plt.hist(y_score_plas, bins, alpha=0.5, label='plasmid', density=True)
-plt.hist(y_score_gen, bins, alpha=0.5, label='genomic', density=True)
-plt.legend(loc="upper left", prop={'size': 11})
-plt.xlabel('Score')
-plt.ylabel('Counts')
-plt.title('Per-scaffold average Scores Deep Learning on test set')
-plt.show()
-plt.savefig(os.path.join( args.outPath , "scaffscore_hist.png"))
-
-plt.figure()
-#Hist plot for per-sample score for each class. scores_samples_list_class0 and scores_samples_list_class1.
-bins = np.linspace(0, 1, 100)
-y_score_plas = np.array(scores_samples_list_class1)
-y_score_gen = np.array(scores_samples_list_class0)
-plt.hist(y_score_plas, bins, alpha=0.5, label='plasmid', density=True)
-plt.hist(y_score_gen, bins, alpha=0.5, label='genomic', density=True)
-plt.legend(loc="upper left", prop={'size': 11})
-plt.xlabel('Score')
-plt.ylabel('Counts')
-plt.title('Per-sample Scores Deep Learning on test set')
-plt.show()
-plt.savefig(os.path.join( args.outPath , "samplescore_hist.png"))
-
-
-from Plotter_Plasmid import Plotter_Plasmid
-ppp=Plotter_Plasmid(args)
-y1=0
-if args.given=='plasm': y1=1
-
-#Ytrue1=Yclass ###[y1]*len(scores_samples_list)
-#ppp.plot_labeled_scores(Ytrue1, scores_samples_list,'samples:'+args.given,score_thr=score_thr,figId=21)
-#Ytrue2=Yclass ###[y1]*len(scores_scaffs_list)
-ppp.plot_labeled_scores(Yclass, scores_scaffs_list,'scaffolds:'+args.given,score_thr=score_thr,figId=22)
-ppp.pause(args,'predict') 
-#Ytrue=[y1]*len(Yscore_sum)
-#ppp.plot_labeled_scores(Ytrue, Yscore_sum,'given='+args.given,score_thr=score_thr)
-#ppp.pause(args,'predict') 
+#Only save plots if the user requested them.
+if not args.noXterm:
+    plt.figure()
+    #Histogram plot. This hist plots the per-scaffold scores for each class (plasmid vs. chrom) with different colors.
+    bins = np.linspace(0, 1, 100)
+    y_score_plas = np.array(scores_scaffs_list)[np.array(Yclass) == 1]
+    y_score_gen = np.array(scores_scaffs_list)[np.array(Yclass) == 0]
+    plt.hist(y_score_plas, bins, alpha=0.5, label='plasmid', density=True)
+    plt.hist(y_score_gen, bins, alpha=0.5, label='genomic', density=True)
+    plt.legend(loc="upper left", prop={'size': 11})
+    plt.xlabel('Score')
+    plt.ylabel('Counts')
+    plt.title('Per-scaffold average Scores Deep Learning on test set')
+    plt.show()
+    plt.savefig(os.path.join( args.outPath , "scaffscore_hist.png"))
+    
+    plt.figure()
+    #Hist plot for per-sample score for each class. scores_samples_list_class0 and scores_samples_list_class1.
+    bins = np.linspace(0, 1, 100)
+    y_score_plas = np.array(scores_samples_list_class1)
+    y_score_gen = np.array(scores_samples_list_class0)
+    plt.hist(y_score_plas, bins, alpha=0.5, label='plasmid', density=True)
+    plt.hist(y_score_gen, bins, alpha=0.5, label='genomic', density=True)
+    plt.legend(loc="upper left", prop={'size': 11})
+    plt.xlabel('Score')
+    plt.ylabel('Counts')
+    plt.title('Per-sample Scores Deep Learning on test set')
+    plt.show()
+    plt.savefig(os.path.join( args.outPath , "samplescore_hist.png"))
+    
+    
+    from Plotter_Plasmid import Plotter_Plasmid
+    ppp=Plotter_Plasmid(args)
+    y1=0
+    if args.given=='plasm': y1=1
+    
+    #Ytrue1=Yclass ###[y1]*len(scores_samples_list)
+    #ppp.plot_labeled_scores(Ytrue1, scores_samples_list,'samples:'+args.given,score_thr=score_thr,figId=21)
+    #Ytrue2=Yclass ###[y1]*len(scores_scaffs_list)
+    ppp.plot_labeled_scores(Yclass, scores_scaffs_list,'scaffolds:'+args.given,score_thr=score_thr,figId=22)
+    ppp.pause(args,'predict') 
+    #Ytrue=[y1]*len(Yscore_sum)
+    #ppp.plot_labeled_scores(Ytrue, Yscore_sum,'given='+args.given,score_thr=score_thr)
+    #ppp.pause(args,'predict') 
 

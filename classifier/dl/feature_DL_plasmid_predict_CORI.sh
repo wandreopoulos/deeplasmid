@@ -64,7 +64,7 @@ MODEL=/global/cscratch1/sd/andreopo/plasmid4x-newfeat2-
 MODEL=/global/cscratch1/sd/andreopo/plasmid4x-newfeat3-
 MODEL=/global/cscratch1/sd/andreopo/plasmidml_tests/plasmid4x-newfeat4-
 MODEL=/global/cscratch1/sd/andreopo/plasmidml_tests/plasmid4z-newfeat5-
-MODEL=/global/dna/shared/data/functests/Assembly/models/plasmid4z-newfeat5-
+MODEL=/global/dna/shared/data/functests/Assembly/Plasmid_Models/plasmid4z-newfeat5-
 echo "Model used for prediction: $MODEL" 
 echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
 echo "Command used: $0 $1 $2"

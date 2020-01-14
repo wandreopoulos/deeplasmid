@@ -83,7 +83,7 @@ comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
 def run_chromsketch(sequence, seqin, penalty_value):
         FASTA = seqin
-        cmd = [os.path.join(srcdir, "run_chromsketch.sh"), FASTA]
+        cmd = [os.path.join(srcdir, "/srv/jgi-ml/classifier/dl/run_chromsketch.sh"), FASTA]
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print "CHROMFINDER cmd: " + str(cmd)
         #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
@@ -123,7 +123,7 @@ comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
 def run_plassketch(sequence, seqin, penalty_value):
         FASTA = seqin
-        cmd = [ os.path.join(srcdir, "run_plassketch.sh"), FASTA] 
+        cmd = [ os.path.join(srcdir, "/srv/jgi-ml/classifier/dl/run_plassketch.sh"), FASTA] 
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print "PLASMIDFINDER cmd: " + str(cmd)
         #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
@@ -162,7 +162,7 @@ comparesketch.sh in=contigs.fa ref=x.sketch persequence
 '''
 def run_plasORIsketch(sequence, seqin, penalty_value):
         FASTA = seqin
-        cmd = [ os.path.join(srcdir, "run_plasORIsketch.sh"), FASTA]
+        cmd = [ os.path.join(srcdir, "/srv/jgi-ml/classifier/dl/run_plasORIsketch.sh"), FASTA]
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print "PLASMIDORIFINDER cmd: " + str(cmd)
         #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
@@ -211,7 +211,7 @@ def prodigal(sequence, seqin, penalty_value):
         '''
         ###/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal
         ###cmd = ["shifter", "--image=registry.services.nersc.gov/jgi/prodigal:latest", "prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
-        cmd = [ os.path.join(srcdir, "run_prodigal.sh"), FASTA]
+        cmd = [ os.path.join(srcdir, "/srv/jgi-ml/classifier/dl/run_prodigal.sh"), FASTA]
         subprocess.check_call(cmd)
 
         prodigalFile = open(FASTA + ".prodigal.out", "r")
@@ -228,7 +228,9 @@ def prodigal(sequence, seqin, penalty_value):
                       genecount += 1
         
         ones = x.values().count(1)
-        genesperMB=(float(ones)/float(contiglen))
+        genesperMB=0
+        if contiglen > 0:
+            genesperMB=(float(ones)/float(contiglen))
         prodigalFile.close()
 
         '''
@@ -331,7 +333,9 @@ def prodigal(sequence, seqin, penalty_value):
                  countprot += 1
             else:
                  countaa += len(line)
-        aalenavg = countaa / float(countprot)
+        aalenavg = 0
+        if countprot > 0:
+            aalenavg = countaa / float(countprot)
                  
         os.remove(FASTA + ".gene.faa")
         os.remove(FASTA + ".gene.fasta")
@@ -355,8 +359,10 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     ###Space separated file (for possible input to excel :)
     features_file_excel = open(os.path.join(output_path, 'features.txt'), 'a')
     ###Yaml file
+    if DEBUG == 1:  print "YML " + os.path.join(output_path, 'yml')
     if not os.path.exists(os.path.join(output_path, 'yml')):
         os.makedirs(os.path.join(output_path, 'yml'))
+        if DEBUG == 1:  print "YML2 " + os.path.join(output_path, 'yml')
     header_start = header.split()[0].replace("/", "_")
     ###suff = header_start[-3:]
     ###if not os.path.exists(os.path.join(output_path, 'yml/' + suff)):
@@ -976,7 +982,7 @@ def fivesixFindPentamer(seq, seqin, penalty_value):
     max_occur_same_pentamer = 0
     pos_occur_same_pentamer = 0
 
-    cmd = [ os.path.join(srcdir, "run_pentamer.sh"), str(seqin)] #"shifter", "--image=bryce911/bbtools", "commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=5", "display=3", "count"]
+    cmd = [ os.path.join(srcdir, "/srv/jgi-ml/classifier/dl/run_pentamer.sh"), str(seqin)] #"shifter", "--image=bryce911/bbtools", "commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=5", "display=3", "count"]
     proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     std_out, std_err = proc1.communicate()
     #std_out = subprocess.check_output(cmd)
@@ -1613,16 +1619,16 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     gc_content = oneComputeGCtotal(sequence);
                     runtime = str(time() - startpointingtime)
                     #print "RUNTIME oneComputeGCtotal: " + runtime
-                    #if DEBUG == 1:
-                    #    print "oneComputeGCtotal for entire sequence"
+                    if DEBUG == 1:
+                        print "oneComputeGCtotal for entire sequence"
 
                     window = min(100, len(sequence));
                     startpointingtime = time()
                     mingc, mingcstart, maxgc, maxgcstart = twothreeComputeMinMaxGCinWindow(sequence, window);
                     runtime = str(time() - startpointingtime)
                     #print "RUNTIME twothreeComputeMinMaxGCinWindow100: " + runtime
-                    #if DEBUG == 1:
-                    #    print "twothreeComputeMinMaxGCinWindow for window " + str(window)
+                    if DEBUG == 1:
+                        print "twothreeComputeMinMaxGCinWindow for window " + str(window)
 
                     ##TODO report where does the homopolymer start (coordinates for every homopolymer) and length, same for GC rules
                     ##TODO some reporting print statements show pointers to vars instead of the values, check all show values.
@@ -1635,8 +1641,8 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     runtime = str(time() - startpointingtime)
                     #print "RUNTIME fourFindLongestHomopolymer: " + runtime
                     bases = ['A', 'C', 'G', 'T', 'N']
-                    #if DEBUG == 1:
-                    #    print "fourFindLongestHomopolymer"
+                    if DEBUG == 1:
+                        print "fourFindLongestHomopolymer"
 
                     startpointingtime = time()
                     longest_repeat, occur_longest_repeat, longest_rev_repeat, occur_longest_rev_repeat, longest_revcompl_repeat, occur_longest_revcompl_repeat, longest_revcompl_repeat_s2, occur_longest_revcompl_repeat_s2, len_sequence, max_occur_same_dimer, percent_occur_same_dimer, max_occur_same_trimer, percent_occur_same_trimer, penalty_value = ('', 0, '', 0, '', 0, '', 0, len(sequence), 0, 0, 0, 0, 0)
@@ -1644,8 +1650,8 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     ###longest_repeat, occur_longest_repeat, longest_rev_repeat, occur_longest_rev_repeat, longest_revcompl_repeat, occur_longest_revcompl_repeat, longest_revcompl_repeat_s2, occur_longest_revcompl_repeat_s2, len_sequence, penalty_value = fivesixFindRepeats(sequence, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME fivesixFindRepeats: " + runtime
-                    #if DEBUG == 1:
-                    #    print "fivesixFindRepeats"
+                    if DEBUG == 1:
+                        print "fivesixFindRepeats"
                         
                     startpointingtime = time()
                     len_sequence, max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, \
@@ -1660,8 +1666,8 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     len_sequence, max_occur_pentamer, max_occur_pentamer_1hot, max_occur_same_pentamer, percent_occur_same_pentamer, penalty_value = fivesixFindPentamer(sequence, seqin, penalty_value)
                     runtime = str(time() - startpointingtime)
                     #print "RUNTIME fivesixFindMers: " + runtime
-                    #if DEBUG == 1:
-                    #    print "fivesixFindMers"
+                    if DEBUG == 1:
+                        print "fivesixFindMers"
 
                     startpointingtime = time()
                     coghits = None
@@ -1672,8 +1678,8 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                        genesperMB, genecount, aalenavg = prodigal(sequence, seqin, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME cogs: " + runtime
-                    #if DEBUG == 1:
-                    #    print "cogs"
+                    if DEBUG == 1:
+                        print "cogs"
 
                     startpointingtime = time()
                     plassketch = 0
@@ -1685,8 +1691,8 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                        chromsketch = run_chromsketch(sequence, seqin, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME cogs: " + runtime
-                    #if DEBUG == 1:
-                    #    print "cogs"
+                    if DEBUG == 1:
+                        print "cogs"
                         
                     seq_in_filename = os.path.join(output_path, 'seq.fasta')
                     seq_in = open(seq_in_filename, 'w')
@@ -1721,7 +1727,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
 def multiproc_pool(pipeline):
         #print "remoteCommand: " + pipeline.getCommand();
         try:
-                #print("Starting: " + pipeline.getCommand() + " ...with args: " + pipeline.params[0] + "  " +  pipeline.paramvalues[0] + "  " +  pipeline.params[1] + "  " +  pipeline.paramvalues[1] + "  " +  pipeline.params[2] + "  " +  pipeline.paramvalues[2] + "  " +  pipeline.params[3] + "  " +  pipeline.paramvalues[3] )
+                #print("Starting: " + pipeline.getCommand() + " ...with args: " + pipeline.params[0] + "  " +  pipeline.paramvalues[0] + "  " +  pipeline.params[1] + "  " +  pipeline.paramvalues[1] + "  " +  pipeline.params[2] + "  " +  pipeline.paramvalues[2] ) ### + "  " +  pipeline.params[3] + "  " +  pipeline.paramvalues[3] )
                 #TODO append all params to cmd
                 cmd = [ pipeline.getCommand() ] ###, pipeline.params[0] , pipeline.paramvalues[0] , pipeline.params[1] , pipeline.paramvalues[1] , pipeline.params[2] , pipeline.paramvalues[2] , pipeline.params[3] , pipeline.paramvalues[3] ]
                 for i in range(0, len(pipeline.params)):
@@ -1729,6 +1735,7 @@ def multiproc_pool(pipeline):
                         if i < len(pipeline.paramvalues):
                             cmd.append(pipeline.paramvalues[i])
                         
+                '''
                 proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 kill = lambda process: process.kill()
                 my_timer = Timer(1000, kill, [proc1])
@@ -1737,8 +1744,9 @@ def multiproc_pool(pipeline):
                     std_out, std_err = proc1.communicate()
                 finally:
                     my_timer.cancel()
-
-                #subprocess.check_call(cmd)
+                '''
+                #NOTE In Docker container we run a process as follows, while on Cori used the block above to cancel long-running processes.
+                subprocess.check_call(cmd)
 
         except subprocess.CalledProcessError as e:
                 result = "Failed to run job (%s)." % (e.output) ###.message   ###"+str(pipeline.paramvalues[2])+"
@@ -1965,7 +1973,7 @@ if __name__ == "__main__":
             print "job number processed: %s " % (num_jobs)
         #num_processes += 1
     else:
-        ###print "\n\nSEQUENCE %s\n\n" % sequence
+        if DEBUG == 1: print "\n\nSEQUENCE %s\n\n" % sequence
         ###if len(input_path) <1:
         ###print "penalty_value = process_seq(options.seqin %s, sequence %s, header %s, penalty_value %s, output_path %s, id_run %s, run_blast %s)" % (options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
         penalty_value = process_seq(options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
