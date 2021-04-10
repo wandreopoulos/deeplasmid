@@ -1,9 +1,0 @@
-
-Entry point for plasmid prediction:
-andreopo@denovo1:/global/projectb/scratch/andreopo/Plasmid_ncbi> shifter       --image=billandreo/mlplasmid:1   /srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh  final.assembly.fasta  OUT_final.assembly.fasta
-Pass in a FASTA file and an OUTPUT dir
- 
-Entry point for mito prediction:
-    shifter --image=billandreo/mlmito:1  get_mitos_from_fungi2_DENOVO.sh  highpass_gc.fa filtered.fa
-2nd argument is optional, it is just the link to the final assembled mito
-
