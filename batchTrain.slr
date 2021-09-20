@@ -1,0 +1,75 @@
+#!/bin/bash -l
+
+#SBATCH --nodes=1  --qos=genepool  -C haswell -A fnglasmb
+#SBATCH   --time=72:00:00  # -J plasm-reg  
+#-SBATCH --partition=debug --time=00:29:00 -J plasm-dbg
+
+#-SBATCH  -C haswell  
+#  # Edison, 59 GB RAM
+
+#SBATCH --array=18-29
+
+arrIdx=${SLURM_ARRAY_TASK_ID}
+
+#zipDim=${arrIdx} 
+#zipDim=$[ 16+ 8 * ${arrIdx} ]
+#zipDim=$(( ${arrIdx} % 3 +1 ))
+#zipDim=$(( ${arrIdx} / 3 + 1 ))
+#nCpu=$[ $SLURM_CPUS_ON_NODE / 4 ]
+#dropFrac=0.${arrIdx}
+
+#PARENT is passed in from the calling script. It is used for cp'ing src files for archiving.
+#PARENT=`dirname "$(readlink -f "$0")"`
+#PARENT=`dirname $0`
+#PARENT=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl
+if [[ -z "${PARENT}" ]]; then
+  echo "PARENT envvar must be defined as the src code location. It is used for copying src files for archiving. Rerun with export PARENT=....; sbatch --export=PARENT batchTrain.slr"
+  exit 1
+else
+  echo "PARENT envvar is defined as the src code location $PARENT"
+fi
+
+kfoldOff=$(( ${arrIdx} % 6 ))
+
+taskExe=$PARENT/train_Plasmid.py
+coreN='plasmid4z-newfeat15'
+#coreN='plasmid4test-newfeat5'
+
+codeList="$PARENT/Constants.py $PARENT/DL_Model.py $PARENT/Plotter_Plasmid.py  $PARENT/batchTrain.slr $PARENT/Util_Plasmid.py  $taskExe  $PARENT/read_fasta2_plasmids.py"
+dataDir="delplasmid_data4train"
+
+date
+echo fit-`hostname`-arrIdx-$arrIdx start-jid ${SLURM_JOBID}
+echo SLURM_CLUSTER_NAME=$SLURM_CLUSTER_NAME kfoldOff=$kfoldOff
+md5sum $taskExe
+#env|grep SLURM
+
+#move any old dirs
+export DATETIME=`date "+%Y-%m-%d_%H:%M:%S"`
+#mkdir ./${coreN}.$DATETIME
+#mv ./${coreN}-??  ./${coreN}.$DATETIME/
+
+srcDir=`pwd`
+wrkDir=./${coreN}-${arrIdx}
+mkdir -p $wrkDir
+cp -rp $codeList  $wrkDir
+cp -rp $dataDir ${wrkDir}/data
+cd  $wrkDir
+echo PWD=`pwd`
+ls -l  $dataH5
+module load python/3.6-anaconda-5.2
+
+( sleep 180; date; free -g; top ibn1)&
+( sleep 1200; date;  free -g; top ibn1)&
+
+/usr/bin/time -v python -u $taskExe     --arrIdx $arrIdx   --kfoldOffset $kfoldOff --verbosity 0  --noXterm   --outPath ./   >&fit_${arrIdx}.log
+
+# re-train: --seedModel $seedModel
+
+md5sum $taskExe >>fit_${arrIdx}.log
+echo it was JID  ${SLURM_JOBID} >>fit_${arrIdx}.log
+echo done-`date`
+
+# mv slurm log to final destination - it is alwasy a job-array
+mv $srcDir/slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out .
+
