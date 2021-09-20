@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-echo "Running prodigal"
+echo "Running hmmsearch"
 
 FASTA=$1
 
