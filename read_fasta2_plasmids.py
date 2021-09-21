@@ -240,10 +240,6 @@ def build_genehit_vector(input_list):
         table=infile.readlines()
         hmm_dict = map(hash, [i.strip() for i in table])
 
-    # hmm dictionary - for each HMM store plasmid and chromosomal frequency 
-    #for i in table:
-    #    hmm_dict[i[0]] = [float(i[3]),float(i[4])]
-
     # Calculate probabilities for each element of input list
     out_list = [0]*1538
     gene_list = []
@@ -252,10 +248,8 @@ def build_genehit_vector(input_list):
         gene_list = map(hash, input_list[0].split())
     for i in hmm_dict:
         if i in gene_list:
-            out_list[count] = 1 #.append(1)
+            out_list[count] = 1 
         count += 1
-        #else:
-        #    out_list.append(0)
 
     return out_list 
 
@@ -1711,13 +1705,13 @@ def create_timestamp():
 
 
 def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run_blast = None):
-                    if DEBUG == 1:
-                        print "\n\n_____________________________________\n  -------> Computing features for fasta header : " + header + "\n"
+                    #if DEBUG == 1:
+                    #    print "\n\n_____________________________________\n  -------> Computing features for fasta header : " + header + "\n"
                     
                     #TRIMREADS.write(line + "\n" + sequence + "\n")
-                    if DEBUG == 1:
-                        print "sequence %s" % ( sequence )
-                        print "length of sequence %s" % ( len(sequence) )
+                    #if DEBUG == 1:
+                    #    print "sequence %s" % ( sequence )
+                    #    print "length of sequence %s" % ( len(sequence) )
 
                     holder_bad_gc = []
                     startpointingtime = time()
@@ -2083,7 +2077,7 @@ if __name__ == "__main__":
             print "job number processed: %s " % (num_jobs)
         #num_processes += 1
     else:
-        ###print "\n\nSEQUENCE %s\n\n" % sequence
+        ###if DEBUG == 1: print "\n\nSEQUENCE %s\n\n" % sequence
         ###if len(input_path) <1:
         ###print "penalty_value = process_seq(options.seqin %s, sequence %s, header %s, penalty_value %s, output_path %s, id_run %s, run_blast %s)" % (options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
         penalty_value = process_seq(options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
