@@ -4,7 +4,7 @@
 README file
 September 20, 2021
 Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
-
+Codebase: Master branch
 
 
 Deeplasmid is a tool based on machine learning that separates plasmids from chromosomal sequences. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
