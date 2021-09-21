@@ -84,7 +84,7 @@ def normalize_features(rawD):
         for xN in rawD:
             val=rawD[xN]
             if xN=='len_sequence':
-                xx=min(1.,val/3e5) #30k is the max length
+                xx=min(1.,val/3e5) #330k is the max length
                 val=max(0.007,xx) #0.007 is the min accepted value for this feature
             elif xN=='genecount':
                 xx=min(1.,val/1e3) #1k is the max genecount
@@ -98,9 +98,9 @@ def normalize_features(rawD):
                 val=min(1,val/1000.)   #we don't expect homopols of length >1000 and 1 is the max accepted value for this feature
             else: 
                 #val-=0.5
-                outD[xN]=val #other vals such as GC plassketch pentamer are normalized from [0,1] to [-0.5,0.5]
+                outD[xN]=val #other vals such as GC plassketch pentamer are not normalized from [0,1] to [-0.5,0.5]
                 continue
-            val-=0.5
+            val-=0.5 #these vals are normalized from [0,1] to the range [-0.5,0.5]
             outD[xN]=val  # now val is in range [-0.5,0.5]
         return outD
 

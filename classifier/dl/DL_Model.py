@@ -180,7 +180,7 @@ class DL_Model(object):
         numSamples=len(sampList)
         sampleSeqLen=Constants.seqLenCut
         num_bases=len(Constants.basesSet)
-        num_features=len(Constants.globFeatureL)#+19 #TODO change 19!
+        num_features=Constants.globFeatureL_Len  ####len(Constants.globFeatureL)#+19 #TODO change 19!
 
         # clever list-->numpy conversion, Thorsten's idea
         # First turn into np.zeros of desired size, then fill with data
@@ -594,6 +594,9 @@ class DL_Model(object):
         print('prep:',dataset_trainval,classif,' completed, elaT=%.1f sec'%(time.time() - start),', gotSamples=',len(self.trainvalid_data[dataset_trainval][classif][0]))
 
 
+    #def is_digit(str):
+    #    return str.lstrip('-').replace('.', '').isdigit()
+
 
     #............................
     #Called from prep_labeled_input to do subsampling.
@@ -614,7 +617,9 @@ class DL_Model(object):
     #       How many samples in total could be subsampled.
     ##############################
     def sample_labeled_scaffolds(self, currentWrkSegment,sampling_rate,classif,target_samples):
-        flatten = lambda l: [float(item) for sublist in l for item in sublist]
+        is_digit = lambda str: str.lstrip('-').replace('.', '').isdigit()
+        flatten = lambda l: [float(item) for sublist in l for item in sublist  if is_digit(item)]
+        #flatten = lambda l: [float(item) for sublist in l for item in sublist]
         if target_samples < len(currentWrkSegment): # at least 1 sample per scaff on average
             print('Abort: partition_labeled_scaffold: samples:',target_samples ,', num scafold:',len(currentWrkSegment),', Hint: increase number of events\n')
             assert 1==2
@@ -672,7 +677,7 @@ class DL_Model(object):
             num_plasm_seqs=len(self.trainvalid_data[dataset_trainval]['plasm'][0])
             seq_len=Constants.seqLenCut
             num_bases=len(Constants.basesSet)
-            num_features=len(Constants.globFeatureL)#+19 #TODO change 19!
+            num_features=Constants.globFeatureL_Len  ####len(Constants.globFeatureL)#+19 #TODO change 19!
 
             # clever list-->numpy conversion, Thorsten's idea
             XhotAll=np.zeros([num_main_seqs+num_plasm_seqs,seq_len,num_bases],dtype=np.float32)
@@ -726,7 +731,8 @@ class DL_Model(object):
         print('build_model inpA:',inputA.get_shape(),'  inpB:',inputB.get_shape())
         
         lstm_dim=40
-        dens_dim=10
+        #dens_dim_first=100
+        dens_dim=100
         densAct='relu'
 
         layerDropFrac=Constants.dropFrac

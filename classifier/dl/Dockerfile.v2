@@ -167,6 +167,9 @@ ENV PATH="/srv/jgi-ml/classifier/dl:${PATH}"
 RUN cd Prodigal \
  && make all
 
+RUN cd hmmer-3.3.2 \
+ && ./configure && make clean && make all
+
 ###&& cp prodigal /srv/jgi-ml/classifier/dl/
 
 WORKDIR /srv/jgi-ml/classifier/dl/

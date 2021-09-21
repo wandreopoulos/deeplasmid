@@ -71,7 +71,7 @@ exit 1
 fi
 
 #The model used for prediction
-MODEL=/srv/jgi-ml/classifier/dl/Plasmid_Models/plasmid4z-newfeat5-
+MODEL=/srv/jgi-ml/classifier/dl/Plasmid_Models/plasmid4z-newfeat12-
 echo "Model used for prediction: $MODEL" 
 echo "Model used for prediction: $MODEL" > $OUT/outPR.$DATETIME/model_path.txt
 echo "Command used: $0 $1 $2"

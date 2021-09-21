@@ -138,7 +138,10 @@ for scaffN in all_scaffolds:
     assert len(sampList) >1 #0 # must ahve few samples to compute the average
 
     floatD=all_scaffolds[scaffN]['features']
-    flatten = lambda l: [float(item) for sublist in l for item in sublist]
+    is_digit = lambda str: str.lstrip('-').replace('.', '').isdigit()
+    flatten = lambda l: [float(item) for sublist in l for item in sublist  if is_digit(item)]
+    #flatten = lambda l: [float(item) for sublist in l for item in sublist]
+    #flatten = lambda l: [float(item) for sublist in l for item in sublist]
     b=flatten( [ list(floatD[x]) for x in Constants.globFeatureL if type(floatD[x]) is not float ] )
     a=[ floatD[x] for x in Constants.globFeatureL if type(floatD[x]) is float ]
     featureList=a+b #[ floatD[x] for x in Constants.globFeatureL if type(floatD[x]) is float else list(floatD[x]) ]
@@ -272,4 +275,4 @@ if not args.noXterm:
     #Ytrue=[y1]*len(Yscore_sum)
     #ppp.plot_labeled_scores(Ytrue, Yscore_sum,'given='+args.given,score_thr=score_thr)
     #ppp.pause(args,'predict') 
-
+    

@@ -32,10 +32,10 @@ fi
 kfoldOff=$(( ${arrIdx} % 6 ))
 
 taskExe=$PARENT/train_Plasmid.py
-coreN='plasmid4z-newfeat5'
+coreN='plasmid4z-newfeat15'
 #coreN='plasmid4test-newfeat5'
 
-codeList="$PARENT/Constants.py $PARENT/DL_Model.py $PARENT/Plotter_Plasmid.py  $PARENT/batchTrain.slr $PARENT/Util_Plasmid.py  $taskExe"
+codeList="$PARENT/Constants.py $PARENT/DL_Model.py $PARENT/Plotter_Plasmid.py  $PARENT/batchTrain.slr $PARENT/Util_Plasmid.py  $taskExe  $PARENT/read_fasta2_plasmids.py"
 dataDir="delplasmid_data4train"
 
 date
@@ -43,6 +43,11 @@ echo fit-`hostname`-arrIdx-$arrIdx start-jid ${SLURM_JOBID}
 echo SLURM_CLUSTER_NAME=$SLURM_CLUSTER_NAME kfoldOff=$kfoldOff
 md5sum $taskExe
 #env|grep SLURM
+
+#move any old dirs
+export DATETIME=`date "+%Y-%m-%d_%H:%M:%S"`
+#mkdir ./${coreN}.$DATETIME
+#mv ./${coreN}-??  ./${coreN}.$DATETIME/
 
 srcDir=`pwd`
 wrkDir=./${coreN}-${arrIdx}

@@ -23,7 +23,7 @@ project="assayer4"
 mxScaf_pred=122000 # set it below 1k for testing
 
 #maximum scaffold to train on
-mxScaf_train_class1=1100 # set it below 1k for testing
+mxScaf_train_class1=110000 # set it below 1k for testing
 mxScaf_train_class2=mxScaf_train_class1*50 # set it below 1k for testing
 
 
@@ -69,11 +69,13 @@ print('all bases :', list(oneHotBase.keys()))
 print('use seqLenCut=',seqLenCut)
 
 #Feature names
-globFeatureL=['gc_content','len_sequence','plassketch', 'plasORIsketch', 'chromsketch', 'genecount', 'genesperMB', 'aalenavg'] #'max_occur_pentamer_1hot'
+globFeatureL=['gc_content','len_sequence','plassketch', 'plasORIsketch', 'chromsketch', 'genecount', 'genesperMB', 'aalenavg', 'pfam_vector'] #'max_occur_pentamer_1hot'
 for x in basesL: #Note dont change this to the basesSet, which is unordered! Keep basesL
     globFeatureL.append(x+'_longestHomopol')
     globFeatureL.append(x+'_totalLongHomopol')
 
+#size of features
+globFeatureL_Len = 1554
 
 
 #The class names we are looking for
