@@ -2,7 +2,7 @@
 *********
 
 README file
-September 20, 2021
+September 21, 2021
 Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 Codebase: docker branch
 
