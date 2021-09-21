@@ -299,7 +299,9 @@ def prodigal(sequence, seqin, penalty_value):
                       genecount += 1
         
         ones = x.values().count(1)
-        genesperMB=(float(ones)/float(contiglen))
+        genesperMB=0
+        if contiglen > 0:
+            genesperMB=(float(ones)/float(contiglen))
         prodigalFile.close()
 
         '''
