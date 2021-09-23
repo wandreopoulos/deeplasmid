@@ -431,9 +431,12 @@ def prodigal(sequence, seqin, penalty_value):
 
 
 
-        os.remove(FASTA + ".gene.faa")
-        os.remove(FASTA + ".gene.fasta")
-        os.remove(FASTA + ".prodigal.out")
+        if os.path.exists(FASTA + ".gene.faa"):  os.remove(FASTA + ".gene.faa")
+        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".gene.fasta")
+        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".prodigal.out")
+        if os.path.exists(FASTA + ".domtblout"):  os.remove(FASTA + ".domtblout")
+        if os.path.exists(FASTA + ".feature_table.txt"):  os.remove(FASTA + ".feature_table.txt")
+        if os.path.exists(FASTA + ".out_pfam"):  os.remove(FASTA + ".out_pfam")
         
         return genesperMB, genecount, aalenavg, k
 
@@ -2081,7 +2084,7 @@ if __name__ == "__main__":
         ###if len(input_path) <1:
         ###print "penalty_value = process_seq(options.seqin %s, sequence %s, header %s, penalty_value %s, output_path %s, id_run %s, run_blast %s)" % (options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
         penalty_value = process_seq(options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
-        os.remove(options.seqin)
+        if os.path.exists(options.seqin):  os.remove(options.seqin)
 
     #
     #
