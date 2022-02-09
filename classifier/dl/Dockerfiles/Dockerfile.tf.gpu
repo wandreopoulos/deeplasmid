@@ -1,0 +1,264 @@
+###################################
+# TODO testing, pipeline code
+# TODO GPU, TensorFlow, dont print long lines, finally make pdf
+#install keras and khmer
+#ADD keras and khmer to the env
+#ADD the py files  (git clone jgi-ml)
+#Specify the pipeline entrypoint with the parameters passed in
+#https://github.com/gw0/docker-keras/blob/master/Dockerfile.py3-cntk-cpu
+# https://github.com/dib-lab/khmer/blob/master/docker/Dockerfile
+
+####KHMER
+###https://github.com/dib-lab/khmer/blob/master/docker/Dockerfile
+# docker-keras - Keras in Docker with Python 3 and CNTK on CPU
+
+#From:
+#https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/dockerfiles/gpu.Dockerfile
+
+# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============================================================================
+#
+# THIS IS A GENERATED DOCKERFILE.
+#
+# This file was assembled from multiple pieces, whose use is documented
+# throughout. Please refer to the TensorFlow dockerfiles documentation
+# for more information.
+
+ARG UBUNTU_VERSION=20.04
+
+ARG ARCH=
+ARG CUDA=11.2
+FROM nvidia/cuda${ARCH:+-$ARCH}:${CUDA}.1-base-ubuntu${UBUNTU_VERSION} as base
+# ARCH and CUDA are specified again because the FROM directive resets ARGs
+# (but their default value is retained if set previously)
+ARG ARCH
+ARG CUDA
+ARG CUDNN=8.1.0.77-1
+ARG CUDNN_MAJOR_VERSION=8
+ARG LIB_DIR_PREFIX=x86_64
+ARG LIBNVINFER=8.0.0-1
+ARG LIBNVINFER_MAJOR_VERSION=8
+
+# Let us install tzdata painlessly
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Needed for string substitution
+SHELL ["/bin/bash", "-c"]
+# Pick up some TF dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cuda-command-line-tools-${CUDA/./-} \
+        libcublas-${CUDA/./-} \
+        cuda-nvrtc-${CUDA/./-} \
+        libcufft-${CUDA/./-} \
+        libcurand-${CUDA/./-} \
+        libcusolver-${CUDA/./-} \
+        libcusparse-${CUDA/./-} \
+        curl \
+        libcudnn8=${CUDNN}+cuda${CUDA} \
+        libfreetype6-dev \
+        libhdf5-serial-dev \
+        libzmq3-dev \
+        pkg-config \
+        software-properties-common \
+        unzip
+
+# Install TensorRT if not building for PowerPC
+# NOTE: libnvinfer uses cuda11.1 versions
+RUN [[ "${ARCH}" = "ppc64le" ]] || { apt-get update && \
+        apt-get install -y --no-install-recommends libnvinfer${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}+cuda11.0 \
+        libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}+cuda11.0 \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*; }
+
+# For CUDA profiling, TensorFlow requires CUPTI.
+ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+# Link the libcuda stub to the location where tensorflow is searching for it and reconfigure
+# dynamic linker run-time bindings
+RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 \
+    && echo "/usr/local/cuda/lib64/stubs" > /etc/ld.so.conf.d/z-cuda-stubs.conf \
+    && ldconfig
+
+# See http://bugs.python.org/issue19846
+ENV LANG C.UTF-8
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip
+
+RUN python3 -m pip --no-cache-dir install --upgrade \
+    "pip<20.3" \
+    setuptools
+
+# Some TF tools expect a "python" binary
+RUN ln -s $(which python3) /usr/local/bin/python
+
+# Options:
+#   tensorflow
+#   tensorflow-gpu
+#   tf-nightly
+#   tf-nightly-gpu
+# Set --build-arg TF_PACKAGE_VERSION=1.11.0rc0 to install a specific version.
+# Installs the latest version by default.
+ARG TF_PACKAGE=tensorflow
+ARG TF_PACKAGE_VERSION=
+RUN python3 -m pip install --no-cache-dir ${TF_PACKAGE}${TF_PACKAGE_VERSION:+==${TF_PACKAGE_VERSION}}
+
+
+
+RUN apt-get update -qq \
+ && apt-get install --no-install-recommends -y \
+    # install essentials
+    build-essential \
+    g++ \
+    git \
+    openssh-client \
+    # install python 3
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-virtualenv \
+    python3-wheel \
+    pkg-config \
+    # requirements for numpy
+    libopenblas-base \
+    python3-numpy \
+    python3-scipy \
+    # requirements for keras
+    python3-h5py \
+    python3-yaml \
+    python3-pydot \
+    # other repositories
+    ca-certificates \
+    gcc \
+    git \
+    libpq-dev \
+    make \
+    python-yaml \
+    python2.7 \
+    python2.7-dev \
+    # python-setuptools \
+    # ssh \
+    build-essential python-dev python-setuptools \
+    python3-tk \
+    # libatlas-dev libatlas3gf-base \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+
+ARG KERAS_VERSION=2.1.3
+###1.4
+ENV KERAS_BACKEND=tensorflow
+RUN pip3 --no-cache-dir install --no-dependencies git+https://github.com/fchollet/keras.git@${KERAS_VERSION}
+
+
+# https://github.com/treyd/docker-python-setuptools/blob/master/Dockerfile
+RUN pip install setuptools-scm && pip install --upgrade setuptools
+
+# http://tlfvincent.github.io/2016/04/30/data-science-with-docker/
+# intall useful and/or required Python libraries to run your script
+RUN pip3 install wheel \
+                matplotlib \
+                # seaborn \
+                # pandas \
+                numpy \
+                scipy \
+                scikit-learn \
+                sklearn
+                # python-dateutil \
+                # gensim
+
+
+
+
+
+
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ARG JAVA_VERSION=8
+ARG JAVA_RELEASE=JRE
+
+RUN bash -c ' \
+    set -euxo pipefail && \
+    apt-get update && \
+    pkg="openjdk-$JAVA_VERSION"; \
+    if [ "$JAVA_RELEASE" = "JDK" ]; then \
+        pkg="$pkg-jdk"; \
+    else \
+        pkg="$pkg-jre-headless"; \
+    fi; \
+    apt-get install -y --no-install-recommends "$pkg" && \
+    apt-get clean \
+    '
+
+###COPY profile.d/java.sh /etc/profile.d/
+
+ENV JAVA_HOME=/usr
+
+
+RUN apt install zlib1g-dev
+
+
+RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+
+
+
+WORKDIR /srv/
+
+
+
+
+####KERAS
+###https://github.com/keras-team/keras/blob/master/docker/Dockerfile
+
+
+###git clone jgi-ml
+#RUN git clone https://wandreopoulos@bitbucket.org/wandreopoulos/jgi-ml.git
+
+
+#RUN mkdir /srv/jgi-ml/classifier/models/
+WORKDIR /srv/jgi-ml/classifier/dl/
+#ADD /global/cscratch1/sd/andreopo/plasmid_sum/4g/plasmid4g-* /srv/jgi-ml/build/
+#ADD models/plasmid4g-* /srv/jgi-ml/classifier/models/
+
+COPY . /srv/jgi-ml/classifier/dl/
+
+
+
+ENV PYTHONPATH="/srv/jgi-ml/classifier/dl:${PYTHONPATH}"
+ENV PATH="/srv/jgi-ml/classifier/dl:${PATH}"
+
+###ENTRYPOINT ["/srv/jgi-ml/classifier/feature_DL_plasmid_predict.sh", "/srv/jgi-ml/classifier/testing/ALL.fasta", "/srv/jgi-ml/classifier/OUT"]
+
+#RUN chmod 777 -R /srv/jgi-ml/classifier/
+
+RUN cd Prodigal \
+ && make all
+
+RUN cd hmmer-3.3.2 \
+ && ./configure && make clean && make all
+
+###&& cp prodigal /srv/jgi-ml/classifier/dl/
+
+WORKDIR /srv/jgi-ml/classifier/dl/
+
+###COPY /srv/jgi-ml/classifier/dl/Prodigal/prodigal /srv/jgi-ml/classifier/dl/
+
+
+CMD ["feature_DL_plasmid_predict.sh", "in.fasta", "outdir"]
+
