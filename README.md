@@ -1,33 +1,35 @@
 
-*********
 
-README file
-September 21, 2021
-Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
-Codebase: docker branch
+## README file
+### Codebase: deeplasmid docker branch
+### February 9th, 2022
+### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 
 
-Deeplasmid is a tool based on machine learning that separates plasmids from chromosomal sequences. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
-1) plasmids from ACLAME, and 
-2) chromosomal sequences from refseq.microbial from which plasmids and mito were removed.
+Deeplasmid is a tool based on machine learning that separates plasmids from chromosomal sequences. It can identify plasmids in microbial isolate or metagenome assemblies. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
+1) plasmids from ACLAME, 2) PLSDB, and 
+3) chromosomal sequences from refseq.microbial (bacteria and archaea) from which plasmids and mito were removed.
 
-______________________
+Below are instructions for using both the CPU-only and GPU-based Docker images for deeplasmid.
 
-Deeplasmid Docker container for identifying plasmids in microbial isolated and metagenome assemblies
+
+## Deeplasmid Docker container (CPU-only)
+
 Input: a .fasta file
-Tested on: Mac, Ubuntu
+Output: a directory of results
+Built and tested on: MacBook Pro
 
-How to run the Docker container with deeplasmid:
+To run the deeplasmid Docker container:
 Install Docker on your system. Register on dockerhub.
 Pull the deeplasmid image from dockerhub as follows:
 
 docker login
 docker pull billandreo/deeplasmid
 
-Please run deeplasmid prediction as follows. Substitute the /path/to/input/fasta and /path/to/output/directory below with your inut file and output dir full paths:
+You can run deeplasmid prediction of plasmids as follows. Substitute the /path/to/input/fasta and /path/to/output/directory below with the full paths to your input file and output dir (note you may need to run docker with sudo):
 docker run -it -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta -v /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
 
-The file predictions.txt file is the file of plasmid prediction results for the contigs that we are interested in.
+The file predictions.txt file is the output file of plasmid predictions for all contigs in the input fasta file.
 Each contig name will indicate if it was:
 - Plasmid with score near 1.0
 - Chromosome (non-plasmid) with score near 0.0
@@ -35,90 +37,114 @@ Each contig name will indicate if it was:
 - Longer than 330k bases (possibly a chromosome or megaplasmid)
 - Shorter than 1k bases (inconclusive)
 
-These 2 score files are also output from the tool; they are histograms that show the scores for samples and scaffolds that had or didn't have "plasmid" in the header. In reality headers won't have "plasmid" in the header, obviously, but these figures are useful when testing the tool on a dataset where the classes are known.
+The following 2 score files are also output; they are histograms that show the scores for samples and scaffolds that had or didn't have "plasmid" in the header. In reality headers are unlikely to have "plasmid" in the header, but these figures may be useful if testing the tool on a dataset where the classes are known.
 - samplescore_hist.png
 - scaffscore_hist.png
 These files are not output by default. The final plotting step is skipped by setting the -noXterm(-X) flag in the .sh script to true by default.
 
-The public Docker repository is available here:
+The public Docker repository (CPU-only container) is available under:
 https://hub.docker.com/repository/docker/billandreo/deeplasmid
 
-The present sourceforge repo has the branch "docker" codebase used for building the Docker image, which has been built for prediction purposes on any platform where Docker is installed.
-Building the Docker container was done as follows:
+The present code repository contains the branch "docker" codebase used for building the Docker image for deeplasmid.
+Building the Docker image (CPU-only) was done as follows on a MacBook Pro:
 docker build -t billandreo/deeplasmid -f Dockerfile.v2 .
 
-Please see the Supplementary Information from the publication for 3 issues when building the Docker file: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed.
+Please see the Supplementary Information from the publication for 3 considerations when building the Docker file: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files that can be downloaded (https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/).
 
-Testing
+### Testing
 
-The 649989979.fna is a testing file, and is available for download from IMG:
-/global/cscratch1/sd/andreopo/plasmidml_tests/jgi-ml_paper/classifier/dl/testing/649989979/649989979.fna
+The 649989979.fna is a testing file, which was downloaded from IMG taxonoid 649989979:
 This way you can test to verify if your installation of the deeplasmid tool gives the same results as expected, which are shown below.
 
-You can run on this file with:
+You can run deeplasmid on this file with (note you may need to run docker with sudo):
 
-andreopo@nid00245:/global/cscratch1/sd/andreopo/plasmidml_tests/jgi-ml_paper/classifier/dl/testing> ../feature_DL_plasmid_predict_CORI.sh 649989979/649989979.fna 649989979d.native.OUT
-andreopo@nid00245:/global/cscratch1/sd/andreopo/plasmidml_tests/jgi-ml_paper/classifier/dl/testing> cat 649989979d.native.OUT/outPR.20200113_172443/predictions.txt
-name,pred,conf
-NZ_ADHJ01000001,LONGER_330000.0,1
-NZ_ADHJ01000014,LONGER_330000.0,1
-NZ_ADHJ01000017,LONGER_330000.0,1
-NZ_ADHJ01000025,LONGER_330000.0,1
-NZ_ADHJ01000027,SHORTER_1000.0,1
-NZ_ADHJ01000030,SHORTER_1000.0,1
-NZ_ADHJ01000032,SHORTER_1000.0,1
-NZ_ADHJ01000037,LONGER_330000.0,1
-NZ_ADHJ01000051,SHORTER_1000.0,1
-nz_adhj01000009 paenibacillus vortex v453 cnt_pvor1000009, whole genome shotgun sequence.,GENOME,0.013 +/- 0.001
-nz_adhj01000010 paenibacillus vortex v453 cnt_pvor1000010, whole genome shotgun sequence.,PLASMID,0.830 +/- 0.005
-nz_adhj01000028 paenibacillus vortex v453 cnt_pvor1000028, whole genome shotgun sequence.,GENOME,0.018 +/- 0.002
-nz_adhj01000033 paenibacillus vortex v453 cnt_pvor1000033, whole genome shotgun sequence.,GENOME,0.015 +/- 0.002
-nz_adhj01000040 paenibacillus vortex v453 cnt_pvor1000040, whole genome shotgun sequence.,GENOME,0.007 +/- 0.001
-nz_adhj01000043 paenibacillus vortex v453 cnt_pvor1000043, whole genome shotgun sequence.,GENOME,0.005 +/- 0.000
-nz_adhj01000044 paenibacillus vortex v453 cnt_pvor1000044, whole genome shotgun sequence.,GENOME,0.057 +/- 0.003
-nz_adhj01000004 paenibacillus vortex v453 cnt_pvor1000004, whole genome shotgun sequence.,PLASMID,0.798 +/- 0.007
-nz_adhj01000039 paenibacillus vortex v453 cnt_pvor1000039, whole genome shotgun sequence.,PLASMID,0.739 +/- 0.006
-nz_adhj01000042 paenibacillus vortex v453 cnt_pvor1000042, whole genome shotgun sequence.,GENOME,0.002 +/- 0.000
-nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,GENOME,0.315 +/- 0.011
-nz_adhj01000048 paenibacillus vortex v453 cnt_pvor1000048, whole genome shotgun sequence.,PLASMID,0.847 +/- 0.004
-nz_adhj01000052 paenibacillus vortex v453 cnt_pvor1000052, whole genome shotgun sequence.,GENOME,0.055 +/- 0.004
-nz_adhj01000054 paenibacillus vortex v453 cnt_pvor1000054, whole genome shotgun sequence.,PLASMID,0.816 +/- 0.006
-nz_adhj01000055 paenibacillus vortex v453 cnt_pvor1000055, whole genome shotgun sequence.,GENOME,0.425 +/- 0.006
-nz_adhj01000056 paenibacillus vortex v453 cnt_pvor1000056, whole genome shotgun sequence.,PLASMID,0.571 +/- 0.009
-nz_adhj01000003 paenibacillus vortex v453 cnt_pvor1000003, whole genome shotgun sequence.,GENOME,0.210 +/- 0.005
-nz_adhj01000006 paenibacillus vortex v453 cnt_pvor1000006, whole genome shotgun sequence.,GENOME,0.018 +/- 0.001
-nz_adhj01000007 paenibacillus vortex v453 cnt_pvor1000007, whole genome shotgun sequence.,GENOME,0.004 +/- 0.000
-nz_adhj01000012 paenibacillus vortex v453 cnt_pvor1000012, whole genome shotgun sequence.,PLASMID,0.799 +/- 0.005
-nz_adhj01000013 paenibacillus vortex v453 cnt_pvor1000013, whole genome shotgun sequence.,GENOME,0.010 +/- 0.000
-nz_adhj01000015 paenibacillus vortex v453 cnt_pvor1000015, whole genome shotgun sequence.,GENOME,0.106 +/- 0.013
-nz_adhj01000019 paenibacillus vortex v453 cnt_pvor1000019, whole genome shotgun sequence.,GENOME,0.034 +/- 0.004
-nz_adhj01000021 paenibacillus vortex v453 cnt_pvor1000021, whole genome shotgun sequence.,PLASMID,0.686 +/- 0.008
-nz_adhj01000022 paenibacillus vortex v453 cnt_pvor1000022, whole genome shotgun sequence.,GENOME,0.025 +/- 0.003
-nz_adhj01000024 paenibacillus vortex v453 cnt_pvor1000024, whole genome shotgun sequence.,PLASMID,0.731 +/- 0.008
-nz_adhj01000036 paenibacillus vortex v453 cnt_pvor1000036, whole genome shotgun sequence.,PLASMID,0.893 +/- 0.003
-nz_adhj01000049 paenibacillus vortex v453 cnt_pvor1000049, whole genome shotgun sequence.,PLASMID,0.890 +/- 0.003
-nz_adhj01000053 paenibacillus vortex v453 cnt_pvor1000053, whole genome shotgun sequence.,PLASMID,0.703 +/- 0.004
-nz_adhj01000002 paenibacillus vortex v453 cnt_pvor1000002, whole genome shotgun sequence.,GENOME,0.186 +/- 0.004
-nz_adhj01000008 paenibacillus vortex v453 cnt_pvor1000008, whole genome shotgun sequence.,PLASMID,0.878 +/- 0.004
-nz_adhj01000016 paenibacillus vortex v453 cnt_pvor1000016, whole genome shotgun sequence.,GENOME,0.008 +/- 0.001
-nz_adhj01000018 paenibacillus vortex v453 cnt_pvor1000018, whole genome shotgun sequence.,GENOME,0.454 +/- 0.006
-nz_adhj01000045 paenibacillus vortex v453 cnt_pvor1000045, whole genome shotgun sequence.,PLASMID,0.759 +/- 0.007
-nz_adhj01000011 paenibacillus vortex v453 cnt_pvor1000011, whole genome shotgun sequence.,GENOME,0.146 +/- 0.010
-nz_adhj01000020 paenibacillus vortex v453 cnt_pvor1000020, whole genome shotgun sequence.,GENOME,0.002 +/- 0.000
-nz_adhj01000026 paenibacillus vortex v453 cnt_pvor1000026, whole genome shotgun sequence.,GENOME,0.086 +/- 0.006
-nz_adhj01000029 paenibacillus vortex v453 cnt_pvor1000029, whole genome shotgun sequence.,GENOME,0.000 +/- 0.000
-nz_adhj01000050 paenibacillus vortex v453 cnt_pvor1000050, whole genome shotgun sequence.,PLASMID,0.889 +/- 0.003
-nz_adhj01000005 paenibacillus vortex v453 cnt_pvor1000005, whole genome shotgun sequence.,GENOME,0.006 +/- 0.001
-nz_adhj01000023 paenibacillus vortex v453 cnt_pvor1000023, whole genome shotgun sequence.,GENOME,0.450 +/- 0.006
-nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,GENOME,0.044 +/- 0.002
-nz_adhj01000034 paenibacillus vortex v453 cnt_pvor1000034, whole genome shotgun sequence.,GENOME,0.131 +/- 0.006
-nz_adhj01000035 paenibacillus vortex v453 cnt_pvor1000035, whole genome shotgun sequence.,GENOME,0.400 +/- 0.013
-nz_adhj01000038 paenibacillus vortex v453 cnt_pvor1000038, whole genome shotgun sequence.,GENOME,0.041 +/- 0.003
-nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.923 +/- 0.001
-nz_adhj01000047 paenibacillus vortex v453 cnt_pvor1000047, whole genome shotgun sequence.,PLASMID,0.691 +/- 0.010
-andreopo@nid00245:/global/cscratch1/sd/andreopo/plasmidml_tests/jgi-ml_paper/classifier/dl/testing>
+~/Downloads/deeplasmid/classifier/dl$ docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
 
-Training
+Then you can check the plasmid identified contigs as follows:
+
+~/Downloads/deeplasmid/classifier/dl/testing/649989979$ grep PLASMID 649989979.fna.OUT/outPR.20220209*/predictions.txt 
+nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
+nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.899 +/- 0.000
+nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.509 +/- 0.002
+
+
+## Deeplasmid Docker container for GPU
+
+Input: a .fasta file
+Output: a directory of results
+Built and tested on: Ubuntu 20.04 with NVIDIA GEFORCE RTX 3090
+
+
+~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it     --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')    -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT3:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid-gpu   feature_DL_plasmid_predict.sh  in.fasta outdir
+
+The extra parameters in the above command explicitly expose your GPU devices and CUDA Driver library from the host system into the container. In case this command produces an error it may be caused by broken symlinks under the nvidia device and library directories (it is a known Docker bug). 
+
+### Building the Docker image for GPU
+
+The Dockerfile was extended from the keras-gpu container (https://github.com/gw0/docker-keras); however I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors (see https://github.com/microsoft/CNTK/issues/2908).
+
+To build the Docker image, stop or remove your unused containers and images to make space on your drive and use docker build:
+    sudo docker rm $(sudo docker ps --filter status=exited -q)
+    sudo docker images
+    sudo docker rmi ...ids....
+    sudo docker build -t billandreo/deeplasmid-gpu -f Dockerfile.GPU .
+
+
+### Troubleshooting a GPU run
+
+In case your execution is slow and you suspect it might not be using the GPU, you can verify if Keras and cntk uses a GPU inside the running Docker container, as follows:
+
+$ sudo docker run -it  --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')   -v `pwd`:/srv  a8d777f61654  /bin/sh
+ #python3 
+Python 3.5.3 (default, Nov  4 2021, 15:29:10) 
+[GCC 6.3.0 20170516] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cntk as C
+>>> C.device.all_devices()
+(GPU[0] NVIDIA GeForce RTX 3090, CPU)
+>>> from keras import backend as K
+Using CNTK backend
+Selected GPU[0] NVIDIA GeForce RTX 3090 as the process wide default device.>>> 
+
+
+In case you have other DL packages like Pytorch on your host computer, check if those can detect the GPU:
+>>> import torch
+>>> torch.cuda.is_available()
+True
+>>> torch.cuda.current_device()
+0
+>>> torch.cuda.get_device_name(0)
+'NVIDIA GeForce RTX 3090'
+
+If it can not see the GPU it may be an issue with your Cuda libraries or NVIDIA driver. For Cuda installation, see https://developer.nvidia.com/cuda-downloads https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_network https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation  . You can install NVIDIA drivers from your system settings, or to download new NVIDIA drivers see https://www.nvidia.com/Download/index.aspx .
+
+Check if your GPUs are detected on your host with these commands: 
+    nvidia-smi -q
+    nvidia-smi -L
+    nvidia-smi   
+    sudo apt install nvidia-cuda-toolkit
+    nvcc --version
+    whereis cuda
+    cd /usr/local/cuda*/samples/ && make
+    ./bin/x86_64/linux/release/deviceQuery
+    ./bin/x86_64/linux/release/bandwidthTest
+    cat /usr/local/cuda/version.txt
+For details on these commands see: https://varhowto.com/check-cuda-version-ubuntu-18-04/
+In case the commands above don't work on your system here are suggestions and ideas: 
+https://askubuntu.com/questions/902636/nvidia-smi-command-not-found-ubuntu-16-04 
+https://stackoverflow.com/questions/43022843/nvidia-nvml-driver-library-version-mismatch
+Sometimes rebooting your system may work too.
+
+To setup CNTK on your host (outside of the Docker image) see https://docs.microsoft.com/en-us/cognitive-toolkit/setup-cntk-on-your-machine
+
+If you want to setup tensorflow and run the code natively: https://www.tensorflow.org/install/gpu
+The docker-keras github repo above also provides keras-tensorflow-gpu dockerfiles, but I couldn't get them to build.
+
+To read more on Nvidia Docker images for deeplearning: https://docs.nvidia.com/deeplearning/frameworks/user-guide/index.html
+
+
+
+## Training
 
 The training of the deeplasmid deep learning model was done on Cori at NERSC. These are the training steps:
 
@@ -137,7 +163,7 @@ Running feature_DL_plasmid_train.sh . This version is meant for Cori.
 
 After training completes you will have a trained model under the two directories you specified on the command line. You may use the trained model in the predictions file feature_DL_plasmid_predict_CORI.sh
 
-The codebase used for training on Cori (as well as running prediction on Cori) is under https://bitbucket.org/berkeleylab/jgi-ml/src/master/
+The codebase used for training on Cori (as well as running prediction on Cori) is under the master branch of the code repository.
 
 A single training data element consists of the label and two input words: xseq - a 300bp contiguous subsequence sampled randomly from the full original contig sequence and xf - a vector containing 16 features extracted from the full sequence, as described in the Table below. The number (m) of 300bp subsequences sampled from each contig is proportional to the square root of the contig length, such that longer contigs contribute more samples, but do not overwhelm the training.
 
@@ -156,13 +182,17 @@ len_sequence	Scaffold seq length	Integer
 Table 1. Definition of 16 features per sequence. These are the 16 features extracted from each sequence used in training. Some of these features are extracted by .sh scripts that are called by the predict.sh script. See the helper scripts: run_pentamer.sh, run_prodigal.sh, run_plassketch.sh, run_plasORIsketch.sh, run_chromsketch.sh, comparesketch.sh.
 
 
-____________________
 
-Docker:
+## Citation:
+
+William B Andreopoulos, Alexander M Geller, Miriam Lucke, Jan Balewski, Alicia Clum, Natalia N Ivanova, Asaf Levy, Deeplasmid: deep learning accurately separates plasmids from bacterial chromosomes, Nucleic Acids Research, 2021;, gkab1115, https://doi.org/10.1093/nar/gkab1115 
+
+
+## Docker:
+
 The Dockerfile is available under the dl directory of the "docker" branch,
 which can be used to create Docker images with the tool.
-The latest Docker image can be pulled from dockerhub. For details please see the QuickStart page.
-https://sourceforge.net/p/deeplasmid/wiki/deeplasmid%20Quick%20Start/
+The latest Docker images can be pulled from dockerhub. 
 
 
 ********************

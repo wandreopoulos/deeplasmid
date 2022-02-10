@@ -1,9 +1,9 @@
 
 
-##README file
-###Codebase: deeplasmid docker branch
-###February 9th, 2022
-###Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
+## README file
+### Codebase: deeplasmid docker branch
+### February 9th, 2022
+### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 
 
 Deeplasmid is a tool based on machine learning that separates plasmids from chromosomal sequences. It can identify plasmids in microbial isolate or metagenome assemblies. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
@@ -13,7 +13,7 @@ Deeplasmid is a tool based on machine learning that separates plasmids from chro
 Below are instructions for using both the CPU-only and GPU-based Docker images for deeplasmid.
 
 
-##Deeplasmid Docker container (CPU-only)
+## Deeplasmid Docker container (CPU-only)
 
 Input: a .fasta file
 Output: a directory of results
@@ -51,7 +51,7 @@ docker build -t billandreo/deeplasmid -f Dockerfile.v2 .
 
 Please see the Supplementary Information from the publication for 3 considerations when building the Docker file: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files that can be downloaded (https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/).
 
-###Testing
+### Testing
 
 The 649989979.fna is a testing file, which was downloaded from IMG taxonoid 649989979:
 This way you can test to verify if your installation of the deeplasmid tool gives the same results as expected, which are shown below.
@@ -68,7 +68,7 @@ nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun 
 nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.509 +/- 0.002
 
 
-##Deeplasmid Docker container for GPU
+## Deeplasmid Docker container for GPU
 
 Input: a .fasta file
 Output: a directory of results
@@ -79,7 +79,7 @@ Built and tested on: Ubuntu 20.04 with NVIDIA GEFORCE RTX 3090
 
 The extra parameters in the above command explicitly expose your GPU devices and CUDA Driver library from the host system into the container. In case this command produces an error it may be caused by broken symlinks under the nvidia device and library directories (it is a known Docker bug). 
 
-###Building the Docker image for GPU
+### Building the Docker image for GPU
 
 The Dockerfile was extended from the keras-gpu container (https://github.com/gw0/docker-keras); however I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors (see https://github.com/microsoft/CNTK/issues/2908).
 
@@ -90,12 +90,12 @@ To build the Docker image, stop or remove your unused containers and images to m
     sudo docker build -t billandreo/deeplasmid-gpu -f Dockerfile.GPU .
 
 
-###Troubleshooting a GPU run
+### Troubleshooting a GPU run
 
 In case your execution is slow and you suspect it might not be using the GPU, you can verify if Keras and cntk uses a GPU inside the running Docker container, as follows:
 
 $ sudo docker run -it  --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')   -v `pwd`:/srv  a8d777f61654  /bin/sh
-# python3 
+ #python3 
 Python 3.5.3 (default, Nov  4 2021, 15:29:10) 
 [GCC 6.3.0 20170516] on linux
 Type "help", "copyright", "credits" or "license" for more information.
@@ -144,7 +144,7 @@ To read more on Nvidia Docker images for deeplearning: https://docs.nvidia.com/d
 
 
 
-##Training
+## Training
 
 The training of the deeplasmid deep learning model was done on Cori at NERSC. These are the training steps:
 
@@ -183,12 +183,12 @@ Table 1. Definition of 16 features per sequence. These are the 16 features extra
 
 
 
-##Citation:
+## Citation:
 
 William B Andreopoulos, Alexander M Geller, Miriam Lucke, Jan Balewski, Alicia Clum, Natalia N Ivanova, Asaf Levy, Deeplasmid: deep learning accurately separates plasmids from bacterial chromosomes, Nucleic Acids Research, 2021;, gkab1115, https://doi.org/10.1093/nar/gkab1115 
 
 
-##Docker:
+## Docker:
 
 The Dockerfile is available under the dl directory of the "docker" branch,
 which can be used to create Docker images with the tool.
