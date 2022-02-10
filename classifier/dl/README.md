@@ -20,7 +20,7 @@ Input: a .fasta file
 
 Output: a directory of results
 
-Built and tested on: MacBook Pro
+Built and tested on: MacBook Pro, Ubuntu 20.04.3
 
 To run the deeplasmid Docker container first
 install Docker on your system, then register on dockerhub.
@@ -52,11 +52,22 @@ These files are not output by default. The final plotting step is skipped by set
 The public Docker repository (CPU-only container) is available under:
 https://hub.docker.com/repository/docker/billandreo/deeplasmid
 
-The present code repository contains the branch "docker" codebase used for building the Docker image for deeplasmid.
-Building the Docker image (CPU-only) was done as follows on a MacBook Pro:
-docker build -t billandreo/deeplasmid -f Dockerfile.v2 .
+### Building the Docker image for CPU-only
 
-Please see the Supplementary Information from the publication for 3 considerations when building the Docker file: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files that can be downloaded (https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/).
+The present code repository contains the branch "docker" codebase used for building the Docker image for deeplasmid.
+Building the Docker image (CPU-only) was done with Dockerfile.v2 on a MacBook Pro:
+```
+docker build -t billandreo/deeplasmid -f Dockerfile.v2 .
+```
+I built a different image on Ubuntu with Dockerfile.CPU-UbuntuBuild. I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors. Either of these builds should work:
+```
+~/Downloads/deeplasmid/classifier/dl$ sudo docker build -t billandreo/deeplasmid-cpu-ubuntu -f Dockerfile.CPU-UbuntuBuild .
+
+docker pull billandreo/deeplasmid-cpu-ubuntu
+```
+
+
+Please see the Supplementary Information from the publication for things to consider when building the Docker image: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files and Pfam-A.TMP2.hmm that can be downloaded (https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/).
 
 ### Testing
 
@@ -72,6 +83,10 @@ Deeplasmid - Plasmid finder for microbial genome assemblies.
 Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 
 ~/Downloads/deeplasmid/classifier/dl$ docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
+Counts: Plasm=3  Ambig=0  Main=44  nCount=47
+
+~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid-cpu-ubuntu  feature_DL_plasmid_predict.sh in.fasta outdir
+Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 ```
 
 Then you can check the plasmid identified contigs as follows:
@@ -82,10 +97,10 @@ nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun 
 nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.916 +/- 0.000
 nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,1.000 +/- 0.000
 
-~/Downloads/deeplasmid/classifier/dl/testing/649989979$ grep PLASMID 649989979.fna.OUT/outPR.20220209*/predictions.txt 
-nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
+~/Downloads/deeplasmid/classifier/dl$ grep PLASM testing/649989979/649989979.fna.OUT/outPR.20220210_085843/predictions.txt 
 nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.899 +/- 0.000
-nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.509 +/- 0.002
+nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
+nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.510 +/- 0.002
 ```
 
 
@@ -109,10 +124,18 @@ docker pull billandreo/deeplasmid-gpu
 You can run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo):
 
 ```
-~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it     --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')    -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT3:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid-gpu   feature_DL_plasmid_predict.sh  in.fasta outdir
+~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it     --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')    -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid-gpu   feature_DL_plasmid_predict.sh  in.fasta outdir
 ```
 
 The extra parameters in the above command explicitly expose your GPU devices and CUDA Driver library from the host system into the container. In case this command produces an error it may be caused by broken symlinks under the nvidia device and library directories (it is a known Docker bug). 
+
+GPU result:
+```
+~/Downloads/deeplasmid/classifier/dl/testing/649989979$ grep PLASMID 649989979.fna.OUT/outPR.20220209*/predictions.txt
+nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
+nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.899 +/- 0.000
+nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.509 +/- 0.002
+```
 
 ### Building the Docker image for GPU
 
