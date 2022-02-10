@@ -59,7 +59,8 @@ Please see the Supplementary Information from the publication for 3 consideratio
 
 ### Testing
 
-The 649989979.fna is a testing file, which was downloaded from IMG taxonoid 649989979:
+The 649989979.fna is a testing file, which was downloaded from IMG taxonoid 649989979.
+This file can be found under the master branch in order to reduce space in the docker branch.
 This way you can test to verify if your installation of the deeplasmid tool gives the same results as expected, which are shown below.
 
 You can run deeplasmid on this input file as follows (note you may need to run docker with sudo):
