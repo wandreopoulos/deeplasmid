@@ -99,7 +99,7 @@ Input: a .fasta file
 
 Output: a directory of results
 
-Built and tested on: Ubuntu 20.04 with NVIDIA GEFORCE RTX 3090
+Built and tested on: Ubuntu 20.04.3 with NVIDIA GEFORCE RTX 3090
 
 To run the deeplasmid Docker container first
 install Docker on your system, then register on dockerhub.
@@ -226,8 +226,8 @@ The codebase used for training on Cori (as well as running prediction on Cori) i
 
 A single training data element consists of the label and two input words: xseq - a 300bp contiguous subsequence sampled randomly from the full original contig sequence and xf - a vector containing 16 features extracted from the full sequence, as described in the Table below. The number (m) of 300bp subsequences sampled from each contig is proportional to the square root of the contig length, such that longer contigs contribute more samples, but do not overwhelm the training.
 
-Header	Header	Header
-Name	Definition	Type
+```
+Feature Name	Definition	Type
 gc_content	GC content of contig	Float [0-1]
 A(C/G/T)_longest_homopolymer	Length of longest homopolymer	Integer
 A(C/G/T)_total_homopolymer	Total number of homopolymers of length >5	Integer
@@ -239,6 +239,7 @@ gene_percent	Coding percent of scaffold (Prodigal)	Float [0-1]
 polypeptide_aa_avg_len	Average length of aa sequence (Prodigal)	Integer
 len_sequence	Scaffold seq length	Integer
 Table 1. Definition of 16 features per sequence. These are the 16 features extracted from each sequence used in training. Some of these features are extracted by .sh scripts that are called by the predict.sh script. See the helper scripts: run_pentamer.sh, run_prodigal.sh, run_plassketch.sh, run_plasORIsketch.sh, run_chromsketch.sh, comparesketch.sh.
+```
 
 
 
