@@ -1,14 +1,5 @@
 ###################################
-# TODO testing, pipeline code
-#install keras and khmer
-#ADD keras and khmer to the env
-#ADD the py files  (git clone jgi-ml)
-#Specify the pipeline entrypoint with the parameters passed in
-#https://github.com/gw0/docker-keras/blob/master/Dockerfile.py3-cntk-cpu
-# https://github.com/dib-lab/khmer/blob/master/docker/Dockerfile
-
-####KHMER
-###https://github.com/dib-lab/khmer/blob/master/docker/Dockerfile
+# Extended from https://github.com/gw0/docker-keras/blob/master/Dockerfile.py3-cntk-cpu
 # docker-keras - Keras in Docker with Python 3 and CNTK on CPU
 
 FROM debian:stretch
