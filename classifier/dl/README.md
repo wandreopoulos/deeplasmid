@@ -106,7 +106,7 @@ docker login
 docker pull billandreo/deeplasmid-gpu
 ```
 
-You can run deeplasmid for plasmid identification with a GPU as follows (note you may need to run docker with sudo):
+You can run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo):
 
 ```
 ~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it     --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')    -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT3:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid-gpu   feature_DL_plasmid_predict.sh  in.fasta outdir
@@ -197,15 +197,14 @@ salloc: sal with 48 hours
 
 Then run as follows:
 ```
-feature_DL_plasmid_train_CORI.sh plasmid.fasta plasmid.fasta.OUTDIR nonplasmid.fasta nonplasmid.fasta.OUTDIR
+./feature_DL_plasmid_train_CORI.sh plasmid.fasta plasmid.fasta.OUTDIR nonplasmid.fasta nonplasmid.fasta.OUTDIR
 ```
 
 For example:
 ```
-andreopo@cori02:/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_paper/classifier/dl> ./feature_DL_plasmid_train_CORI.sh  ../DATA/ACLAME.REFSEQMICROB/aclame_plasmid_sequences.fasta.MIN1kMAX330k.fasta    ../DATA/ACLAME.REFSEQMICROB/aclame_plasmid_sequences.fasta.MIN1kMAX330k.fasta.OUT18/    ../DATA/ACLAME.REFSEQMICROB/refseq.bacteria.nonplasmid.nonmito.fasta.subsam40kreads.fasta.MIN1kMAX330k.fasta.UNION.lists_shortq.archaea.txt.fasta.MIN1kMAX330k.fasta       ../DATA/ACLAME.REFSEQMICROB/refseq.bacteria.nonplasmid.nonmito.fasta.subsam40kreads.fasta.MIN1kMAX330k.fasta.UNION.lists_shortq.archaea.txt.fasta.MIN1kMAX330k.fasta.OUT18/
-```
-
+./feature_DL_plasmid_train_CORI.sh  ../DATA/ACLAME.REFSEQMICROB/aclame_plasmid_sequences.fasta.MIN1kMAX330k.fasta    ../DATA/ACLAME.REFSEQMICROB/aclame_plasmid_sequences.fasta.MIN1kMAX330k.fasta.OUT18/    ../DATA/ACLAME.REFSEQMICROB/refseq.bacteria.nonplasmid.nonmito.fasta.subsam40kreads.fasta.MIN1kMAX330k.fasta.UNION.lists_shortq.archaea.txt.fasta.MIN1kMAX330k.fasta       ../DATA/ACLAME.REFSEQMICROB/refseq.bacteria.nonplasmid.nonmito.fasta.subsam40kreads.fasta.MIN1kMAX330k.fasta.UNION.lists_shortq.archaea.txt.fasta.MIN1kMAX330k.fasta.OUT18/
 Running feature_DL_plasmid_train.sh . This version is meant for Cori.
+```
 
 .....
 
