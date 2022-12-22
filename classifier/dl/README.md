@@ -3,7 +3,7 @@
 ## README file
 ### Codebase: deeplasmid master branch 
 #### Note: the master branch was mainly used for native code runs on Cori-NERSC. Most users will prefer to use the docker branch, which is the default branch, unless you want to setup a native code run.
-### February 9th, 2022
+### December 22, 2022
 ### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 
 
@@ -11,10 +11,156 @@ Deeplasmid is a tool based on machine learning that separates plasmids from chro
 1) plasmids from ACLAME, 2) PLSDB, and 
 3) chromosomal sequences from refseq.microbial (bacteria and archaea) from which plasmids and mito were removed.
 
-Below are instructions for using both the CPU-only and GPU-based Docker images for deeplasmid.
+Below are instructions for using both the GPU and CPU Docker images for deeplasmid. It is recommended to use GPU (Docker image built December 22, 2022). If you need help with rebuilding the Docker image please feel free to contact me (a reply may be delayed, but I will get back). 
+The train and test data used can be found under: https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/
 
 
-## Deeplasmid Docker container (CPU-only)
+The output file predictions.txt contains plasmid predictions for all contigs in the input fasta file for each run.
+Each contig name will indicate if it was:
+- Plasmid with score near 1.0
+- Chromosome (non-plasmid) with score near 0.0
+- Ambiguous have scores around 0.5 (gray zone)
+- Longer than 330k bases (possibly a chromosome or megaplasmid)
+- Shorter than 1k bases (inconclusive)
+
+The following 2 score files are also output; they are histograms that show the scores for samples and scaffolds that had or didn't have "plasmid" in the header. In reality headers are unlikely to have "plasmid" in the header, but these figures may be useful if testing the tool on a dataset where the classes are known.
+- samplescore_hist.png
+- scaffscore_hist.png
+These files are not output by default. The final plotting step is skipped by setting the -noXterm(-X) flag in the .sh script to true by default.
+
+
+The Git branch "docker" codebase was used for building the Docker images for deeplasmid.
+The public Docker repository is available under:
+https://hub.docker.com/repository/docker/billandreo/deeplasmid
+
+
+
+## Deeplasmid Docker container for GPU
+
+Input: a .fasta file
+
+Output: a directory of results
+
+Built and tested on: Ubuntu 20.04.3 with NVIDIA GEFORCE RTX 3090
+
+To run the deeplasmid Docker container first
+install Docker on your system, then register on dockerhub.
+Pull the deeplasmid image from dockerhub as follows:
+
+```
+docker login
+docker pull billandreo/deeplasmid.tf.gpu2
+```
+
+You can run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo on your system):
+
+```
+~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it       -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid.tf.gpu2   deeplasmid.sh  in.fasta outdir
+```
+
+GPU result:
+```
+~/Downloads/deeplasmid/classifier/dl/testing/649989979$ grep PLASMID 649989979.fna.OUT/outPR.20220209*/predictions.txt
+nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
+nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.899 +/- 0.000
+nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.509 +/- 0.002
+```
+
+### Building the Docker image for GPU
+
+The Dockerfile.GPU2 image was built on Docker image tensorflow/tensorflow:latest-gpu ( https://hub.docker.com/r/tensorflow/tensorflow/ https://github.com/tensorflow/tensorflow ).
+
+To build the Docker image, stop or remove your unused containers and images to make space on your drive and use docker build with Dockerfile.GPU2:
+```
+    sudo docker rm $(sudo docker ps --filter status=exited -q)
+    sudo docker images
+    sudo docker rmi ...ids....
+    sudo docker build -t billandreo/deeplasmid-gpu -f Dockerfile.GPU2 .
+```
+
+If needed, make space on /var (https://askubuntu.com/questions/1219555/low-disk-space-on-var https://askubuntu.com/questions/178909/not-enough-space-in-var-cache-apt-archives). The second method is quick but may remove images you are using:
+```
+du -ks /var/* | sort -nr | more
+docker system prune -a -f
+```
+
+Please see the Supplementary Information from the publication for things to consider when building the Docker image: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files and Pfam-A.TMP2.hmm that can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
+
+
+### Troubleshooting a GPU run
+
+Docker is the easiest way to run TensorFlow on a GPU since the host machine only requires the NVIDIA® driver (the NVIDIA® CUDA® Toolkit is not required).
+Install the Nvidia Container Toolkit to add NVIDIA® GPU support to Docker. nvidia-container-runtime is only available for Linux. See the nvidia-container-runtime platform support FAQ for details.
+https://www.tensorflow.org/install/docker
+If you are getting an error when running Docker with the Nvidia Container Toolkit, see:
+https://github.com/NVIDIA/nvidia-docker/blob/master/README.md#quickstart
+https://github.com/NVIDIA/nvidia-docker/issues/1243 (follow the commands under the Sep 18, 2020 post)
+
+In case your execution is slow it might not be using the GPU.
+If you have DL packages like Pytorch on your host computer, check if those can detect the GPU:
+```
+>>> import torch
+>>> torch.cuda.is_available()
+True
+>>> torch.cuda.device_count()
+1
+>>> torch.cuda.current_device()
+0
+>>> torch.cuda.get_device_name(0)
+'NVIDIA GeForce RTX 3090'
+```
+
+
+Check if your GPUs are detected on your host with these commands: 
+```
+    nvidia-smi -q
+    nvidia-smi -L
+    nvidia-smi   
+    sudo apt install nvidia-cuda-toolkit
+    nvcc --version
+    whereis cuda
+    cd /usr/local/cuda*/samples/ && make
+    ./bin/x86_64/linux/release/deviceQuery
+    ./bin/x86_64/linux/release/bandwidthTest
+    cat /usr/local/cuda/version.txt
+```
+
+For details on these commands see: https://www.geeksforgeeks.org/how-to-check-if-tensorflow-is-using-gpu/  https://varhowto.com/check-cuda-version-ubuntu-18-04/
+In case the commands above don't work on your system here are suggestions and ideas: 
+https://askubuntu.com/questions/902636/nvidia-smi-command-not-found-ubuntu-16-04 
+https://stackoverflow.com/questions/43022843/nvidia-nvml-driver-library-version-mismatch
+Sometimes rebooting your system may work too.
+
+Cuda Toolkit libraries aren't needed for TensorFlow, just the NVIDIA Driver and NVIDIA Container Toolkit are (see above). 
+If it can not see the GPU it may be an issue with your Cuda libraries or NVIDIA driver. For Cuda installation, see https://developer.nvidia.com/cuda-downloads https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_network https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation  . You can install NVIDIA drivers from your system settings, or to download new NVIDIA drivers see https://www.nvidia.com/Download/index.aspx .
+
+If you want to setup tensorflow and run the code natively: https://www.tensorflow.org/install/gpu
+
+To read more on Nvidia Docker images for deeplearning: https://docs.nvidia.com/deeplearning/frameworks/user-guide/index.html
+
+#### CNTK (old):
+
+To setup CNTK on your host (outside of the Docker image) see https://docs.microsoft.com/en-us/cognitive-toolkit/setup-cntk-on-your-machine
+The old Dockerfile.GPU was extended from the keras-gpu container (https://github.com/gw0/docker-keras); however I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors (see https://github.com/microsoft/CNTK/issues/2908). 
+The docker-keras github repo above also provides keras-tensorflow-gpu dockerfiles, but I couldn't get them to build.
+In case your execution is slow and you suspect it might not be using the GPU, you can verify if Keras and cntk uses a GPU inside the running Docker container, as follows:
+ 
+```
+$ sudo docker run -it  --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')   -v `pwd`:/srv  a8d777f61654  /bin/sh
+#python3 
+Python 3.5.3 (default, Nov  4 2021, 15:29:10) 
+[GCC 6.3.0 20170516] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cntk as C
+>>> C.device.all_devices()
+(GPU[0] NVIDIA GeForce RTX 3090, CPU)
+>>> from keras import backend as K
+Using CNTK backend
+Selected GPU[0] NVIDIA GeForce RTX 3090 as the process wide default device.>>> 
+```
+
+
+## Deeplasmid Docker container for CPU-only
 
 Input: a .fasta file
 
@@ -36,30 +182,14 @@ You can run deeplasmid for plasmid identification as follows. Substitute the `/p
 docker run -it -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta -v /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
 ```
 
-The file predictions.txt file is the output file of plasmid predictions for all contigs in the input fasta file.
-Each contig name will indicate if it was:
-- Plasmid with score near 1.0
-- Chromosome (non-plasmid) with score near 0.0
-- Ambiguous have scores around 0.5 (gray zone)
-- Longer than 330k bases (possibly a chromosome or megaplasmid)
-- Shorter than 1k bases (inconclusive)
-
-The following 2 score files are also output; they are histograms that show the scores for samples and scaffolds that had or didn't have "plasmid" in the header. In reality headers are unlikely to have "plasmid" in the header, but these figures may be useful if testing the tool on a dataset where the classes are known.
-- samplescore_hist.png
-- scaffscore_hist.png
-These files are not output by default. The final plotting step is skipped by setting the -noXterm(-X) flag in the .sh script to true by default.
-
-The public Docker repository (CPU-only container) is available under:
-https://hub.docker.com/repository/docker/billandreo/deeplasmid
 
 ### Building the Docker image for CPU-only
 
-The present code repository contains the branch "docker" codebase used for building the Docker image for deeplasmid.
 Building the Docker image (CPU-only) was done with Dockerfile.v2 on a MacBook Pro:
 ```
 docker build -t billandreo/deeplasmid -f Dockerfile.v2 .
 ```
-I built a different image on Ubuntu with Dockerfile.CPU-UbuntuBuild. I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors. Either of these builds should work:
+I built a different image on Ubuntu with Dockerfile.CPU-UbuntuBuild. I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors. Either of these builds should work. I haven't rebuilt this with Tensorflow, since I don't run CPU-only anymore anyway:
 ```
 ~/Downloads/deeplasmid/classifier/dl$ sudo docker build -t billandreo/deeplasmid-cpu-ubuntu -f Dockerfile.CPU-UbuntuBuild .
 
@@ -67,21 +197,15 @@ docker pull billandreo/deeplasmid-cpu-ubuntu
 ```
 
 
-Please see the Supplementary Information from the publication for things to consider when building the Docker image: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files and Pfam-A.TMP2.hmm that can be downloaded (https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/).
+## Testing
 
-### Testing
-
-The 649989979.fna is a testing file, which was downloaded from IMG taxonoid 649989979. 
+The 649989979.fna is a testing file, which was downloaded from IMG taxonoid 649989979.
 This file can be found under the master branch in order to reduce space in the docker branch.
 This way you can test to verify if your installation of the deeplasmid tool gives the same results as expected, which are shown below.
 
-You can run deeplasmid on this input file as follows, either natively or with docker (note you may need to run docker with sudo):
+You can run deeplasmid on this input file as follows (note you may need to run docker with sudo):
 
 ```
-andreopo@nid00435:/global/cscratch1/sd/andreopo/plasmidml_tests/jgi-ml_paper/classifier/dl> ./feature_DL_plasmid_predict_CORI.sh testing/649989979/649989979.fna testing/649989979/649989979.fna.native.OUT22e
-Deeplasmid - Plasmid finder for microbial genome assemblies. 
-Counts: Plasm=3  Ambig=0  Main=44  nCount=47
-
 ~/Downloads/deeplasmid/classifier/dl$ docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
 Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 
@@ -92,128 +216,21 @@ Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 Then you can check the plasmid identified contigs as follows:
 
 ```
-andreopo@nid00435:/global/cscratch1/sd/andreopo/plasmidml_tests/jgi-ml_paper/classifier/dl> grep PLAS testing/649989979/649989979.fna.native.OUT22e/outPR.20220209_235839/predictions.txt
-nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.511 +/- 0.002
-nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.916 +/- 0.000
-nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,1.000 +/- 0.000
-
-~/Downloads/deeplasmid/classifier/dl$ grep PLASM testing/649989979/649989979.fna.OUT/outPR.20220210_085843/predictions.txt 
+~/Downloads/deeplasmid/classifier/dl$ grep PLASM testing/649989979/649989979.fna.OUT/outPR.20220210_085843/predictions.txt
 nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.899 +/- 0.000
 nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
 nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.510 +/- 0.002
 ```
 
 
-## Deeplasmid Docker container for GPU
-
-Input: a .fasta file
-
-Output: a directory of results
-
-Built and tested on: Ubuntu 20.04.3 with NVIDIA GEFORCE RTX 3090
-
-To run the deeplasmid Docker container first
-install Docker on your system, then register on dockerhub.
-Pull the deeplasmid image from dockerhub as follows:
-
-```
-docker login
-docker pull billandreo/deeplasmid-gpu
-```
-
-You can run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo):
-
-```
-~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it     --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')    -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid-gpu   feature_DL_plasmid_predict.sh  in.fasta outdir
-```
-
-The extra parameters in the above command explicitly expose your GPU devices and CUDA Driver library from the host system into the container. In case this command produces an error it may be caused by broken symlinks under the nvidia device and library directories (it is a known Docker bug). 
-
-GPU result:
-```
-~/Downloads/deeplasmid/classifier/dl/testing/649989979$ grep PLASMID 649989979.fna.OUT/outPR.20220209*/predictions.txt
-nz_adhj01000031 paenibacillus vortex v453 cnt_pvor1000031, whole genome shotgun sequence.,PLASMID,0.999 +/- 0.000
-nz_adhj01000041 paenibacillus vortex v453 cnt_pvor1000041, whole genome shotgun sequence.,PLASMID,0.899 +/- 0.000
-nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun sequence.,PLASMID,0.509 +/- 0.002
-```
-
-### Building the Docker image for GPU
-
-The Dockerfile was extended from the keras-gpu container (https://github.com/gw0/docker-keras); however I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors (see https://github.com/microsoft/CNTK/issues/2908).
-
-To build the Docker image, stop or remove your unused containers and images to make space on your drive and use docker build:
-```
-    sudo docker rm $(sudo docker ps --filter status=exited -q)
-    sudo docker images
-    sudo docker rmi ...ids....
-    sudo docker build -t billandreo/deeplasmid-gpu -f Dockerfile.GPU .
-```
-
-
-### Troubleshooting a GPU run
-
-In case your execution is slow and you suspect it might not be using the GPU, you can verify if Keras and cntk uses a GPU inside the running Docker container, as follows:
-
-```
-$ sudo docker run -it  --rm   $(ls /dev/nvidia* | xargs -I{} echo '--device={}') $(ls /usr/lib/*-linux-gnu/{libcuda,libnvidia}* | xargs -I{} echo '-v {}:{}:ro')   -v `pwd`:/srv  a8d777f61654  /bin/sh
- #python3 
-Python 3.5.3 (default, Nov  4 2021, 15:29:10) 
-[GCC 6.3.0 20170516] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> import cntk as C
->>> C.device.all_devices()
-(GPU[0] NVIDIA GeForce RTX 3090, CPU)
->>> from keras import backend as K
-Using CNTK backend
-Selected GPU[0] NVIDIA GeForce RTX 3090 as the process wide default device.>>> 
-```
-
-
-In case you have other DL packages like Pytorch on your host computer, check if those can detect the GPU:
-```
->>> import torch
->>> torch.cuda.is_available()
-True
->>> torch.cuda.current_device()
-0
->>> torch.cuda.get_device_name(0)
-'NVIDIA GeForce RTX 3090'
-```
-
-If it can not see the GPU it may be an issue with your Cuda libraries or NVIDIA driver. For Cuda installation, see https://developer.nvidia.com/cuda-downloads https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_network https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#ubuntu-installation  . You can install NVIDIA drivers from your system settings, or to download new NVIDIA drivers see https://www.nvidia.com/Download/index.aspx .
-
-Check if your GPUs are detected on your host with these commands: 
-```
-    nvidia-smi -q
-    nvidia-smi -L
-    nvidia-smi   
-    sudo apt install nvidia-cuda-toolkit
-    nvcc --version
-    whereis cuda
-    cd /usr/local/cuda*/samples/ && make
-    ./bin/x86_64/linux/release/deviceQuery
-    ./bin/x86_64/linux/release/bandwidthTest
-    cat /usr/local/cuda/version.txt
-```
-
-For details on these commands see: https://varhowto.com/check-cuda-version-ubuntu-18-04/
-In case the commands above don't work on your system here are suggestions and ideas: 
-https://askubuntu.com/questions/902636/nvidia-smi-command-not-found-ubuntu-16-04 
-https://stackoverflow.com/questions/43022843/nvidia-nvml-driver-library-version-mismatch
-Sometimes rebooting your system may work too.
-
-To setup CNTK on your host (outside of the Docker image) see https://docs.microsoft.com/en-us/cognitive-toolkit/setup-cntk-on-your-machine
-
-If you want to setup tensorflow and run the code natively: https://www.tensorflow.org/install/gpu
-The docker-keras github repo above also provides keras-tensorflow-gpu dockerfiles, but I couldn't get them to build.
-
-To read more on Nvidia Docker images for deeplearning: https://docs.nvidia.com/deeplearning/frameworks/user-guide/index.html
 
 
 
 ## Training
 
-The training of the deeplasmid deep learning model was done on Cori at NERSC. These are the training steps:
+The training and some testing data can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
+The training of the deeplasmid deep learning model was done on Cori at NERSC. 
+These are the training steps:
 
 Get an salloc session with 48 hours allocation:
 salloc: sal with 48 hours
