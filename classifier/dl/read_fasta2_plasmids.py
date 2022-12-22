@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2.7
 '''
 # Read a fasta file.
 # Each sequence consists of 2 rows: header line and the sequence itself.

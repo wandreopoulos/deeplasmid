@@ -2,10 +2,10 @@
 set -e
 
 echo "Deeplasmid - Plasmid finder for microbial genome assemblies. 
-Running feature_DL_plasmid_predict.sh .
+Running deeplasmid.sh .
 This .sh script is meant for running Deeplasmid from the Docker image.
 Usage: please specify 2 arguments - the input fasta file and output directory - as follows:
- docker run -it  -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta  -v  /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid     feature_DL_plasmid_predict.sh  in.fasta outdir
+ docker run -it  -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta  -v  /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid     deeplasmid.sh  in.fasta outdir
 Contact person: Bill Andreopoulos, wandreopoulos@lbl.gov
 Last maintained: December 22, 2022"
 
