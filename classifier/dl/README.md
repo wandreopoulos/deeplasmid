@@ -52,7 +52,7 @@ docker login
 docker pull billandreo/deeplasmid.tf.gpu2
 ```
 
-You can run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo on your system):
+Run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo on your system):
 
 ```
 ~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it       -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid.tf.gpu2   deeplasmid.sh  in.fasta outdir
@@ -68,14 +68,14 @@ nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun 
 
 ### Building the Docker image for GPU
 
-The Dockerfile.GPU2 image was built on Docker image tensorflow/tensorflow:latest-gpu ( https://hub.docker.com/r/tensorflow/tensorflow/ https://github.com/tensorflow/tensorflow ).
+The Dockerfile.GPU2 Docker image was built on tensorflow/tensorflow:latest-gpu ( https://hub.docker.com/r/tensorflow/tensorflow/ https://github.com/tensorflow/tensorflow ).
 
 To build the Docker image, stop or remove your unused containers and images to make space on your drive and use docker build with Dockerfile.GPU2:
 ```
     sudo docker rm $(sudo docker ps --filter status=exited -q)
     sudo docker images
     sudo docker rmi ...ids....
-    sudo docker build -t billandreo/deeplasmid-gpu -f Dockerfile.GPU2 .
+    sudo docker build -t billandreo/deeplasmid.tf.gpu2 -f Dockerfile.GPU2 .
 ```
 
 If needed, make space on /var (https://askubuntu.com/questions/1219555/low-disk-space-on-var https://askubuntu.com/questions/178909/not-enough-space-in-var-cache-apt-archives). The second method is quick but may remove images you are using:
