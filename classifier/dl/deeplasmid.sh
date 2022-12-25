@@ -12,7 +12,7 @@ Last maintained: December 22, 2022"
 #module load deeplearning
 
 if [ $# -ne 2 ]; then
-    echo "Usage of Deeplasmid from the Docker image, please specify 2 arguments (input fasta file and output directory): docker run -it  -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta  -v  /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid     feature_DL_plasmid_predict.sh  in.fasta outdir"
+    echo "Usage of Deeplasmid from the Docker image, please specify 2 arguments (input fasta file and output directory): docker run -it  -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta  -v  /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid     deeplasmid.sh  in.fasta outdir"
     exit 1
 fi
 

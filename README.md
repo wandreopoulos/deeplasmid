@@ -185,7 +185,9 @@ docker run -it -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta -v /pa
 
 ### Building the Docker image for CPU-only on Ubuntu with Ryzen processor
 
-I built a different image on Ubuntu with Dockerfile.CPU-UbuntuBuild. Dec 2022 update: I rebuilt this with Tensorflow. Older build was with Cntk and I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors. Before I hadn't rebuilt this with Tensorflow, since I don't run CPU-only anymore anyway:
+Dec 2022 update: I rebuilt a different image on Ubuntu using Dockerfile.CPU-UbuntuBuild2 with Tensorflow.                                
+The Dockerfile.CPU-UbuntuBuild2 Docker image was built on tensorflow/tensorflow ( https://hub.docker.com/r/tensorflow/tensorflow/ https://github.com/tensorflow/tensorflow ).
+An older deeplasmid-cpu-ubuntu build was with Cntk and I had downgraded to Cntk 2.3.1, since 2.4 appears to have a compatibility issue with Ryzen processors: 
 ```
 ~/Downloads/deeplasmid/classifier/dl$ sudo docker build -t billandreo/deeplasmid-cpu-ubuntu2 -f Dockerfile.CPU-UbuntuBuild2 .
 
