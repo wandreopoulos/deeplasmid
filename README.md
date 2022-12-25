@@ -35,7 +35,7 @@ https://hub.docker.com/repository/docker/billandreo/deeplasmid
 
 
 
-## Deeplasmid Docker container for GPU
+## Deeplasmid Docker image for GPU
 
 Input: a .fasta file
 
@@ -160,13 +160,48 @@ Selected GPU[0] NVIDIA GeForce RTX 3090 as the process wide default device.>>>
 ```
 
 
-## Deeplasmid Docker container for CPU-only
+
+
+## Deeplasmid Docker image for CPU-only on Ubuntu 20.04.3 with Ryzen processor
 
 Input: a .fasta file
 
 Output: a directory of results
 
-Built and tested on: MacBook Pro, Ubuntu 20.04.3
+Built and tested on: Ubuntu 20.04.3 with Ryzen processor
+
+To run the deeplasmid Docker container first
+install Docker on your system, then register on dockerhub.
+Pull the deeplasmid image from dockerhub as follows:
+
+```
+docker login
+docker pull billandreo/deeplasmid-cpu-ubuntu2
+```
+
+You can run deeplasmid for plasmid identification as follows. Substitute the `/path/to/input/fasta` and `/path/to/output/directory` below with the full paths to your input file and output dir (note you may need to run docker with sudo):
+```
+docker run -it -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta -v /path/to/output/directory:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid-cpu-ubuntu2 deeplasmid.sh in.fasta outdir
+```
+
+### Building the Docker image for CPU-only on Ubuntu with Ryzen processor
+
+I built a different image on Ubuntu with Dockerfile.CPU-UbuntuBuild. Dec 2022 update: I rebuilt this with Tensorflow. Older build was with Cntk and I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors. Before I hadn't rebuilt this with Tensorflow, since I don't run CPU-only anymore anyway:
+```
+~/Downloads/deeplasmid/classifier/dl$ sudo docker build -t billandreo/deeplasmid-cpu-ubuntu2 -f Dockerfile.CPU-UbuntuBuild2 .
+
+docker pull billandreo/deeplasmid-cpu-ubuntu2
+```
+
+
+
+## Deeplasmid Docker image for CPU-only on MacBook Pro 2019 with Intel Processor (the Docker image may also work on other Unix-like systems)
+
+Input: a .fasta file
+
+Output: a directory of results
+
+Built and tested on: MacBook Pro. Disclaimer: It's been a while since I run this one on MacBook.
 
 To run the deeplasmid Docker container first
 install Docker on your system, then register on dockerhub.
@@ -183,18 +218,15 @@ docker run -it -v /path/to/input/fasta:/srv/jgi-ml/classifier/dl/in.fasta -v /pa
 ```
 
 
-### Building the Docker image for CPU-only
+### Building the Docker image for CPU-only on MacBook
 
-Building the Docker image (CPU-only) was done with Dockerfile.v2 on a MacBook Pro:
+Building the Docker image (CPU-only) was done with Dockerfile.v2 on a MacBook Pro. This command is from an older build that I did with CNTK:
 ```
 docker build -t billandreo/deeplasmid -f Dockerfile.v2 .
 ```
-I built a different image on Ubuntu with Dockerfile.CPU-UbuntuBuild. I downgraded to Cntk 2.3.1 since 2.4 appears to have a compatibility issue with Ryzen processors. Either of these builds should work. I haven't rebuilt this with Tensorflow, since I don't run CPU-only anymore anyway:
-```
-~/Downloads/deeplasmid/classifier/dl$ sudo docker build -t billandreo/deeplasmid-cpu-ubuntu -f Dockerfile.CPU-UbuntuBuild .
 
-docker pull billandreo/deeplasmid-cpu-ubuntu
-```
+
+One of these Docker builds should work if you are on a Linux-based system, else you can try to rebuild the Docker image. I haven't tested on Windows.
 
 
 ## Testing
@@ -206,10 +238,13 @@ This way you can test to verify if your installation of the deeplasmid tool give
 You can run deeplasmid on this input file as follows (note you may need to run docker with sudo):
 
 ```
-~/Downloads/deeplasmid/classifier/dl$ docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
+~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid.tf.gpu2  deeplasmid.sh in.fasta outdir
 Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 
-~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid-cpu-ubuntu  feature_DL_plasmid_predict.sh in.fasta outdir
+~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid-cpu-ubuntu2  deeplasmid.sh in.fasta outdir
+Counts: Plasm=3  Ambig=0  Main=44  nCount=47
+
+~/Downloads/deeplasmid/classifier/dl$ docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid feature_DL_plasmid_predict.sh in.fasta outdir
 Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 ```
 
@@ -228,8 +263,8 @@ nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun 
 
 ## Training
 
-The training and some testing data can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
-The training of the deeplasmid deep learning model was done on Cori at NERSC. 
+The training data and some testing data can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
+The training of the deeplasmid deep learning model was done on Cori at NERSC with Tensorflow in 2021. 
 These are the training steps:
 
 Get an salloc session with 48 hours allocation:
