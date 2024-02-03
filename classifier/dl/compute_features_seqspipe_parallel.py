@@ -72,373 +72,10 @@ import shutil
 from JGI_Pipeline import JGI_Pipeline
 
 
-COGs = ["COG0009"]
 
 DEBUG = 0
 
 
-'''
-Evaluate if the sequence hits one of the chromosome-specific aa sequences.
-To make a separate sketch database from an aa fasta file, run this:
-sketch.sh in=x.faa out=x.sketch amino persequence
-Then to compare, run:
-comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
-'''
-def run_chromsketch(sequence, seqin, penalty_value):
-        FASTA = seqin
-        cmd = [os.path.join(srcdir, "run_chromsketch.sh"), FASTA]
-        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
-        print("CHROMFINDER cmd: " + str(cmd))
-        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
-        #subprocess.check_call(cmd)
-        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        kill = lambda process: process.kill()
-        my_timer = Timer(50, kill, [proc1])
-        try:
-            my_timer.start()
-            std_out, std_err = proc1.communicate()
-        finally:
-            my_timer.cancel()
-
-        #std_out, std_err = proc1.communicate()
-        print("CHROMFINDER std_out: " + str(std_out))
-        #std_out = subprocess.check_output(cmd)
-
-        results=1
-        if std_out.find("No hits") >= 0:
-            results=0
-
-        #proc1.kill()
-        #proc1.terminate()
-        #proc1.wait()
-
-        return results
-
-
-
-'''
-Evaluate if the sequence hits one of the plasmid-specific aa sequences.
-To make a separate sketch database from an aa fasta file, run this:
-sketch.sh in=x.faa out=x.sketch amino persequence
-Then to compare, run:
-comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
-'''
-def run_plassketch(sequence, seqin, penalty_value):
-        FASTA = seqin
-        cmd = [ os.path.join(srcdir, "run_plassketch.sh"), FASTA] 
-        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
-        print("PLASMIDFINDER cmd: " + str(cmd))
-        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
-        #subprocess.check_call(cmd)
-        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        kill = lambda process: process.kill()
-        my_timer = Timer(50, kill, [proc1])
-        try:
-            my_timer.start()
-            std_out, std_err = proc1.communicate()
-        finally:
-            my_timer.cancel()
-
-        #std_out, std_err = proc1.communicate()
-        print("PLASMIDFINDER std_out: " + str(std_out))
-        #std_out = subprocess.check_output(cmd)
-
-        results=1
-        if std_out.find("No hits") >= 0:
-            results=0
-
-        #proc1.kill()
-        #proc1.terminate()
-        #proc1.wait()
-
-        return results
-
-
-'''
-Evaluate if the sequence hits one of the plasmid-specific aa sequences.
-In order to also sketch a nucleotide (not amino acid) fasta file, do these command parameters look ok? I removed the "amino" part.
-sketch.sh in=x.fasta out=x.sketch persequence
-Then to compare, run:
-comparesketch.sh in=contigs.fa ref=x.sketch persequence
-'''
-def run_plasORIsketch(sequence, seqin, penalty_value):
-        FASTA = seqin
-        cmd = [ os.path.join(srcdir, "run_plasORIsketch.sh"), FASTA]
-        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
-        print("PLASMIDORIFINDER cmd: " + str(cmd))
-        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
-        #subprocess.check_call(cmd)
-        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        kill = lambda process: process.kill()
-        my_timer = Timer(50, kill, [proc1])
-        try:
-            my_timer.start()
-            std_out, std_err = proc1.communicate()
-        finally:
-            my_timer.cancel()
-
-        #std_out, std_err = proc1.communicate()
-        print("PLASMIDORIFINDER std_out: " + str(std_out))
-        #std_out = subprocess.check_output(cmd)
-
-        results=1
-        if std_out.find("No hits") >= 0:
-            results=0
-
-        #proc1.kill()
-        #proc1.terminate()
-        #proc1.wait()
-
-        return results
-
-
-
-
-
-def get_table_from_tblout(tblout_pfam):
-    with open(tblout_pfam, "r") as infile:
-        tblout_pfam=infile.readlines()
-    tblout_pfam = [i.split() for i in tblout_pfam[3:-10]]
-    for i in tblout_pfam:
-        i[13] = float(i[13])
-    tblout_pfam.sort(key = operator.itemgetter(0, 13,17), reverse = True)
-    top_genes={}
-    for i in tblout_pfam:
-        if i[0] not in top_genes:
-            top_genes[i[0]] = [[i[3],float(i[13]),float(i[17]),float(i[18])]]
-        else:
-            for j in top_genes[i[0]]:
-                start_i, end_i, start_j, end_j = float(i[17]), float(i[18]), float(j[2]), float(j[3])
-                if not ((end_i <= start_j) or (start_i >= end_j)):
-                    break
-                else: 
-                    top_genes[i[0]].append([i[3],float(i[13]),start_i,end_i])
-                    break
-    contigs = collections.OrderedDict()
-    for i in top_genes:
-        name = i.rsplit("_", 1)[0]
-        if name not in contigs:
-            contigs[name] = []
-            for j in top_genes[i]:
-                contigs[name].append(j[0])
-        else:
-            for j in top_genes[i]:
-                contigs[name].append(j[0])
-    out = []
-    for key, value in contigs.items():
-        out+=[str(key) + " "  +  " ".join(value)]
-    return out
-
-
-def build_genehit_vector(input_list):
-    tr=os.path.dirname(os.path.abspath(__file__)) + "/pfams_discr.txt"
-    hmm_dict = []
-    with open(tr, 'r') as infile:
-        table=infile.readlines()
-        hmm_dict = map(hash, [i.strip() for i in table])
-
-    # Calculate probabilities for each element of input list
-    out_list = [0]*1538
-    gene_list = []
-    count = 0
-    if len(input_list) > 0:
-        gene_list = map(hash, input_list[0].split())
-    for i in hmm_dict:
-        if i in gene_list:
-            out_list[count] = 1 
-        count += 1
-
-    return out_list 
-
-
-
-
-
-
-'''
-COGs not used atm because I only had chrom-specific COGs, not plasmid-specific COGs.
-Also the COG computation wasn't that fast. Alevy said he'd send plasmid-specific COGs once they're ready.
-Note use of COGs should improve accuracy of ML a lot.
-'''
-def prodigal(sequence, seqin, penalty_value):
-        ###Run taxa finder
-        ###for filename in glob.glob( BINS_src_files ):
-        FASTA = seqin
-        '''
-        cmd = "/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal -a  %s.gene.faa -d  %s.gene.fasta  -i  %s  -o  %s.prodigal.out -p meta" % (FASTA, FASTA, FASTA, FASTA)
-        std_out, std_err, exit_code = run_command(cmd, True, log)
-        if exit_code != 0:
-            print "CMD %s failed with OUT %s ERR %s" % (cmd, std_out, std_err)
-            return
-        '''
-        ###/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal
-        ###cmd = ["shifter", "--image=registry.services.nersc.gov/jgi/prodigal:latest", "prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
-        cmd = [ os.path.join(srcdir, "run_prodigal.sh"), FASTA]
-        subprocess.check_call(cmd)
-
-        prodigalFile = open(FASTA + ".prodigal.out", "r")
-        x = {}
-        genecount = 0
-        contiglen = len(sequence)
-        for i in xrange(0,contiglen):
-           x[i] = 0
-        for line in prodigalFile:
-                if line.find("CDS") > -1:
-                      [ start , end ] = [ int(i) for i in re.findall("\d+", line) ]
-                      for i in xrange(min(start, end)-1, max(start, end)):
-                           x[i] = 1
-                      genecount += 1
-        
-        ones = x.values().count(1)
-        genesperMB=0
-        if contiglen > 0:
-            genesperMB=(float(ones)/float(contiglen))
-        prodigalFile.close()
-
-        '''
-        ###prodigal input contig file output genes as aas
-        ###rpsblast on genes as aas
-        if os.path.getsize(FASTA + ".gene.faa") > 0:
-            Cog = "/global/dna/projectdirs/microbial/img/databases/cog/Cog"  ###"/global/projectb/sandbox/IMG/img/databases/cog"
-            ###cmd2 = ["/usr/bin/rpsblast", "-m", "8", "-d", Cog, "-i", FASTA + ".gene.faa", "-b", "1", "-a", "1", "-e", "1e-2", "-l", FASTA + ".gene.faa.rpsblast.log" ]    ####
-            cmd2 = ["shifter", "--image=registry.services.nersc.gov/jgi/hmmer:latest", "hmmsearch", "--cut_ga", "--domtblout", FASTA + ".COG.hmm.hmmsearch.domtblout.txt", "/global/projectb/scratch/andreopo/GAA-1290_plasmids/Dingl/microbial/NEW3_ALL_FEATURES/tmp170.refseq.bacteria.NOplasmids_NOmito.fasta.1/COG_sub2.hmm",  FASTA + ".gene.faa"] ###COG_sub2  ###"-E", "100"
-            std_out2 = subprocess.check_output(cmd2)
-            print "std_out2_________ " + std_out2
-        '''
-        '''
-        cmd = "/usr/bin/rpsblast -m 8 -d %s -i %s.gene.faa -o %s.gene.faa.out -b 1 -a 1 -e 1e-2 -l %s.gene.faa.log" % (Cog, FASTA, FASTA, FASTA)
-        std_out, std_err, exit_code = run_command(cmd, True, log)
-        if exit_code != 0:
-            print "CMD %s failed with OUT %s ERR %s" % (cmd, std_out, std_err)
-            return
-        '''
-            
-        '''
-        std_out = subprocess.check_output(cmd4)
-        cmd2 = ["/usr/common/jgi/utilities/bbtools/prod-v35.50/bin/commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=2", "display=3", "count"]
-            ###print "CMD " + str(cmd2)
-            ###run
-            ###p = Popen(cmd2)
-            ###std_out, std_err = p.communicate()
-            std_out = subprocess.check_output(cmd2)
-            ###read first line from stdout
-            ###print "STDOUT " + std_out
-            ###print std_err
-            ###for line in std_out:
-            ###    print "LINE " + line
-            vals = std_out.split()[1].split("=")
-            ###print "VALS " + str(vals)
-            max_occur_dimer = vals[0]
-            max_occur_same_dimer = vals[1]
-        '''
-        
-        '''
-        ###save the second_column objects only in hits
-        ###For each gene 'contig' there should be just one COG hit with the highest bit score
-        ###This assume the same COGs for a specific gene are consecutive in order.
-        hits = {}
-        if os.path.getsize(FASTA + ".gene.faa") > 0:
-            tbloutFile = open(FASTA + ".COG.hmm.hmmsearch.domtblout.txt", "r")
-            for s in tbloutFile:
-                if len(s) > 1 and not s.startswith("#"):
-                    ###hits.append(s.split()[2])
-                    s_array = s.split()
-                    contig = s_array[0]
-                    cog_hit = s_array[3]
-                    cog_len = int(s_array[5])
-                    bit_score = float(s_array[7])
-                    hit_start = int(s_array[19])
-                    hit_end = int(s_array[20])
-                    hit_len = float(hit_end - hit_start) / cog_len
-                    if not contig in hits:
-                        hits[contig] = [cog_hit, bit_score, hit_len]
-                    else:
-                        cog_bit_len = hits.get(contig)
-                        if cog_bit_len[0] == cog_hit:
-                                cog_bit_len[2] += hit_len
-                                hits[contig] = cog_bit_len
-                        elif bit_score > cog_bit_len[1]:
-                                hits[contig] = [cog_hit, bit_score, hit_len]
-        
-        print "HITS___________ " + str(hits)
-        
-        ###check if hits contain the COGs unique to chromosomes - if yes set the corresponding bit field to 1.
-        ###The same COGs may be encounterd for multiple genes in the fille, so keep one with highest hit_len.
-        results = {}
-        hits_summary = {}
-        for k, v in hits.items():
-                cog_hit = v[0]
-                bit_score = v[1]
-                hit_len = v[2]
-                if cog_hit in hits_summary:
-                        if hits_summary[cog_hit] < hit_len:
-                             hits_summary[cog_hit] = hit_len
-                else:
-                        hits_summary[cog_hit] = hit_len
-                        
-        for i in COGs:
-            if i in hits_summary and hits_summary.get(i) >= 0.80:
-                results[i] = "1"
-            else:
-                results[i] = "0"
-
-        os.remove(FASTA + ".prodigal.out")
-        ###os.remove(FASTA + ".gene.faa.rpsblast.log")
-        if os.path.getsize(FASTA + ".gene.faa") > 0:
-            os.remove(FASTA + ".COG.hmm.hmmsearch.domtblout.txt")
-        '''
-        countaa = 0
-        countprot = 0
-        for line in fileinput.input( FASTA + ".gene.faa" ): ###READS####READS: ###:
-            line = line.strip()
-            if line.startswith(">"):
-                 countprot += 1
-            else:
-                 countaa += len(line)
-        aalenavg = 0
-        if countprot > 0:
-            aalenavg = countaa / float(countprot)
-
-        #now run hmmsearch
-        print ("HMMSearch Parsing...")
-        cmd = [ os.path.join(srcdir, "run_hmmsearch.sh"), FASTA]
-        subprocess.check_call(cmd)
-
-
-        tblout_pfam = FASTA + ".domtblout"
-
-
-        feature_table = get_table_from_tblout(tblout_pfam)
-        feature_table = [i.strip().split(' ', 1) for i in feature_table]
-
-        with open(FASTA + '.feature_table.txt', 'w') as output:
-            writer = csv.writer(output, lineterminator='\n')
-            writer.writerows(feature_table)
-
-
-        feature_table_names=[]
-        feature_table_genes=[]
-        for i in feature_table:
-            feature_table_names.append(i[0])
-            feature_table_genes.append(i[1])
-
-
-        print ("build_genehit_vector...")
-        k = build_genehit_vector(feature_table_genes)
-
-
-
-        if os.path.exists(FASTA + ".gene.faa"):  os.remove(FASTA + ".gene.faa")
-        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".gene.fasta")
-        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".prodigal.out")
-        if os.path.exists(FASTA + ".domtblout"):  os.remove(FASTA + ".domtblout")
-        if os.path.exists(FASTA + ".feature_table.txt"):  os.remove(FASTA + ".feature_table.txt")
-        if os.path.exists(FASTA + ".out_pfam"):  os.remove(FASTA + ".out_pfam")
-        
-        return genesperMB, genecount, aalenavg, k
 
 
 '''
@@ -936,6 +573,26 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
 
 
 
+#............................
+# convert sequences to 1-hot 2-D arrays
+#............................
+def encode1hotBase(seqPad):
+        hot2D=[]
+        for y in seqPad:
+            hot2D.append(Constants.oneHotBase[y])
+        #''.join(map(str, a.flatten().tolist()))
+        return ''.join(map(str, map(int, np.asarray(hot2D).flatten().tolist())))  #np.array(hot2D).astype(np.float32)
+
+
+###############################
+# RQC's runcommand function
+###############################
+def runCommand(cmd):
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    return stdout.strip(), stderr.strip(), process.returncode
+
+
 
 '''
 Compute total GC in seq
@@ -1032,26 +689,6 @@ def fourFindLongestHomopolymer(seq):
 
 
 
-#............................
-# convert sequences to 1-hot 2-D arrays
-#............................
-def encode1hotBase(seqPad):
-        hot2D=[]
-        for y in seqPad:
-            hot2D.append(Constants.oneHotBase[y])
-        #''.join(map(str, a.flatten().tolist()))
-        return ''.join(map(str, map(int, np.asarray(hot2D).flatten().tolist())))  #np.array(hot2D).astype(np.float32)
-
-
-###############################
-# RQC's runcommand function
-###############################
-def runCommand(cmd):
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    return stdout.strip(), stderr.strip(), process.returncode
-
-
 '''
   This function finds the most frequent 
   pentamer in a sequence. It only find the pentamer and converts it to 1hot encoding. No frequencies returned.
@@ -1112,556 +749,278 @@ def fivesixFindPentamer(seq, seqin, penalty_value):
 
 
 
-'''
-Unused at the moment
-'''
-def fivesixFindMers_BBtoolsCommonKmers(seq, seqin, penalty_value):
-    '''
-    lmers_dimer = khmer.new_ktable(2)
-    lmers_indexes_dimer = {}    
-    lmers_trimer = khmer.new_ktable(3)
-    lmers_indexes_trimer = {}
-    lmers_tetramer = khmer.new_ktable(4)
-    lmers_indexes_tetramer = {}
-    
-    lmers_dimer.consume(seq)
-    lmers_trimer.consume(seq)
-    lmers_tetramer.consume(seq)
-    '''
 
-    '''
-    for windowSizeL in [4]:
-        for idx_start in range(0, windowSizeL):
-            idx = idx_start
-            #consec_identical_mers = ''
-            count_consec_identical_mers = 0
-            prev_mer = ''
-            while idx + windowSizeL <= len(seq):
-                subseq = seq[idx : idx + windowSizeL]
-                if subseq == len(subseq) * subseq[0]: ###is a homopolymer:
-                    if DEBUG == 1:
-                        print "subseq is a homopolymer " + subseq
-                    idx += windowSizeL
-                    prev_mer = subseq
-                    continue
-                lmers  = lmers_dimer
-                lmers_indexes = lmers_indexes_dimer
-                if windowSizeL == 3:
-                    lmers  = lmers_trimer
-                    lmers_indexes = lmers_indexes_trimer
-                if windowSizeL == 4:
-                    lmers  = lmers_tetramer
-                    lmers_indexes = lmers_indexes_tetramer
-                lmers[subseq] = lmers.get(subseq, 0) + 1
-                lmers_indexes[subseq] = lmers_indexes.get(subseq, []) + range(idx , idx + windowSizeL)
-                ###print "subseq " + subseq + " prev_mer " + prev_mer
-                
-                if not subseq == prev_mer:
-                    key = str(windowSizeL) + "repeat"
-                    if count_consec_identical_mers > rules.get(key).get("X"):
-                        penalty_value += float( rules.get(key).get("value") )
-                        if  PRINT_SUCC_FAIL: print >>sys.stderr, str( key + " . " + rules.get(key).get("text").format(Sequence=prev_mer) + rules.get(key).get("explanation") )
-                        if  PRINT_SUCC_FAIL: print >>sys.stderr, "    (...) explanation: consec_identical_mers " + prev_mer + " count_consec_identical_mers " + str(count_consec_identical_mers)
-                        if windowSizeL == 2:
-                            if count_consec_identical_mers > max_occur_same_dimer:
-                                max_occur_same_dimer = count_consec_identical_mers
-                                pos_occur_same_dimer = count_consec_identical_mers * 2
-                                max_occur_dimer = prev_mer
-                        elif windowSizeL == 3:
-                            if count_consec_identical_mers > max_occur_same_trimer:
-                                max_occur_same_trimer = count_consec_identical_mers
-                                pos_occur_same_trimer = count_consec_identical_mers * 3
-                                max_occur_trimer = prev_mer
-                        elif windowSizeL == 4:
-                            if count_consec_identical_mers > max_occur_same_tetramer:
-                                max_occur_same_tetramer = count_consec_identical_mers
-                                pos_occur_same_tetramer = count_consec_identical_mers * 4
-                                max_occur_tetramer = prev_mer
-                    count_consec_identical_mers = 1
-                    #consec_identical_mers = subseq
-                else:
-                    count_consec_identical_mers += 1
-                    #consec_identical_mers = subseq
-                    
-                idx += windowSizeL
-                prev_mer = subseq
-    '''
-
-    max_occur_dimer = ""
-    max_occur_same_dimer = 0
-    pos_occur_same_dimer = 0
-    '''
-    for l in lmers_dimer.keys():
-        if lmers_dimer.get(l) > max_occur_same_dimer and lmers_dimer.get(l) > 1:
-            max_occur_dimer = l
-            max_occur_same_dimer = lmers_dimer.get(l)
-            pos_occur_same_dimer = len(set(lmers_indexes_dimer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    '''
-    for i in range(0, lmers_dimer.n_entries()):
-       n = lmers_dimer.get(i)
-       if n > max_occur_same_dimer and n > 1:
-          if DEBUG == 1:  print lmers_dimer.reverse_hash(i), "is present", n, "times."
-          max_occur_dimer = lmers_dimer.reverse_hash(i)
-          max_occur_same_dimer = n
-    '''
-    cmd2 = ["/usr/common/jgi/utilities/bbtools/prod-v35.50/bin/commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=2", "display=3", "count"]
-    ###print "CMD " + str(cmd2)
-    ###run
-    ###p = Popen(cmd2)
-    ###std_out, std_err = p.communicate()
-    std_out = subprocess.check_output(cmd2)
-    ###read first line from stdout
-    ###print "STDOUT " + std_out
-    ###print std_err
-    ###for line in std_out:
-    ###    print "LINE " + line
-    vals = std_out.split()[1].split("=")
-    ###print "VALS " + str(vals)
-    max_occur_dimer = vals[0]
-    max_occur_same_dimer = vals[1]
-
-          
-    max_occur_trimer = ""
-    max_occur_same_trimer = 0
-    pos_occur_same_trimer = 0
-    '''
-    for l in lmers_trimer.keys():
-        if lmers_trimer.get(l) > max_occur_same_trimer and lmers_trimer.get(l) > 1:
-            max_occur_trimer = l
-            max_occur_same_trimer = lmers_trimer.get(l)
-            pos_occur_same_trimer = len(set(lmers_indexes_trimer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    '''
-    for i in range(0, lmers_trimer.n_entries()):
-       n = lmers_trimer.get(i)
-       if n > max_occur_same_trimer and n > 1:
-          if DEBUG == 1:  print lmers_trimer.reverse_hash(i), "is present", n, "times."
-          max_occur_trimer = lmers_trimer.reverse_hash(i)
-          max_occur_same_trimer = n
-    '''
-    cmd3 = ["/usr/common/jgi/utilities/bbtools/prod-v35.50/bin/commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=3", "display=3", "count"]
-    ###print "CMD " + str(cmd3)
-    ###run
-    ###p = Popen(cmd3)
-    ###std_out, std_err = p.communicate()
-    std_out = subprocess.check_output(cmd3)
-    ###read first line from stdout
-    ###print "STDOUT " + std_out
-    ###print std_err
-    ###for line in std_out:
-    ###    print "LINE " + line
-    vals = std_out.split()[1].split("=")
-    ###print "VALS " + str(vals)
-    max_occur_trimer = vals[0]
-    max_occur_same_trimer = vals[1]
-
-    max_occur_tetramer = ""
-    max_occur_same_tetramer = 0
-    pos_occur_same_tetramer = 0
-    '''
-    for l in lmers_tetramer.keys():
-        if lmers_tetramer.get(l) > max_occur_same_tetramer and lmers_tetramer.get(l) > 1:
-            max_occur_tetramer = l
-            max_occur_same_tetramer = lmers_tetramer.get(l)
-            pos_occur_same_tetramer = len(set(lmers_indexes_tetramer.get(l)))
-    '''
-    # run through all entries. if they have nonzero presence, print.
-    '''
-    for i in range(0, lmers_tetramer.n_entries()):
-       n = lmers_tetramer.get(i)
-       if n > max_occur_same_tetramer and n > 1:
-          if DEBUG == 1:  print lmers_tetramer.reverse_hash(i), "is present", n, "times."
-          max_occur_tetramer = lmers_tetramer.reverse_hash(i)
-          max_occur_same_tetramer = n
-    '''
-    cmd4 = ["/usr/common/jgi/utilities/bbtools/prod-v35.50/bin/commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=4", "display=3", "count"]
-    ###print "CMD " + str(cmd4)
-    ###run
-    ###p = Popen(cmd4)  ###stdout = PIPE, stderr = PIPE
-    ###std_out, std_err = p.communicate()
-    std_out = subprocess.check_output(cmd4)
-    ###read first line from stdout
-    ###print "STDOUT " + std_out
-    ###print std_err
-    ###for line in std_out:
-    ###    print "LINE " + line
-    vals = std_out.split()[1].split("=")
-    ###print "VALS " + str(vals)
-    max_occur_tetramer = vals[0]
-    max_occur_same_tetramer = vals[1]
-
-    percent_occur_same_dimer = float(pos_occur_same_dimer) / float(len(seq))
-    percent_occur_same_trimer = float(pos_occur_same_trimer) / float(len(seq))
-    percent_occur_same_tetramer = float(pos_occur_same_tetramer) / float(len(seq))
-
-    if DEBUG == 1:
-        print("max_occur_dimer " + max_occur_dimer + " max_occur_same_dimer " + str(max_occur_same_dimer) + " percent_occur_same_dimer " + str(percent_occur_same_dimer))
-        print("max_occur_trimer " + max_occur_trimer + " max_occur_same_trimer " + str(max_occur_same_trimer) + " percent_occur_same_trimer " + str(percent_occur_same_trimer))
-        print("max_occur_tetramer " + max_occur_tetramer + " max_occur_same_tetramer " + str(max_occur_same_tetramer) + " percent_occur_same_tetramer " + str(percent_occur_same_tetramer))
-
-    return len(seq), max_occur_dimer, max_occur_same_dimer, percent_occur_same_dimer, max_occur_trimer, max_occur_same_trimer, percent_occur_same_trimer, max_occur_tetramer, max_occur_same_tetramer, percent_occur_same_tetramer, penalty_value
-
+COGs = ["COG0009"]
 
 '''
-Unused at the moment
+COGs not used atm because I only had chrom-specific COGs, not plasmid-specific COGs.
+Also the COG computation wasn't that fast. Alevy said he'd send plasmid-specific COGs once they're ready.
+Note use of COGs should improve accuracy of ML a lot.
 '''
-def fivesixFindRepeatsInverted(seq, penalty_value):
-    ###Use http://tandem.bu.edu/trf/trf.html
-    ###No, things that look for repeats in human genome are prob looking for long sequences
-    ###whereas our entire sequence is shorter, in comparision to human
-    ###if you hash all lenght l mers and count the number of entries with count>1,
-    ###that's an easy way to measure repeats (exact repeats)
-    lmers = {}
-    lmers_indexes = {}
-    min_l = 4
-    max_l = 31
-    for windowSizeL in range(max_l, min_l, -1):
-        idx = 0
-        while idx + windowSizeL <= len(seq):
-            subseq = seq[idx : idx + windowSizeL]
-            # TODO Check it does not intersect with a previous repeat pattern found? It does not matter because we only
-            # care about the indexes of a mer in the seq and those are computed based on sets, so if there is overlap with previous lmers it is ok.
-            #if len( list(set(range(idx , idx + windowSizeL)) & set(lmers_indexes.get(subseq, [])) ) ) == 0:
-            lmers[subseq] = lmers.get(subseq, 0) + 1
-            lmers_indexes[subseq] = lmers_indexes.get(subseq, []) + range(idx , idx + windowSizeL)
-            idx += 1
+def prodigal(sequence, seqin, penalty_value):
+        ###Run taxa finder
+        ###for filename in glob.glob( BINS_src_files ):
+        FASTA = seqin
+        '''
+        cmd = "/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal -a  %s.gene.faa -d  %s.gene.fasta  -i  %s  -o  %s.prodigal.out -p meta" % (FASTA, FASTA, FASTA, FASTA)
+        std_out, std_err, exit_code = run_command(cmd, True, log)
+        if exit_code != 0:
+            print "CMD %s failed with OUT %s ERR %s" % (cmd, std_out, std_err)
+            return
+        '''
+        ###/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal
+        ###cmd = ["shifter", "--image=registry.services.nersc.gov/jgi/prodigal:latest", "prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
+        cmd = [ os.path.join(srcdir, "run_prodigal.sh"), FASTA]
+        subprocess.check_call(cmd)
 
-    longest_lmer = ""
-    for l in lmers.keys():
-        if len(l) > len(longest_lmer) and lmers[l] > 1:
-            longest_lmer = l
+        prodigalFile = open(FASTA + ".prodigal.out", "r")
+        x = {}
+        genecount = 0
+        contiglen = len(sequence)
+        for i in xrange(0,contiglen):
+           x[i] = 0
+        for line in prodigalFile:
+                if line.find("CDS") > -1:
+                      [ start , end ] = [ int(i) for i in re.findall("\d+", line) ]
+                      for i in xrange(min(start, end)-1, max(start, end)):
+                           x[i] = 1
+                      genecount += 1
 
-    max_occur_same_dimer = 0
-    pos_occur_same_dimer = 0
-    max_occur_dimer = ""
-    max_occur_same_trimer = 0
-    pos_occur_same_trimer = 0
-    max_occur_trimer = ""
-    max_occur_same_tetramer = 0
-    pos_occur_same_tetramer = 0
-    max_occur_tetramer = ""
-    
-    '''
-    ###This logic for max dimers and trimers was redone below.
-        if len(l) == 2 and lmers[l] > max_occur_same_dimer:
-            max_occur_same_dimer = lmers[l]
-            max_occur_dimer = l
-            pos_occur_same_dimer = len(set(lmers_indexes[l]))
-        if len(l) == 3 and lmers[l] > max_occur_same_trimer:
-            max_occur_same_trimer = lmers[l]
-            max_occur_trimer = l
-            pos_occur_same_trimer = len(set(lmers_indexes[l]))
-    '''
-    ##TODO dimers and trimers should not include homopolymers.
-    ##TODO generalize the code for dimers trimers and homopolymers with regexs.
-    ###TODO regex python for dimer and trimer repeats, but not homopolymers. Exclude homopolymers. OK check below and continue if homopolymer.
-    '''
-    for windowSizeL in [2, 3, 4]:
-        for idx_start in range(0, windowSizeL):
-            idx = idx_start
-            #consec_identical_mers = ''
-            count_consec_identical_mers = 0
-            prev_mer = ''
-            while idx + windowSizeL <= len(seq):
-                subseq = seq[idx : idx + windowSizeL]
-                if subseq == len(subseq) * subseq[0]: ###is a homopolymer:
-                    if DEBUG == 1:
-                        print "subseq is a homopolymer " + subseq
-                    idx += windowSizeL
-                    prev_mer = subseq
-                    continue
-                ###print "subseq " + subseq + " prev_mer " + prev_mer
-                if not subseq == prev_mer:
-                    key = str(windowSizeL) + "repeat"
-                    if count_consec_identical_mers > rules.get(key).get("X"):
-                        penalty_value += float( rules.get(key).get("value") )
-                        if windowSizeL == 2:
-                            if count_consec_identical_mers > max_occur_same_dimer:
-                                max_occur_same_dimer = count_consec_identical_mers
-                                pos_occur_same_dimer = count_consec_identical_mers * 2
-                                max_occur_dimer = prev_mer
-                        elif windowSizeL == 3:
-                            if count_consec_identical_mers > max_occur_same_trimer:
-                                max_occur_same_trimer = count_consec_identical_mers
-                                pos_occur_same_trimer = count_consec_identical_mers * 3
-                                max_occur_trimer = prev_mer
-                        elif windowSizeL == 4:
-                            if count_consec_identical_mers > max_occur_same_tetramer:
-                                max_occur_same_tetramer = count_consec_identical_mers
-                                pos_occur_same_tetramer = count_consec_identical_mers * 4
-                                max_occur_tetramer = prev_mer
-                    count_consec_identical_mers = 1
-                    #consec_identical_mers = subseq
-                else:
-                    count_consec_identical_mers += 1
-                    #consec_identical_mers = subseq
-                idx += windowSizeL
-                prev_mer = subseq
+        ones = x.values().count(1)
+        genesperMB=0
+        if contiglen > 0:
+            genesperMB=(float(ones)/float(contiglen))
+        prodigalFile.close()
+
+        countaa = 0
+        countprot = 0
+        for line in fileinput.input( FASTA + ".gene.faa" ): ###READS####READS: ###:
+            line = line.strip()
+            if line.startswith(">"):
+                 countprot += 1
+            else:
+                 countaa += len(line)
+        aalenavg = 0
+        if countprot > 0:
+            aalenavg = countaa / float(countprot)
+
+        #now run hmmsearch
+        print ("HMMSearch Parsing...")
+        cmd = [ os.path.join(srcdir, "run_hmmsearch.sh"), FASTA]
+        subprocess.check_call(cmd)
 
 
-    percent_occur_same_dimer = float(pos_occur_same_dimer) / float(len(seq))
-    percent_occur_same_trimer = float(pos_occur_same_trimer) / float(len(seq))
-    percent_occur_same_tetramer = float(pos_occur_same_tetramer) / float(len(seq))
+        tblout_pfam = FASTA + ".domtblout"
 
-    if DEBUG == 1:
-        print "max_occur_dimer " + max_occur_dimer + " max_occur_same_dimer " + str(max_occur_same_dimer) + " percent_occur_same_dimer " + str(percent_occur_same_dimer)
-        print "max_occur_trimer " + max_occur_trimer + " max_occur_same_trimer " + str(max_occur_same_trimer) + " percent_occur_same_trimer " + str(percent_occur_same_trimer)
-        print "max_occur_tetramer " + max_occur_tetramer + " max_occur_same_tetramer " + str(max_occur_same_tetramer) + " percent_occur_same_tetramer " + str(percent_occur_same_tetramer)
-    
-    #for i in lmers.keys():
-    #    lmers[i] = 1
-    
-    rev_lmers = {}
-    revcompl_lmers = {}
-    union_bases_in_repeats = []
-    #for windowSizeL in range(5, 61):
-        #idx = 0
-        #while idx + windowSizeL <= len(seq):
-            #subseq = seq[idx : idx + windowSizeL]
-    for subseq in lmers.keys():
-        if len(subseq) > min_l:
-            lmers_indexes_subseq = lmers_indexes.get(subseq)
-            #TODO rules 1 only need 5mers on 30base terminals , compare first 30 bases to last 30 bases and see if they have repeats. Find overlapping kmers(5mers) in beginning and end.
-            #3: check if any terminal direct repeats exist for subseq at both ends of the sequence.
-            # (len(set( range(0, 25) ) & set(lmers_indexes_subseq)) > 0) and (len(set( range(len(seq)-25, len(seq)) ) & set(lmers_indexes_subseq)) > 0)
-                        
-            rev_subseq = subseq[::-1]
-            #TODO CHECK
-            rev_subseq_indexes = set([m.start() for m in re.finditer(rev_subseq, seq)]) ###[seq.find(rev_subseq) , seq.rfind(rev_subseq) ]) ###[m.start() for m in re.finditer(rev_subseq, seq) ]
-            #Remove -1 for not found case
-            rev_subseq_indexes.discard(-1)
-            ### print str(rev_subseq_indexes)
-            if len(rev_subseq_indexes) > 1 and rev_subseq == subseq:
-                rev_lmers[rev_subseq] = lmers.get(subseq)
-            if len(rev_subseq_indexes) > 0 and rev_subseq != subseq:  ### seq.find(rev_subseq) > -1:
-                rev_lmers[rev_subseq] = len(rev_subseq_indexes) + lmers.get(subseq) ### rev_lmers.get(rev_subseq, lmers.get(subseq) ) + 1
-                #print subseq + " " + rev_subseq + " rev_lmers[rev_subseq] " + str(rev_lmers[rev_subseq]) + " lmers.get(subseq, 0) " + str(lmers.get(subseq, 0))
-            ###Update rev_subseq_indexes to include all indexes
-            rev_subseq_indexes_tmp = []
-            for i in rev_subseq_indexes:
-                rev_subseq_indexes_tmp = rev_subseq_indexes_tmp + range(i, i+len(rev_subseq))
-            rev_subseq_indexes = rev_subseq_indexes_tmp
-            
-            revcompl_subseq = ""
-            for i in range(len(rev_subseq)):
-                if rev_subseq[i] == 'A':
-                    revcompl_subseq += 'T'
-                elif rev_subseq[i] == 'T':
-                    revcompl_subseq += 'A'
-                elif rev_subseq[i] == 'C':
-                    revcompl_subseq += 'G'
-                elif rev_subseq[i] == 'G':
-                    revcompl_subseq += 'C'
-            #TODO CHECK
-            revcompl_subseq_indexes = set([m.start() for m in re.finditer(revcompl_subseq, seq)]) ###[seq.find(revcompl_subseq) , seq.rfind(revcompl_subseq) ]) ###[m.start() for m in re.finditer(revcompl_subseq, seq) ]
-            revcompl_subseq_indexes.discard(-1)
-            if len(revcompl_subseq_indexes) > 1 and revcompl_subseq == subseq:
-                revcompl_lmers[revcompl_subseq] = lmers.get(subseq)
-            if len(revcompl_subseq_indexes) > 0 and revcompl_subseq != subseq:  ### seq.find(revcompl_subseq) > -1:
-                revcompl_lmers[revcompl_subseq] = len(revcompl_subseq_indexes) + lmers.get(subseq) ### revcompl_lmers.get(revcompl_subseq, lmers.get(subseq) ) + 1
-                #print subseq + " " + revcompl_subseq + " revcompl_lmers[revcompl_subseq] " + str(revcompl_lmers[revcompl_subseq]) + " lmers.get(subseq, 0) " + str(lmers.get(subseq, 0))
-            ###Update revcompl_subseq_indexes to include all indexes
-            revcompl_subseq_indexes_tmp = []
-            for i in revcompl_subseq_indexes:
-                revcompl_subseq_indexes_tmp = revcompl_subseq_indexes_tmp + range(i, i+len(revcompl_subseq))
-            revcompl_subseq_indexes = revcompl_subseq_indexes_tmp
 
-            
-    longest_rev_lmer = ""
-    for l in rev_lmers.keys():
-        if len(l) > len(longest_rev_lmer) and rev_lmers[l] > 1:
-            longest_rev_lmer = l
-        
-    if not longest_rev_lmer == "":
-        if DEBUG == 1:
-            print "longest_rev_lmer " + longest_rev_lmer + " rev_lmers " + str(rev_lmers[longest_rev_lmer])
-    
-    longest_revcompl_lmer = ""
-    for l in revcompl_lmers.keys():
-        if len(l) > len(longest_revcompl_lmer) and revcompl_lmers[l] > 1:
-            longest_revcompl_lmer = l
+        feature_table = get_table_from_tblout(tblout_pfam)
+        feature_table = [i.strip().split(' ', 1) for i in feature_table]
 
-    if not longest_revcompl_lmer == "":
-        if DEBUG == 1:
-            print "longest_revcompl_lmer " + longest_revcompl_lmer + " revcompl_lmers " + str(revcompl_lmers[longest_revcompl_lmer])
-    
-    if not longest_lmer == "":
-        if DEBUG == 1:
-            print "longest_lmer " + longest_lmer + " lmers " + str(lmers[longest_lmer])
-            print "penalty_value " + str(penalty_value)
+        with open(FASTA + '.feature_table.txt', 'w') as output:
+            writer = csv.writer(output, lineterminator='\n')
+            writer.writerows(feature_table)
 
-    return longest_lmer, lmers.get(longest_lmer, 0), longest_rev_lmer, rev_lmers.get(longest_rev_lmer, 0), longest_revcompl_lmer, revcompl_lmers.get(longest_revcompl_lmer, 0), len(seq), max_occur_same_dimer, percent_occur_same_dimer, max_occur_same_trimer, percent_occur_same_trimer, penalty_value
-    '''
 
+        feature_table_names=[]
+        feature_table_genes=[]
+        for i in feature_table:
+            feature_table_names.append(i[0])
+            feature_table_genes.append(i[1])
+
+
+        print ("build_genehit_vector...")
+        k = build_genehit_vector(feature_table_genes)
+
+
+
+        if os.path.exists(FASTA + ".gene.faa"):  os.remove(FASTA + ".gene.faa")
+        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".gene.fasta")
+        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".prodigal.out")
+        if os.path.exists(FASTA + ".domtblout"):  os.remove(FASTA + ".domtblout")
+        if os.path.exists(FASTA + ".feature_table.txt"):  os.remove(FASTA + ".feature_table.txt")
+        if os.path.exists(FASTA + ".out_pfam"):  os.remove(FASTA + ".out_pfam")
+
+        return genesperMB, genecount, aalenavg, k
 
 
 
 '''
-Unused at the moment
+Evaluate if the sequence hits one of the chromosome-specific aa sequences.
+To make a separate sketch database from an aa fasta file, run this:
+sketch.sh in=x.faa out=x.sketch amino persequence
+Then to compare, run:
+comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
-def fivesixFindRepeats(seq, penalty_value):
-    return "", 0, "", 0, "", 0, "", 0, len(seq), penalty_value
-    '''
-    ###Use http://tandem.bu.edu/trf/trf.html
-    ###No, things that look for repeats in human genome are prob looking for long sequences
-    ###whereas our entire sequence is shorter, in comparision to human
-    ###if you hash all lenght l mers and count the number of entries with count>1,
-    ###that's an easy way to measure repeats (exact repeats)
-    
-    ###These are the repeats on the same strand. We return the longest lmer (sorted alphbetically to break ties) and the most frequent lmer with the frequencies.
-    ###For the longest lmer and the most frequent lmer we return the sequences and frequencies but not the length. Print out lengths and frequencies for both seqs.
-    lmers = {}
-    ###lmers_indexes = {}
-    ####revcompl_lmers = {}
-    revcompls = []
-    ###Palindrome on both strands matching anywhere. E.g. AAGCTT-TTCGAA but at non-oppposite positions of the two strands. We return the longest one (sorted alphbetically to break ties).
-    ###For the longest palindrome we return the sequence and the length but not the frequencies. Print out length only.
-    palindrome2strands_anywhere = {}
-    ###Palindrome on both strands matching at same positions. E.g. AAGCTT-TTCGAA at the same positions (opposite) of the two strands. We return the longest one (sorted alphbetically to break ties).
-    ###For the longest palindrome we return the sequence and the length but not the frequencies. Print out length only.
-    palindrome2strands = {}
-    min_l = 15
-    max_l = 31
-    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
-    startpointingtime = time()
-    for windowSizeL in range(max_l, min_l, -1):
-        idx = 0
-        while idx + windowSizeL <= len(seq):
-            subseq = seq[idx : idx + windowSizeL]
-            # TODO Check it does not intersect with a previous repeat pattern found? It does not matter because we only
-            # care about the indexes of a mer in the seq and those are computed based on sets, so if there is overlap with previous lmers it is ok.
-            #if len( list(set(range(idx , idx + windowSizeL)) & set(lmers_indexes.get(subseq, [])) ) ) == 0:
-            lmers[subseq] = lmers.get(subseq, 0) + 1
-            ###Find the reverse complement
-            rev_subseq = subseq[::-1]
-            #if subseq == rev_subseq:
-            #    palindrome1strand[subseq] = palindrome1strand.get(subseq, 0) + 1
-            bases = list(rev_subseq) 
-            bases = [complement[base] for base in bases]
-            revcompl_subseq = ''.join(bases)
-            #for i in range(len(rev_subseq)):
-            #    if rev_subseq[i] == 'A':
-            #        revcompl_subseq += 'T'
-            #    elif rev_subseq[i] == 'T':
-            #        revcompl_subseq += 'A'
-            #    elif rev_subseq[i] == 'C':
-            #        revcompl_subseq += 'G'
-            #    elif rev_subseq[i] == 'G':
-            #        revcompl_subseq += 'C'
-            if subseq == revcompl_subseq:
-                palindrome2strands[subseq] = palindrome2strands.get(subseq, 0) + 1
-            ###if lmers.has_key(revcompl_subseq):
-            revcompls.append(revcompl_subseq)
-            idx += 1
-    runtime = str(time() - startpointingtime)
-    print "RUNTIME fivesixFindRepeatsA: " + runtime
+def run_chromsketch(sequence, seqin, penalty_value):
+        FASTA = seqin
+        cmd = [os.path.join(srcdir, "run_chromsketch.sh"), FASTA]
+        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
+        print("CHROMFINDER cmd: " + str(cmd))
+        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
+        #subprocess.check_call(cmd)
+        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    ###revcomplset = set(revcompls)
-    ###lmerset = set(lmers.keys())
-    ###lmerrevcomplint = lmerset & revcomplset
-    startpointingtime = time()
-    for subseq in revcompls:
-        ###if seq.find(revcompl_subseq) > -1:
-        ###Store the subseq so we do not have to recompute the revcompl when searching for the longest revcompl
-        if subseq in lmers:
-            palindrome2strands_anywhere[subseq] = palindrome2strands_anywhere.get(subseq, 0) + 1
-        ###revcompl_lmers[subseq] = 1 ###revcompl_lmers.get(subseq, 0) + 1
-        ###lmers_indexes[subseq] = lmers_indexes.get(subseq, []) + range(idx , idx + windowSizeL)
-    runtime = str(time() - startpointingtime)
-    print "RUNTIME fivesixFindRepeatsB: " + runtime
+        kill = lambda process: process.kill()
+        my_timer = Timer(50, kill, [proc1])
+        try:
+            my_timer.start()
+            std_out, std_err = proc1.communicate()
+        finally:
+            my_timer.cancel()
 
-    longest_lmer = ""
-    most_freq_lmer = ""
-    most_freq_lmer_count = 1
-    startpointingtime = time()
-    for l in lmers.keys():
-        if len(l) > len(longest_lmer) and lmers[l] > 1:
-            longest_lmer = l
-        elif len(l) == len(longest_lmer) and lmers[l] > 1:
-            longest_lmer = sorted([l, longest_lmer])[0]
-        if lmers[l] > most_freq_lmer_count:
-            most_freq_lmer = l
-            most_freq_lmer_count = lmers[l]
-    runtime = str(time() - startpointingtime)
-    print "RUNTIME fivesixFindRepeatsC: " + runtime
-    
-    longest_revcompl_lmer_1s = ""
-    startpointingtime = time()
-    for l in palindrome2strands_anywhere.keys():
-        if len(l) > len(longest_revcompl_lmer_1s): ### and revcompl_lmers.get(l, 0) > 0:
-            longest_revcompl_lmer_1s = l
-        elif len(l) == len(longest_revcompl_lmer_1s):
-            longest_revcompl_lmer_1s = sorted([l, longest_revcompl_lmer_1s])[0]
-    runtime = str(time() - startpointingtime)
-    print "RUNTIME fivesixFindRepeatsD: " + runtime
+        #std_out, std_err = proc1.communicate()
+        print("CHROMFINDER std_out: " + str(std_out))
+        #std_out = subprocess.check_output(cmd)
 
-    longest_revcompl_lmer_2s = ""
-    startpointingtime = time()
-    for l in palindrome2strands.keys():
-        if len(l) > len(longest_revcompl_lmer_2s): ### and revcompl_lmers.get(l, 0) > 0:
-            longest_revcompl_lmer_2s = l
-        elif len(l) == len(longest_revcompl_lmer_2s):
-            longest_revcompl_lmer_2s = sorted([l, longest_revcompl_lmer_2s])[0]
-    runtime = str(time() - startpointingtime)
-    print "RUNTIME fivesixFindRepeatsE: " + runtime
+        results=1
+        if std_out.find("No hits") >= 0:
+            results=0
 
-    if not longest_lmer == "":
-        if DEBUG == 1:
-            print "longest_lmer " + longest_lmer + " lmers " + str(lmers[longest_lmer])
-            print "penalty_value " + str(penalty_value)
+        #proc1.kill()
+        #proc1.terminate()
+        #proc1.wait()
 
-    return longest_lmer, lmers.get(longest_lmer, 0), most_freq_lmer, most_freq_lmer_count, longest_revcompl_lmer_1s, len(longest_revcompl_lmer_1s), longest_revcompl_lmer_2s, len(longest_revcompl_lmer_2s), len(seq), penalty_value
-    '''
+        return results
+
 
 
 '''
-Unused at the moment, run blast against a plasmid database
+Evaluate if the sequence hits one of the plasmid-specific aa sequences.
+To make a separate sketch database from an aa fasta file, run this:
+sketch.sh in=x.faa out=x.sketch amino persequence
+Then to compare, run:
+comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
-def runBlastPlasmid(seq_in_filename, penalty_value):
-    #print seq to seq.fasta
-    #f = open('seq.fasta', 'w')
-    #f.write(">SEQUENCE\n")
-    #f.write(seq)
-    #f.close()
-    if os.path.exists(seq_in_filename + '.main.vs.refseq.plasmid.parsed.tophit'):
-        shutil.move(seq_in_filename + '.main.vs.refseq.plasmid.parsed.tophit', seq_in_filename + '.main.vs.refseq.plasmid.parsed.tophit.BAK')
+def run_plassketch(sequence, seqin, penalty_value):
+        FASTA = seqin
+        cmd = [ os.path.join(srcdir, "run_plassketch.sh"), FASTA]
+        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
+        print("PLASMIDFINDER cmd: " + str(cmd))
+        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
+        #subprocess.check_call(cmd)
+        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    ##############################
-    #run run_mito.sh
-    outfile = seq_in_filename + ".out" ###os.path.join("tmp", timestamp+'.out')
-    cmd = ["/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-rqc-synbio/io/run_blast_plasmid.sh", seq_in_filename]
-    if DEBUG == 1:
-        print("cmd " + str(cmd))
-    with open(outfile, 'w') as output:
-                p = Popen(cmd, stdout = output, stderr = PIPE)
-                std_out, std_err = p.communicate()
-                #print "std_out " + std_out
-                #print "std_err " + std_err
-                #print "retcode " + str(p.returncode)
+        kill = lambda process: process.kill()
+        my_timer = Timer(50, kill, [proc1])
+        try:
+            my_timer.start()
+            std_out, std_err = proc1.communicate()
+        finally:
+            my_timer.cancel()
 
-    #parse tax_list file
-    if not os.path.exists(seq_in_filename + '.main.vs.refseq.plasmid.parsed.tophit'):
-        return 0, 0, penalty_value
-    
-    RESULTS = open(seq_in_filename + '.main.vs.refseq.plasmid.parsed.tophit', 'r')
-    seq_id = 0
-    num_hits = 0
-    while True:
-                line = RESULTS.readline()
-                if DEBUG == 1:
-                    print( "line " + line)
-                if line == '':
+        #std_out, std_err = proc1.communicate()
+        print("PLASMIDFINDER std_out: " + str(std_out))
+        #std_out = subprocess.check_output(cmd)
+
+        results=1
+        if std_out.find("No hits") >= 0:
+            results=0
+
+        #proc1.kill()
+        #proc1.terminate()
+        #proc1.wait()
+
+        return results
+
+
+'''
+Evaluate if the sequence hits one of the plasmid-specific aa sequences.
+In order to also sketch a nucleotide (not amino acid) fasta file, do these command parameters look ok? I removed the "amino" part.
+sketch.sh in=x.fasta out=x.sketch persequence
+Then to compare, run:
+comparesketch.sh in=contigs.fa ref=x.sketch persequence
+'''
+def run_plasORIsketch(sequence, seqin, penalty_value):
+        FASTA = seqin
+        cmd = [ os.path.join(srcdir, "run_plasORIsketch.sh"), FASTA]
+        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
+        print("PLASMIDORIFINDER cmd: " + str(cmd))
+        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
+        #subprocess.check_call(cmd)
+        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        kill = lambda process: process.kill()
+        my_timer = Timer(50, kill, [proc1])
+        try:
+            my_timer.start()
+            std_out, std_err = proc1.communicate()
+        finally:
+            my_timer.cancel()
+
+        #std_out, std_err = proc1.communicate()
+        print("PLASMIDORIFINDER std_out: " + str(std_out))
+        #std_out = subprocess.check_output(cmd)
+
+        results=1
+        if std_out.find("No hits") >= 0:
+            results=0
+
+        #proc1.kill()
+        #proc1.terminate()
+        #proc1.wait()
+
+        return results
+
+
+
+
+
+def get_table_from_tblout(tblout_pfam):
+    with open(tblout_pfam, "r") as infile:
+        tblout_pfam=infile.readlines()
+    tblout_pfam = [i.split() for i in tblout_pfam[3:-10]]
+    for i in tblout_pfam:
+        i[13] = float(i[13])
+    tblout_pfam.sort(key = operator.itemgetter(0, 13,17), reverse = True)
+    top_genes={}
+    for i in tblout_pfam:
+        if i[0] not in top_genes:
+            top_genes[i[0]] = [[i[3],float(i[13]),float(i[17]),float(i[18])]]
+        else:
+            for j in top_genes[i[0]]:
+                start_i, end_i, start_j, end_j = float(i[17]), float(i[18]), float(j[2]), float(j[3])
+                if not ((end_i <= start_j) or (start_i >= end_j)):
                     break
-                if not line.startswith("#"):
-                    vals = line.split("\t")
-                    if float(vals[4]) > seq_id:
-                        seq_id = float(vals[4])
-                        num_hits = float(vals[3]) / min(float(vals[5]), float(vals[6]))
-                    
-    return seq_id, num_hits, penalty_value
+                else:
+                    top_genes[i[0]].append([i[3],float(i[13]),start_i,end_i])
+                    break
+    contigs = collections.OrderedDict()
+    for i in top_genes:
+        name = i.rsplit("_", 1)[0]
+        if name not in contigs:
+            contigs[name] = []
+            for j in top_genes[i]:
+                contigs[name].append(j[0])
+        else:
+            for j in top_genes[i]:
+                contigs[name].append(j[0])
+    out = []
+    for key, value in contigs.items():
+        out+=[str(key) + " "  +  " ".join(value)]
+    return out
+
+
+def build_genehit_vector(input_list):
+    tr=os.path.dirname(os.path.abspath(__file__)) + "/pfams_discr.txt"
+    hmm_dict = []
+    with open(tr, 'r') as infile:
+        table=infile.readlines()
+        hmm_dict = map(hash, [i.strip() for i in table])
+
+    # Calculate probabilities for each element of input list
+    out_list = [0]*1538
+    gene_list = []
+    count = 0
+    if len(input_list) > 0:
+        gene_list = map(hash, input_list[0].split())
+    for i in hmm_dict:
+        if i in gene_list:
+            out_list[count] = 1
+        count += 1
+
+    return out_list
+
+
 
 
 
@@ -1680,31 +1039,6 @@ def get_window(arr, seq):
 #
 def create_timestamp():
     return strftime("%m%d%Y-%H%M%S")
-    # 14 digits YYYYMMDDHHMMSS
-    #year = datetime.datetime.now().year
-    #month = datetime.datetime.now().month
-    #day = datetime.datetime.now().day
-    #hour = datetime.datetime.now().hour
-    #minute = datetime.datetime.now().minute
-    #second = datetime.datetime.now().second
-    #if (month < 10):
-    #    month = "0" + str(month);
-    #if (day < 10):
-    #    day = "0" + str(day);
-    #if (hour < 10):
-    #    hour = "0" + str(hour);
-    #if (minute < 10):
-    #    minute = "0" + str(minute);
-    #if (second < 10):
-    #    second = "0" + str(second);
-    #res = str(year) + str(month) + str(day) + str(hour) + str(minute) + str(second);
-    #return res;
-
-
-
-#def classifySVM:
-    ###  ./svm_learn seq_features seq_features.model
-    ###  ./svm_classify seq_features seq_features.model seq_features.predict
 
 
 def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run_blast = None):
@@ -1903,7 +1237,6 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output-path", dest="output_path", help = "Output path to write to", required=False)
     parser.add_argument("-he", "--header", dest="header", help = "The header to use", required=False)
     parser.add_argument("-s", "--seqin", dest="seqin", help = "The sequence to use", required=False)
-    parser.add_argument("-b", "-run-blast", dest="run_blast", help = "Specify either p for refseq.plasmid or m for refseq.mito", required=False)
     
     options = parser.parse_args()
 
@@ -1917,12 +1250,7 @@ if __name__ == "__main__":
     header = "none"
     sequence = ""
 
-    if (options.run_blast != None) and ((options.run_blast == 'p') or (options.run_blast == 'm')):
-        run_blast = options.run_blast
-    elif (options.run_blast != None):
-        print("Specify either p for refseq.plasmid or m for refseq.mito")
-        exit(1)
-    
+
     ###Output directory
     if options.output_path:
         output_path = options.output_path
