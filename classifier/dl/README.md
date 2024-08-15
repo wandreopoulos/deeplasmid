@@ -5,10 +5,10 @@
 ### August 12, 2024
 ### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 
-#### August 2024 update: The data communication with sub-processes was changed to use pipes instead of files. The subprocesses use /dev/shm for file storage when calling hmmer, prodigal, bbtools/sketch, which is a ram-based file system. Performance profiling to assess speed improvements is in progress, done by student Daniel Bao. I re-built a docker image named billandreo/deeplasmid.tf.gpu3
+#### <sub>August 2024 update: The data communication with sub-processes was changed to use pipes instead of files. The subprocesses use /dev/shm for file storage when calling hmmer, prodigal, bbtools/sketch, which is a ram-based file system. Profiling to evaluate performance improvements is in progress, done by student Daniel Bao. I re-built a new docker image (with Dockerfile.GPU3) named billandreo/deeplasmid.tf.gpu3 and pushed to dockerhub. </sub>
 
 
-Deeplasmid is a tool based on machine learning that separates plasmids from chromosomal sequences. It can identify plasmids in microbial isolate or metagenome assemblies. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
+Deeplasmid is a machine learning tool that separates plasmids from chromosomal sequences. It can identify plasmids accurately and efficiently in microbial isolate assemblies. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
 1) plasmids from ACLAME, 2) PLSDB, and 
 3) chromosomal sequences from refseq.microbial (bacteria and archaea) from which plasmids and mito were removed.
 
