@@ -1,7 +1,7 @@
 
 
 ## README file
-### Codebase: deeplasmid docker_gpu branch
+### Codebase: deeplasmid docker branch
 ### August 12, 2024
 ### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 
