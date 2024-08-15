@@ -1,16 +1,18 @@
 
 
 ## README file
-### Codebase: deeplasmid docker branch
-### December 22, 2022
+### Codebase: deeplasmid docker_gpu branch
+### August 12, 2024
 ### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
+
+#### August 2024 update: The data communication with sub-processes was changed to use pipes instead of files. The subprocesses use /dev/shm for file storage when calling hmmer, prodigal, bbtools/sketch, which is a ram-based file system. Performance profiling to assess speed improvements is in progress, done by student Daniel Bao. I re-built a docker image named billandreo/deeplasmid.tf.gpu3
 
 
 Deeplasmid is a tool based on machine learning that separates plasmids from chromosomal sequences. It can identify plasmids in microbial isolate or metagenome assemblies. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:
 1) plasmids from ACLAME, 2) PLSDB, and 
 3) chromosomal sequences from refseq.microbial (bacteria and archaea) from which plasmids and mito were removed.
 
-Below are instructions for using both the GPU and CPU Docker images for deeplasmid. It is recommended to use GPU (Docker image built December 22, 2022). If you need help with rebuilding the Docker image please feel free to contact me (a reply may be delayed, but I will get back). 
+Below are instructions for using both the GPU and CPU Docker images for deeplasmid. It is recommended to use GPU (Docker image built August 12, 2024). If you want to build a Docker image please see the instructions below, or feel free to contact me (a reply may be delayed, but I will get back). 
 The train and test data used can be found under: https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/
 
 
@@ -48,13 +50,13 @@ Pull the deeplasmid image from dockerhub as follows:
 
 ```
 docker login
-docker pull billandreo/deeplasmid.tf.gpu2
+docker pull billandreo/deeplasmid.tf.gpu3
 ```
 
 Run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo on your system):
 
 ```
-~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it       -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid.tf.gpu2   deeplasmid.sh  in.fasta outdir
+~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it       -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid.tf.gpu3   deeplasmid.sh  in.fasta outdir
 ```
 
 GPU result:
@@ -67,14 +69,14 @@ nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun 
 
 ### Building the Docker image for GPU
 
-The Dockerfile.GPU2 Docker image was built on tensorflow/tensorflow:latest-gpu ( https://hub.docker.com/r/tensorflow/tensorflow/ https://github.com/tensorflow/tensorflow ).
+The Dockerfile.GPU3 Docker image was built on tensorflow/tensorflow:latest-gpu ( https://hub.docker.com/r/tensorflow/tensorflow/ https://github.com/tensorflow/tensorflow ).
 
-To build the Docker image, stop or remove your unused containers and images to make space on your drive and use docker build with Dockerfile.GPU2:
+To build the Docker image, stop or remove your unused containers and images to make space on your drive and use docker build with Dockerfile.GPU3:
 ```
     sudo docker rm $(sudo docker ps --filter status=exited -q)
     sudo docker images
     sudo docker rmi ...ids....
-    sudo docker build -t billandreo/deeplasmid.tf.gpu2 -f Dockerfile.GPU2 .
+    sudo docker build -t billandreo/deeplasmid.tf.gpu3 -f Dockerfile.GPU3 .
 ```
 
 If needed, make space on /var (https://askubuntu.com/questions/1219555/low-disk-space-on-var https://askubuntu.com/questions/178909/not-enough-space-in-var-cache-apt-archives). The second method is quick but may remove images you are using:
@@ -83,7 +85,15 @@ du -ks /var/* | sort -nr | more
 docker system prune -a -f
 ```
 
-Please see the Supplementary Information from the publication for things to consider when building the Docker image: Prodigal and bbtools/sketch need to be built, and the model .h5 files from training are needed, as well as several sketch files and Pfam-A.TMP2.hmm that can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
+Please see the Supplementary Information from the publication for things to consider if re-building the Docker image.
+These need to be available under the top build directory (they will be copied in the Docker container):
+- Prodigal, use git clone https://github.com/hyattpd/Prodigal.git 
+- hmmer (v3.3.2 was used initially) 
+- bbtools/sketch (BBMap_38.73.tar.gz was used initially) 
+The models, sketch and pfam files can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ :
+- the model .h5 files from training should be under Plasmid_Models/plasmid4z-newfeat12-?? subdirs. These can be downloaded quickly from nersc with wget
+- several sketch files should be under the asafl_plasmidPred subdirectory
+- the files pfams_discr.txt and Pfam-A.TMP2.hmm under the top build directory
 
 
 ### Troubleshooting a GPU run
@@ -239,7 +249,7 @@ This way you can test to verify if your installation of the deeplasmid tool give
 You can run deeplasmid on this input file as follows (note you may need to run docker with sudo):
 
 ```
-~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid.tf.gpu2  deeplasmid.sh in.fasta outdir
+~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid.tf.gpu3  deeplasmid.sh in.fasta outdir
 Counts: Plasm=3  Ambig=0  Main=44  nCount=47
 
 ~/Downloads/deeplasmid/classifier/dl$ sudo docker run -it -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta -v `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir billandreo/deeplasmid-cpu-ubuntu2  deeplasmid.sh in.fasta outdir
@@ -264,7 +274,7 @@ nz_adhj01000046 paenibacillus vortex v453 cnt_pvor1000046, whole genome shotgun 
 
 ## Training
 
-The training data and some testing data can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
+The training data and a fasta file of testing data can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ .
 The training of the deeplasmid deep learning model was done on Cori at NERSC with Tensorflow in 2021. 
 These are the training steps:
 

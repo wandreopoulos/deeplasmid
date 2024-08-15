@@ -3,14 +3,22 @@
 
 trap 'pkill -P $$' EXIT
 
-echo "Running pentamer.sh"
+#echo "Running pentamer.sh"
 
 FASTA=$1
 
 #shifter  --image=bryce911/bbtools  commonkmers.sh  -Xmx1000m -threads=1  in=$FASTA  out=stdout  k=5  display=3  count
 
-/srv/jgi-ml/classifier/dl/bbmap/commonkmers.sh  -Xmx1000m -threads=1  in=$FASTA  out=stdout  k=5  display=3  count  
+#SEQ=$2
+#rm -f run_pentamer.sh.$FASTA
+#mkfifo run_pentamer.sh.$FASTA
+#echo ">$FASTA" > $FASTA.run_pentamer.sh
+#echo "$SEQ" >> $FASTA.run_pentamer.sh &
+cat /dev/stdin >  /dev/shm/$FASTA
 
+./bbmap/commonkmers.sh  -Xmx1000m -threads=1  in=/dev/shm/$FASTA  out=stdout  k=5  display=3  count  
+
+#rm -f run_pentamer.sh.$FASTA
 #& ID=$! ; fg
 
 pkill -P $$

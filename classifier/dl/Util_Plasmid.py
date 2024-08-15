@@ -36,7 +36,7 @@ __email__ = "janstar1122@gmail.com"
 def write_yaml(rec,ymlFn,verb=1):
         start = time.time()
         ymlFd = open(ymlFn, 'w')
-        yaml.dump(rec, ymlFd, Dumper=yaml.CDumper)
+        yaml.dump(rec, ymlFd, Dumper=yaml.Dumper)
         ymlFd.close()
         xx=os.path.getsize(ymlFn)/1048576
         if verb:
@@ -48,7 +48,7 @@ def write_yaml(rec,ymlFn,verb=1):
 def read_yaml(ymlFn):
         start = time.time()
         ymlFd = open(ymlFn, 'r')
-        bulk=yaml.load( ymlFd, Loader=yaml.CLoader)
+        bulk=yaml.safe_load( ymlFd ) #, Loader=yaml.Loader)
         ymlFd.close()
 
         print('  read  yaml:',ymlFn,' size=%d'%len(bulk),'  elaT=%.1f sec'%(time.time() - start))

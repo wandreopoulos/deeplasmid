@@ -4,7 +4,7 @@
 trap 'pkill -P $$' EXIT
 
 
-echo "Running plassketch"
+#echo "Running plassketch"
 
 FASTA=$1
 
@@ -12,8 +12,16 @@ FASTA=$1
 
 #shifter --image=bryce911/bbtools comparesketch.sh   -Xmx1000m -threads=1  in=$FASTA translate ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/plasmidProt.faa.sketch persequence
 
-/srv/jgi-ml/classifier/dl/bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=$FASTA translate ref=/srv/jgi-ml/classifier/dl/asafl_plasmidPred/plasmidProt.faa.sketch persequence   
+#SEQ=$2
+#rm -f run_plassketch.sh.$FASTA
+##mkfifo $FASTA.run_plassketch.sh
+#echo ">$FASTA" > $FASTA.run_plassketch.sh
+#echo "$SEQ" >> $FASTA.run_plassketch.sh &
+#cp /dev/stdin run_plassketch.sh.$FASTA
 
+./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=/dev/shm/$FASTA translate ref=./asafl_plasmidPred/plasmidProt.faa.sketch persequence   
+
+#rm -f run_plassketch.sh.$FASTA
 #& ID=$! ; fg
 
 pkill -P $$

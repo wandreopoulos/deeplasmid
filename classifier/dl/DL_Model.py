@@ -420,7 +420,7 @@ class DL_Model(object):
         ymlF=globFD[scafName]
         with open(ymlF,'r') as fd:
             print('  fd %s' % fd)
-            bulk=yaml.load(fd)
+            bulk=yaml.safe_load(fd)
         inpD=bulk['sequence']
         #print(scafName, 'bb',inpD.keys())
         outD={}

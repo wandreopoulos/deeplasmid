@@ -51,6 +51,7 @@ from threading import Timer
 import csv
 import operator
 import collections
+from sys import stdin
 #https://riccomini.name/kill-subprocesses-linux-bash
 #https://www.blog.pythonlibrary.org/2016/05/17/python-101-how-to-timeout-a-subprocess/
 
@@ -130,13 +131,13 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     totalLongHomopolSum = 0
     bases = ['A', 'C', 'G', 'T', 'N']
     for b in bases:
-        if longestHomopol.has_key(b):
+        if b in longestHomopol:
             line += " " + str(feature_index) + ":" + str(float(longestHomopol[b]) ) ###/ float(len_sequence) )
         feature_index += 1
         line_excel += " " + str(float(longestHomopol.get(b, 0)) ) ###/ float(len_sequence) )
         yml_dict[b+"_longestHomopol"] = float(longestHomopol.get(b, 0))
         longestHomopolSum += longestHomopol.get(b, 0)
-        if totalLongHomopol.has_key(b):
+        if b in totalLongHomopol:
             line += " " + str(feature_index) + ":" + str(float(totalLongHomopol[b]) ) ###/ float(len_sequence) )
         feature_index += 1
         line_excel += " " + str(float(totalLongHomopol.get(b, 0)) ) ###/ float(len_sequence) )
@@ -347,8 +348,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(max_occur_pentamer_1hot)
     yml_dict["max_occur_pentamer_1hot"] = str(max_occur_pentamer_1hot)
 
-
-    if max_occur_same_pentamer > 0:
+    if int(max_occur_same_pentamer) > 0:
         line += " " + str(feature_index) + ":" + str(max_occur_same_pentamer)
     if DEBUG == 1:
         print( "max_occur_same_pentamer " + str(max_occur_same_pentamer))
@@ -356,7 +356,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(max_occur_same_pentamer)
     yml_dict["max_occur_same_pentamer"] = str(max_occur_same_pentamer)
 
-    if percent_occur_same_pentamer > 0:
+    if int(percent_occur_same_pentamer) > 0:
         line += " " + str(feature_index) + ":" + str(percent_occur_same_pentamer)
     if DEBUG == 1:
         print( "percent_occur_same_pentamer " + str(percent_occur_same_pentamer))
@@ -373,7 +373,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(max_occur_hexamer)
     yml_dict["max_occur_hexamer"] = str(max_occur_hexamer)
 
-    if max_occur_same_hexamer > 0:
+    if int(max_occur_same_hexamer) > 0:
         line += " " + str(feature_index) + ":" + str(max_occur_same_hexamer)
     if DEBUG == 1:
         print( "max_occur_same_hexamer " + str(max_occur_same_hexamer))
@@ -381,7 +381,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(max_occur_same_hexamer)
     yml_dict["max_occur_same_hexamer"] = str(max_occur_same_hexamer)
 
-    if percent_occur_same_hexamer > 0:
+    if int(percent_occur_same_hexamer) > 0:
         line += " " + str(feature_index) + ":" + str(percent_occur_same_hexamer)
     if DEBUG == 1:
         print( "percent_occur_same_hexamer " + str(percent_occur_same_hexamer))
@@ -398,7 +398,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(max_occur_heptamer)
     yml_dict["max_occur_heptamer"] = str(max_occur_heptamer)
 
-    if max_occur_same_heptamer > 0:
+    if int(max_occur_same_heptamer) > 0:
         line += " " + str(feature_index) + ":" + str(max_occur_same_heptamer)
     if DEBUG == 1:
         print( "max_occur_same_heptamer " + str(max_occur_same_heptamer))
@@ -406,7 +406,7 @@ def print_read_features(output_path, id_run, gc_content, mingc, maxgc, longestHo
     line_excel += " " + str(max_occur_same_heptamer)
     yml_dict["max_occur_same_heptamer"] = str(max_occur_same_heptamer)
 
-    if percent_occur_same_heptamer > 0:
+    if int(percent_occur_same_heptamer) > 0:
         line += " " + str(feature_index) + ":" + str(percent_occur_same_heptamer)
     if DEBUG == 1:
         print( "percent_occur_same_heptamer " + str(percent_occur_same_heptamer))
@@ -600,15 +600,19 @@ Compute total GC in seq
 def oneComputeGCtotal(seq):
     gc_content = 0
     total_bases = len(seq)
+    # Handle case where seq is empty or has zero length
+    if total_bases == 0:
+        return 0.0  # or handle this case according to your application logic
+    
     idx = 0
     while idx < len(seq):
         seq_idx = seq[idx]
         if seq_idx == 'C' or seq_idx == 'G':
             gc_content += 1
         idx += 1
+    
     gc_cont_perc = float(gc_content) / float(total_bases)
     return gc_cont_perc
-
 
 '''
 Compute min and max GC in any window of size windowSizeL in seq
@@ -670,7 +674,7 @@ def fourFindLongestHomopolymer(seq):
     hits = re.findall(r'(([A-Z])\2\2+)', seq)
     for hit in hits:
         hit_len = len(hit[0])
-        if longestHomopol.has_key(hit[1]):
+        if hit[1] in longestHomopol:
             if hit_len > longestHomopol[hit[1]]:
                 longestHomopol[hit[1]] = hit_len
                 startLongestHomopol[hit[1]] = seq.find(hit[0])
@@ -708,7 +712,7 @@ This used to be computed with khmer (see an older commit)
   Parameters
   ----------
   seq : string
-  seqin : string
+  seq_filename : string
   penalty_value : unused int
 
   Returns
@@ -716,24 +720,49 @@ This used to be computed with khmer (see an older commit)
   max_occur_pentamer : most freq 5mer
   max_occur_pentamer_1hot : 1hot encoding of most freq 5mer
 '''
-def fivesixFindPentamer(seq, seqin, penalty_value):
+def fivesixFindPentamer(sequence, seq_filename, penalty_value):
+    FASTA = seq_filename
+    SEQ = ">" + FASTA + "\n" + sequence
     max_occur_pentamer = ""
     max_occur_same_pentamer = 0
     pos_occur_same_pentamer = 0
+    
+    #print("FASTA %s SEQ %s" % (FASTA, SEQ))
 
-    cmd = [ os.path.join(srcdir, "run_pentamer.sh"), str(seqin)] #"shifter", "--image=bryce911/bbtools", "commonkmers.sh", "in=" + str(seqin), "out=stdout", "k=5", "display=3", "count"]
-    proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    std_out, std_err = proc1.communicate()
+    cmd = [ os.path.join(srcdir, "run_pentamer.sh"), FASTA ] #"shifter", "--image=bryce911/bbtools", "commonkmers.sh", "in=" + str(seq_filename), "out=stdout", "k=5", "display=3", "count"]
+
+    #proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)    
+
+    #std_out, std_err = proc1.communicate()
+
+    proc1 = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    kill = lambda process: process.kill()
+    my_timer = Timer(50, kill, [proc1])
+    try:
+                    my_timer.start()
+                    #read sequence from stdin. https://stackoverflow.com/questions/8475290/how-do-i-write-to-a-python-subprocess-stdin
+                    #changed this so the subprocess takes its stdin input from the sequence
+                    std_out, std_err = proc1.communicate(input=SEQ.encode('utf-8'))
+    finally:
+          my_timer.cancel()
+
     #std_out = subprocess.check_output(cmd)
     #subprocess.check_call(cmd)
-    print("PENTAMER stdout: " + std_out)
-    vals = ["AAAAA", 1]
-    vals = std_out.split("\t")[1].split("=")
-    print("PENTAMER vals: " + str(vals))
+    #print("PENTAMER stdout: " + str(std_out))
+    # vals = ["AAAAA", 1] 
+    
+    std_out_decode_utf8 = std_out.decode('utf-8')
+    #print(f"stdout no decode8: {std_out}")
+    #print(f"stdout decode8: {std_out_decode_utf8}")
+    
+    #print(std_out_decode_utf8)
+    #print(str(std_out_decode_utf8).split("\t")[1].split("="))
+    vals = str(std_out_decode_utf8).split("\t")[1].split("=")
+
     max_occur_pentamer = vals[0]
     max_occur_same_pentamer = vals[1]
 
-    percent_occur_same_pentamer = float(pos_occur_same_pentamer) / float(len(seq))
+    percent_occur_same_pentamer = float(pos_occur_same_pentamer) / float(len(SEQ))
 
     if DEBUG == 1:
         print("max_occur_pentamer " + max_occur_pentamer + " max_occur_same_pentamer " + str(max_occur_same_pentamer) + " percent_occur_same_pentamer " + str(percent_occur_same_pentamer))
@@ -745,7 +774,7 @@ def fivesixFindPentamer(seq, seqin, penalty_value):
     #proc1.terminate()
     #proc1.wait()
 
-    return len(seq), max_occur_pentamer, max_occur_pentamer_1hot, max_occur_same_pentamer, percent_occur_same_pentamer, penalty_value
+    return len(SEQ), max_occur_pentamer, max_occur_pentamer_1hot, max_occur_same_pentamer, percent_occur_same_pentamer, penalty_value
 
 
 
@@ -757,10 +786,27 @@ COGs not used atm because I only had chrom-specific COGs, not plasmid-specific C
 Also the COG computation wasn't that fast. Alevy said he'd send plasmid-specific COGs once they're ready.
 Note use of COGs should improve accuracy of ML a lot.
 '''
-def prodigal(sequence, seqin, penalty_value):
+def prodigal(sequence, seq_filename, penalty_value):
         ###Run taxa finder
         ###for filename in glob.glob( BINS_src_files ):
-        FASTA = seqin
+        FASTA = seq_filename
+        SEQ = ">" + FASTA + "\n" + sequence
+
+        #print("FASTA %s SEQ %s" % (FASTA, SEQ))
+
+        cmd = [ os.path.join(srcdir, "run_prodigal.sh"), FASTA]
+        proc1 = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        kill = lambda process: process.kill()
+        my_timer = Timer(100, kill, [proc1])
+        try:
+                    my_timer.start()
+                    #read sequence from stdin. https://stackoverflow.com/questions/8475290/how-do-i-write-to-a-python-subprocess-stdin
+                    #changed this so the subprocess takes its stdin input from the sequence
+                    std_out, std_err = proc1.communicate(input=SEQ.encode('utf-8'))
+        finally:
+              my_timer.cancel()
+
+
         '''
         cmd = "/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal -a  %s.gene.faa -d  %s.gene.fasta  -i  %s  -o  %s.prodigal.out -p meta" % (FASTA, FASTA, FASTA, FASTA)
         std_out, std_err, exit_code = run_command(cmd, True, log)
@@ -770,23 +816,22 @@ def prodigal(sequence, seqin, penalty_value):
         '''
         ###/usr/common/jgi/annotators/prodigal/2.50/bin/prodigal
         ###cmd = ["shifter", "--image=registry.services.nersc.gov/jgi/prodigal:latest", "prodigal", "-a", FASTA + ".gene.faa", "-d", FASTA + ".gene.fasta", "-i", FASTA, "-o", FASTA + ".prodigal.out", "-p", "meta" ]
-        cmd = [ os.path.join(srcdir, "run_prodigal.sh"), FASTA]
-        subprocess.check_call(cmd)
+        #subprocess.check_call(cmd)
 
         prodigalFile = open(FASTA + ".prodigal.out", "r")
         x = {}
         genecount = 0
         contiglen = len(sequence)
-        for i in xrange(0,contiglen):
+        for i in range(0,contiglen):
            x[i] = 0
         for line in prodigalFile:
                 if line.find("CDS") > -1:
                       [ start , end ] = [ int(i) for i in re.findall("\d+", line) ]
-                      for i in xrange(min(start, end)-1, max(start, end)):
+                      for i in range(min(start, end)-1, max(start, end)):
                            x[i] = 1
                       genecount += 1
 
-        ones = x.values().count(1)
+        ones = list(x.values()).count(1)
         genesperMB=0
         if contiglen > 0:
             genesperMB=(float(ones)/float(contiglen))
@@ -804,10 +849,10 @@ def prodigal(sequence, seqin, penalty_value):
         if countprot > 0:
             aalenavg = countaa / float(countprot)
 
-        #now run hmmsearch
-        print ("HMMSearch Parsing...")
+        
         cmd = [ os.path.join(srcdir, "run_hmmsearch.sh"), FASTA]
         subprocess.check_call(cmd)
+        
 
 
         tblout_pfam = FASTA + ".domtblout"
@@ -828,13 +873,13 @@ def prodigal(sequence, seqin, penalty_value):
             feature_table_genes.append(i[1])
 
 
-        print ("build_genehit_vector...")
+        #print ("build_genehit_vector...")
         k = build_genehit_vector(feature_table_genes)
-
+        #print("k %s" % (k))
 
 
         if os.path.exists(FASTA + ".gene.faa"):  os.remove(FASTA + ".gene.faa")
-        if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".gene.fasta")
+        if os.path.exists(FASTA + ".gene.fasta"):  os.remove(FASTA + ".gene.fasta")
         if os.path.exists(FASTA + ".prodigal.out"):  os.remove(FASTA + ".prodigal.out")
         if os.path.exists(FASTA + ".domtblout"):  os.remove(FASTA + ".domtblout")
         if os.path.exists(FASTA + ".feature_table.txt"):  os.remove(FASTA + ".feature_table.txt")
@@ -851,29 +896,37 @@ sketch.sh in=x.faa out=x.sketch amino persequence
 Then to compare, run:
 comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
-def run_chromsketch(sequence, seqin, penalty_value):
-        FASTA = seqin
-        cmd = [os.path.join(srcdir, "run_chromsketch.sh"), FASTA]
+def run_chromsketch(sequence, seq_filename, penalty_value):
+        FASTA = seq_filename
+        SEQ = ">" + FASTA + "\n" + sequence
+
+        #print("FASTA %s SEQ %s" % (FASTA, SEQ))
+
+        cmd = [ os.path.join(srcdir, "run_chromsketch.sh"), FASTA]
+        proc1 = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        kill = lambda process: process.kill()
+        my_timer = Timer(50, kill, [proc1])
+        try:
+                    my_timer.start()
+                    #read sequence from stdin. https://stackoverflow.com/questions/8475290/how-do-i-write-to-a-python-subprocess-stdin
+                    #changed this so the subprocess takes its stdin input from the sequence
+                    std_out, std_err = proc1.communicate(input=SEQ.encode('utf-8'))
+        finally:
+              my_timer.cancel()
+
+
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print("CHROMFINDER cmd: " + str(cmd))
         #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
         #subprocess.check_call(cmd)
-        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        kill = lambda process: process.kill()
-        my_timer = Timer(50, kill, [proc1])
-        try:
-            my_timer.start()
-            std_out, std_err = proc1.communicate()
-        finally:
-            my_timer.cancel()
 
         #std_out, std_err = proc1.communicate()
         print("CHROMFINDER std_out: " + str(std_out))
         #std_out = subprocess.check_output(cmd)
+        std_out_str = std_out.decode('utf-8') # Added by daniel here
 
         results=1
-        if std_out.find("No hits") >= 0:
+        if std_out_str.find("No hits") >= 0:
             results=0
 
         #proc1.kill()
@@ -891,29 +944,37 @@ sketch.sh in=x.faa out=x.sketch amino persequence
 Then to compare, run:
 comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
-def run_plassketch(sequence, seqin, penalty_value):
-        FASTA = seqin
+def run_plassketch(sequence, seq_filename, penalty_value):
+        FASTA = seq_filename
+        SEQ = ">" + FASTA + "\n" + sequence
+
+        #print("FASTA %s SEQ %s" % (FASTA, SEQ))
+
         cmd = [ os.path.join(srcdir, "run_plassketch.sh"), FASTA]
+        proc1 = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        kill = lambda process: process.kill()
+        my_timer = Timer(50, kill, [proc1])
+        try:
+                    my_timer.start()
+                    #read sequence from stdin. https://stackoverflow.com/questions/8475290/how-do-i-write-to-a-python-subprocess-stdin
+                    #changed this so the subprocess takes its stdin input from the sequence
+                    std_out, std_err = proc1.communicate(input=SEQ.encode('utf-8'))
+        finally:
+              my_timer.cancel()
+
         ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
         print("PLASMIDFINDER cmd: " + str(cmd))
         #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
         #subprocess.check_call(cmd)
-        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        kill = lambda process: process.kill()
-        my_timer = Timer(50, kill, [proc1])
-        try:
-            my_timer.start()
-            std_out, std_err = proc1.communicate()
-        finally:
-            my_timer.cancel()
 
         #std_out, std_err = proc1.communicate()
         print("PLASMIDFINDER std_out: " + str(std_out))
         #std_out = subprocess.check_output(cmd)
 
         results=1
-        if std_out.find("No hits") >= 0:
+        std_out_str = std_out.decode('utf-8') # Added by daniel here
+        
+        if std_out_str.find("No hits") >= 0:
             results=0
 
         #proc1.kill()
@@ -930,29 +991,35 @@ sketch.sh in=x.fasta out=x.sketch persequence
 Then to compare, run:
 comparesketch.sh in=contigs.fa ref=x.sketch persequence
 '''
-def run_plasORIsketch(sequence, seqin, penalty_value):
-        FASTA = seqin
-        cmd = [ os.path.join(srcdir, "run_plasORIsketch.sh"), FASTA]
-        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
-        print("PLASMIDORIFINDER cmd: " + str(cmd))
-        #note because of the necessity to ensure there are no zombie processes left behind, I did not use RQC's runCommand.
-        #subprocess.check_call(cmd)
-        proc1 = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def run_plasORIsketch(sequence, seq_filename, penalty_value):
+        FASTA = seq_filename
+        SEQ = ">" + FASTA + "\n" + sequence
 
+        #print("FASTA %s SEQ %s" % (FASTA, SEQ))
+
+        cmd = [ os.path.join(srcdir, "run_plasORIsketch.sh"), FASTA]
+        proc1 = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         kill = lambda process: process.kill()
         my_timer = Timer(50, kill, [proc1])
         try:
-            my_timer.start()
-            std_out, std_err = proc1.communicate()
+                    my_timer.start()
+                    #read sequence from stdin. https://stackoverflow.com/questions/8475290/how-do-i-write-to-a-python-subprocess-stdin
+                    #changed this so the subprocess takes its stdin input from the sequence
+                    std_out, std_err = proc1.communicate(input=SEQ.encode('utf-8'))
         finally:
-            my_timer.cancel()
+              my_timer.cancel()
+
+
+        ####"shifter", "--image=bryce911/bbtools",  "comparesketch.sh", "-Xmx100M",  "in="+FASTA , "translate",  "ref=/global/projectb/sandbox/rqc/andreopo/src/bitbucket/jgi-ml_clean/classifier/dl/asafl_plasmidPred/protein_all.faa.sketch", "persequence"]
+        print("PLASMIDORIFINDER cmd: " + str(cmd))
+        #subprocess.check_call(cmd)
 
         #std_out, std_err = proc1.communicate()
         print("PLASMIDORIFINDER std_out: " + str(std_out))
         #std_out = subprocess.check_output(cmd)
-
+        std_out_str = std_out.decode('utf-8')  # Added by daniel here
         results=1
-        if std_out.find("No hits") >= 0:
+        if std_out_str.find("No hits") >= 0:
             results=0
 
         #proc1.kill()
@@ -1001,23 +1068,26 @@ def get_table_from_tblout(tblout_pfam):
 
 
 def build_genehit_vector(input_list):
+    #print("input_list %s" %(input_list))
     tr=os.path.dirname(os.path.abspath(__file__)) + "/pfams_discr.txt"
     hmm_dict = []
     with open(tr, 'r') as infile:
         table=infile.readlines()
-        hmm_dict = map(hash, [i.strip() for i in table])
+        hmm_dict = [i.strip() for i in table]
 
     # Calculate probabilities for each element of input list
     out_list = [0]*1538
     gene_list = []
     count = 0
     if len(input_list) > 0:
-        gene_list = map(hash, input_list[0].split())
+        gene_list = input_list[0].split()
+    #print("gene_list %s" %(gene_list))
     for i in hmm_dict:
         if i in gene_list:
+            #print(i + " found")
             out_list[count] = 1
         count += 1
-
+    #print("out_list %s" %(out_list))
     return out_list
 
 
@@ -1041,7 +1111,7 @@ def create_timestamp():
     return strftime("%m%d%Y-%H%M%S")
 
 
-def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run_blast = None):
+def process_seq(seq_filename, sequence, header, penalty_value, output_path, id_run, run_blast = None):
                     #if DEBUG == 1:
                     #    print "\n\n_____________________________________\n  -------> Computing features for fasta header : " + header + "\n"
                     
@@ -1052,7 +1122,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
 
                     holder_bad_gc = []
                     startpointingtime = time()
-                    gc_content = oneComputeGCtotal(sequence);
+                    gc_content = oneComputeGCtotal(sequence); #--
                     runtime = str(time() - startpointingtime)
                     #print "RUNTIME oneComputeGCtotal: " + runtime
                     #if DEBUG == 1:
@@ -1099,7 +1169,7 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     max_occur_octamer, max_occur_same_octamer, percent_occur_same_octamer, \
                     max_occur_ninemer, max_occur_same_ninemer, percent_occur_same_ninemer, \
                     max_occur_dekamer, max_occur_same_dekamer, percent_occur_same_dekamer = (len(sequence), '-', 0, 0, '-', 0, 0, '-', 0, 0, '-', '-', 0, 0, '-', 0, 0, '-', 0, 0, '-', 0, 0, '-', 0, 0, '-', 0, 0)
-                    len_sequence, max_occur_pentamer, max_occur_pentamer_1hot, max_occur_same_pentamer, percent_occur_same_pentamer, penalty_value = fivesixFindPentamer(sequence, seqin, penalty_value)
+                    len_sequence, max_occur_pentamer, max_occur_pentamer_1hot, max_occur_same_pentamer, percent_occur_same_pentamer, penalty_value = fivesixFindPentamer(sequence, seq_filename, penalty_value)
                     runtime = str(time() - startpointingtime)
                     #print "RUNTIME fivesixFindMers: " + runtime
                     #if DEBUG == 1:
@@ -1111,8 +1181,11 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     genecount = 0
                     aalenavg = 0
                     pfam_vector = []
+                    #print("HELLLLLLLLOOO Reached prodigal if statement")
+                    #print(Constants.USE_PRODIGAL)
                     if Constants.USE_PRODIGAL:
-                       genesperMB, genecount, aalenavg, pfam_vector = prodigal(sequence, seqin, penalty_value);
+                       print("Running Prodigal")
+                       genesperMB, genecount, aalenavg, pfam_vector = prodigal(sequence, seq_filename, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME cogs: " + runtime
                     #if DEBUG == 1:
@@ -1124,9 +1197,9 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
                     plasORIsketch = 0
                     chromsketch = 0
                     if Constants.USE_PROT_SKETCH:
-                       plassketch = run_plassketch(sequence, seqin, penalty_value);
-                       plasORIsketch = run_plasORIsketch(sequence, seqin, penalty_value);
-                       chromsketch = run_chromsketch(sequence, seqin, penalty_value);
+                       plassketch = run_plassketch(sequence, seq_filename, penalty_value);
+                       plasORIsketch = run_plasORIsketch(sequence, seq_filename, penalty_value);
+                       chromsketch = run_chromsketch(sequence, seq_filename, penalty_value);
                     runtime = str(time() - startpointingtime)
                     ###print "RUNTIME cogs: " + runtime
                     #if DEBUG == 1:
@@ -1168,9 +1241,9 @@ def process_seq(seqin, sequence, header, penalty_value, output_path, id_run, run
 
 
 def multiproc_pool(pipeline):
-        #print "remoteCommand: " + pipeline.getCommand();
+        # print "remoteCommand: " + pipeline.getCommand();
         try:
-                #print("Starting: " + pipeline.getCommand() + " ...with args: " + pipeline.params[0] + "  " +  pipeline.paramvalues[0] + "  " +  pipeline.params[1] + "  " +  pipeline.paramvalues[1] + "  " +  pipeline.params[2] + "  " +  pipeline.paramvalues[2] + "  " +  pipeline.params[3] + "  " +  pipeline.paramvalues[3] )
+                print("Starting: " + pipeline.getCommand() + " ...with args: " + pipeline.params[0] + "  " +  pipeline.paramvalues[0] + "  " +  pipeline.params[1] + "  " +  pipeline.paramvalues[1] + "  " +  pipeline.params[2] + "  " +  pipeline.paramvalues[2] ) ####+ "  " +  pipeline.params[3] + "  " +  pipeline.paramvalues[3] )
                 #TODO append all params to cmd
                 cmd = [ pipeline.getCommand() ] ###, pipeline.params[0] , pipeline.paramvalues[0] , pipeline.params[1] , pipeline.paramvalues[1] , pipeline.params[2] , pipeline.paramvalues[2] , pipeline.params[3] , pipeline.paramvalues[3] ]
                 for i in range(0, len(pipeline.params)):
@@ -1184,6 +1257,7 @@ def multiproc_pool(pipeline):
                 try:
                     my_timer.start()
                     #read sequence from stdin. https://stackoverflow.com/questions/8475290/how-do-i-write-to-a-python-subprocess-stdin
+                    #changed this so the subprocess takes its stdin input from the sequence
                     std_out, std_err = proc1.communicate(input=pipeline.sequence.encode('utf-8'))
                 finally:
                     my_timer.cancel()
@@ -1229,14 +1303,15 @@ if __name__ == "__main__":
     ###id_run = None
     id_run = "DATETIME" + datetime
 
-    #input-path and output-path are the only parameters used in the top call
-    #in the child call, output-path header and seqin (a non-existent filename with the seqnumber) are specified and the sequence itself is passed through stdin
+    #input-path and output-path are the only parameters used in the top call.
+    #you can also call by specifying -he for header, and -s is a nonexistent filename since the sequence is passed through stdin
+    #in the child call, output-path header and seq_filename (a non-existent filename with the seqnumber) are specified and the sequence itself is passed through stdin
     desc = 'fasta_features'
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("-i", "--input-path", dest="input_path", help = "Input path to write to", required=False)
     parser.add_argument("-o", "--output-path", dest="output_path", help = "Output path to write to", required=False)
     parser.add_argument("-he", "--header", dest="header", help = "The header to use", required=False)
-    parser.add_argument("-s", "--seqin", dest="seqin", help = "The sequence to use", required=False)
+    parser.add_argument("-s", "--seq_filename", dest="seq_filename", help = "The sequence to use", required=False)
     
     options = parser.parse_args()
 
@@ -1249,7 +1324,7 @@ if __name__ == "__main__":
     run_blast = None
     header = "none"
     sequence = ""
-
+    
 
     ###Output directory
     if options.output_path:
@@ -1262,32 +1337,32 @@ if __name__ == "__main__":
         header = options.header
 
     #we are processing either the fasta with all sequences (-i) or a single sequence (-s and -he)
-    if options.seqin and options.input_path:
-        print("Please specify either seqin(-s) or input-path(-i) but not both")
+    if options.seq_filename and options.input_path:
+        print("Please specify either seq_filename(-s) or input-path(-i) but not both")
         exit(2)
     
-    if options.seqin and not options.header:
-        print("If using seqin(-s) you may want to specify a header(-he)")
+    if options.seq_filename and not options.header:
+        print("If using seq_filename(-s) you should specify a header(-he)")
         
-    ###Assume we are not passing a valid seqfilein to get rid of filesystem. Instead read sequence from stdin via a pipe.
-    if options.seqin:
+    ###Assume we read sequence from stdin via a pipe if there is no input_path to get rid of filesystem. In this case we are passing a seq_filename where to store the seq passed in via pipe on /dev/shm later.
+    if not options.input_path and options.seq_filename:
         '''
-        if not os.path.exists(options.seqin):
-            print("The dataset path does not exist: " + options.seqin)
+        if not os.path.exists(options.seq_filename):
+            print("The dataset path does not exist: " + options.seq_filename)
             exit(2)
-        if not os.path.isfile(options.seqin):
-            print("The dataset file does not exist, is missing or is not readable: " + options.seqin)
+        if not os.path.isfile(options.seq_filename):
+            print("The dataset file does not exist, is missing or is not readable: " + options.seq_filename)
             exit(2)
-        seqfilein = open(options.seqin, 'r')
+        seqfilein = open(options.seq_filename, 'r')
         '''
-        for line in stdin: ###seqfilein: ###fileinput.input( [ options.seqin ] ): ###READS####READS: ###:
+        for line in stdin: ###seqfilein: ###fileinput.input( [ options.seq_filename ] ): ###READS####READS: ###:
             ###line = CONTIGS.readline()
-            ####sequence = options.seqin
+            ####sequence = options.seq_filename
             if not line.startswith(">"):
                 sequence += line.strip()
-        ###Remove file options.seqin
+        ###Remove file options.seq_filename
         #seqfilein.close()
-
+    
     ###Do not allow the output path to have "homes" in it.
     if output_path.find("homes") > -1:
         print("The output path can not be under homes. The output_path given: " + output_path)
@@ -1344,11 +1419,11 @@ if __name__ == "__main__":
     # result_queue : a queue to pass to workers to store the results
     result_queue = multiprocessing.Queue()
     #work_queue is not used, the jobs_to_run list is used instead.
-    work_queue = multiprocessing.Queue()
+    #work_queue = multiprocessing.Queue()
 
     #while True:
     if len(input_path) > 0:
-        for line in fileinput.input( files = ( input_path ) , encoding="utf-8"): ###READS####READS: ###:
+        for line in fileinput.input( files = ( input_path ) ): #, encoding="utf-8"): ###READS####READS: ###:
             ###line = CONTIGS.readline()
             line = line.strip()
 
@@ -1367,7 +1442,7 @@ if __name__ == "__main__":
                     #else:
                     ###rqc_command_dir = os.getcwd() ###os.path.join(os.path.abspath(os.pardir) , "categorical" ) ###current_dir
                     pars = ['-o', '-he', '-s']
-                    seq_filename = os.path.join(output_path, str(seq_count) + '.fa')
+                    seq_filename = str(seq_count) + '.fa' ###os.path.join(output_path, str(seq_count) + '.fa')
                     '''
                     seq_file = open(seq_filename, 'w')
                     seq_file.write(header + "\n")
@@ -1377,10 +1452,10 @@ if __name__ == "__main__":
                     seq_file.close()
                     '''
                     seq_count += 1
-                    paramvals = [ str(output_path), str(header).replace(">",""), str(seq_filename) ]
+                    paramvals = [ str(output_path), str(header).replace(">","").strip(), str(seq_filename) ]
                     rqc_command = os.path.realpath(__file__)  ###os.path.join(os.path.dirname(__file__), "read_fastaB.py") ###os.path.realpath(__file__)  ###os.path.join(rqc_command_dir , 'read_fasta.py')
                     p = JGI_Pipeline(rqc_command, pars, paramvals, sequence, header)
-                    work_queue.put(p)
+                    #work_queue.put(p)
                     jobs_to_run.append(p)
                     num_jobs += 1
                     if num_jobs % 100 == 0:
@@ -1398,7 +1473,7 @@ if __name__ == "__main__":
                 sequence += line
         ###rqc_command_dir = os.getcwd() ###os.path.join(os.path.abspath(os.pardir) , "categorical" ) ###current_dir
         pars = ['-o', '-he', '-s']
-        seq_filename = os.path.join(output_path, str(seq_count) + '.fa')
+        seq_filename = str(seq_count) + '.fa' ###os.path.join(output_path, str(seq_count) + '.fa')
         '''
         seq_file = open(seq_filename, 'w')
         seq_file.write(header + "\n")
@@ -1408,10 +1483,10 @@ if __name__ == "__main__":
         seq_file.close()
         '''
         seq_count += 1
-        paramvals = [ str(output_path), str(header).replace(">",""), str(seq_filename) ]
+        paramvals = [ str(output_path), str(header).replace(">","").strip(), str(seq_filename) ]
         rqc_command = os.path.realpath(__file__)  ###os.path.join(os.path.dirname(__file__), "read_fastaB.py") ###os.path.realpath(__file__)  ###os.path.join(rqc_command_dir , 'read_fasta.py')
         p = JGI_Pipeline(rqc_command, pars, paramvals, sequence, header)
-        work_queue.put(p)
+        #work_queue.put(p)
         jobs_to_run.append(p)
         num_jobs += 1
         if num_jobs % 100 == 0:
@@ -1420,9 +1495,9 @@ if __name__ == "__main__":
     else:
         ###if DEBUG == 1: print "\n\nSEQUENCE %s\n\n" % sequence
         ###if len(input_path) <1:
-        ###print "penalty_value = process_seq(options.seqin %s, sequence %s, header %s, penalty_value %s, output_path %s, id_run %s, run_blast %s)" % (options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
-        penalty_value = process_seq(options.seqin, sequence, header, penalty_value, output_path, id_run, run_blast)
-        if os.path.exists(options.seqin):  os.remove(options.seqin)
+        ###print "penalty_value = process_seq(options.seq_filename %s, sequence %s, header %s, penalty_value %s, output_path %s, id_run %s, run_blast %s)" % (options.seq_filename, sequence, header, penalty_value, output_path, id_run, run_blast)
+        penalty_value = process_seq(options.seq_filename, sequence, header, penalty_value, output_path, id_run, run_blast)
+        if os.path.exists(options.seq_filename):  os.remove(options.seq_filename)
 
     #
     #

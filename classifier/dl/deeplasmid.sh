@@ -43,7 +43,7 @@ echo "Using $DATETIME for outdir suffix"
 PARENT=`dirname $0`
 
 
-python2.7 $PARENT/read_fasta2_plasmids.py  -i $FASTA -o $OUT/dlFeatures.$DATETIME
+python3 $PARENT/compute_features_seqspipe_parallel.py  -i $FASTA -o $OUT/dlFeatures.$DATETIME
 
 if [ $? -ne 0 ];
 then echo "read_fasta2_plasmids.py failed"
