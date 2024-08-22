@@ -2,10 +2,10 @@
 
 ## README file
 ### Codebase: deeplasmid docker branch
-### August 12, 2024
+### August 22, 2024
 ### Maintainer: Bill Andreopoulos, wandreopoulos@lbl.gov
 
-#### <sub>August 2024 update: The data communication with sub-processes was changed to use pipes instead of files. The subprocesses use /dev/shm for file storage when calling hmmer, prodigal, bbtools/sketch, which is a ram-based file system. Profiling to evaluate performance improvements is in progress, done by student Daniel Bao. I re-built a new docker image (with Dockerfile.GPU3) named billandreo/deeplasmid.tf.gpu3 and pushed to dockerhub. </sub>
+#### <sub>August 2024 update: The data communication with sub-processes was changed to use pipes instead of files. The subprocesses use /dev/shm for file storage when calling hmmer, prodigal, bbtools/sketch, which is a ram-based file system. Profiling to evaluate performance improvements is in progress, done by student Daniel Bao. I re-built a new docker image (with Dockerfile.GPU3) named billandreo/deeplasmid.tf.gpu3 and pushed it to dockerhub, so billandreo/deeplasmid.tf.gpu3 is the latest one you should pull. </sub>
 
 
 Deeplasmid is a machine learning tool that separates plasmids from chromosomal sequences. It can identify plasmids accurately and efficiently in microbial isolate assemblies. The input sequences are in the form of contigs and could have been produced from any sequencing technology or assembly algorithm. The deep learning model was trained on a corpus of:

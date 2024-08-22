@@ -14,9 +14,9 @@ FASTA=$1
 #mkfifo run_pentamer.sh.$FASTA
 #echo ">$FASTA" > $FASTA.run_pentamer.sh
 #echo "$SEQ" >> $FASTA.run_pentamer.sh &
-cat /dev/stdin >  /dev/shm/$FASTA
+cat /dev/stdin >  $FASTA
 
-./bbmap/commonkmers.sh  -Xmx1000m -threads=1  in=/dev/shm/$FASTA  out=stdout  k=5  display=3  count  
+./bbmap/commonkmers.sh  -Xmx1000m -threads=1  in=$FASTA  out=stdout  k=5  display=3  count  
 
 #rm -f run_pentamer.sh.$FASTA
 #& ID=$! ; fg

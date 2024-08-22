@@ -19,9 +19,10 @@ FASTA=$1
 #echo "$SEQ" >> $FASTA.run_chromsketch.sh &
 #cp /dev/stdin run_chromsketch.sh.$FASTA
 
-./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=/dev/shm/$FASTA translate ref=./asafl_plasmidPred/chrProt.faa.sketch persequence   
+./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=$FASTA translate ref=./asafl_plasmidPred/chrProt.faa.sketch persequence   
 
 #rm -f run_chromsketch.sh.$FASTA
+rm -f $FASTA
 #& ID=$! ; fg
 
 pkill -P $$

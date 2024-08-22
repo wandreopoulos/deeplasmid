@@ -721,8 +721,9 @@ This used to be computed with khmer (see an older commit)
   max_occur_pentamer_1hot : 1hot encoding of most freq 5mer
 '''
 def fivesixFindPentamer(sequence, seq_filename, penalty_value):
-    FASTA = seq_filename
-    SEQ = ">" + FASTA + "\n" + sequence
+    SEQ = ">" + seq_filename + "\n" + sequence
+    FASTA = "/dev/shm/" + seq_filename
+
     max_occur_pentamer = ""
     max_occur_same_pentamer = 0
     pos_occur_same_pentamer = 0
@@ -789,8 +790,8 @@ Note use of COGs should improve accuracy of ML a lot.
 def prodigal(sequence, seq_filename, penalty_value):
         ###Run taxa finder
         ###for filename in glob.glob( BINS_src_files ):
-        FASTA = seq_filename
-        SEQ = ">" + FASTA + "\n" + sequence
+        SEQ = ">" + seq_filename + "\n" + sequence
+        FASTA = "/dev/shm/" + seq_filename
 
         #print("FASTA %s SEQ %s" % (FASTA, SEQ))
 
@@ -897,8 +898,8 @@ Then to compare, run:
 comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
 def run_chromsketch(sequence, seq_filename, penalty_value):
-        FASTA = seq_filename
-        SEQ = ">" + FASTA + "\n" + sequence
+        SEQ = ">" + seq_filename + "\n" + sequence
+        FASTA = "/dev/shm/" + seq_filename
 
         #print("FASTA %s SEQ %s" % (FASTA, SEQ))
 
@@ -945,8 +946,8 @@ Then to compare, run:
 comparesketch.sh in=contigs.fa translate ref=x.sketch persequence
 '''
 def run_plassketch(sequence, seq_filename, penalty_value):
-        FASTA = seq_filename
-        SEQ = ">" + FASTA + "\n" + sequence
+        SEQ = ">" + seq_filename + "\n" + sequence
+        FASTA = "/dev/shm/" + seq_filename
 
         #print("FASTA %s SEQ %s" % (FASTA, SEQ))
 
@@ -992,8 +993,8 @@ Then to compare, run:
 comparesketch.sh in=contigs.fa ref=x.sketch persequence
 '''
 def run_plasORIsketch(sequence, seq_filename, penalty_value):
-        FASTA = seq_filename
-        SEQ = ">" + FASTA + "\n" + sequence
+        SEQ = ">" + seq_filename + "\n" + sequence
+        FASTA = "/dev/shm/" + seq_filename
 
         #print("FASTA %s SEQ %s" % (FASTA, SEQ))
 

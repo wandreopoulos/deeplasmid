@@ -18,7 +18,7 @@ FASTA=$1
 #cp /dev/stdin run_prodigal.sh.$FASTA
 
 
-./Prodigal/prodigal  -a  $FASTA.gene.faa  -d  $FASTA.gene.fasta  -i  /dev/shm/$FASTA  -o  $FASTA.prodigal.out  -p meta   
+./Prodigal/prodigal  -a  $FASTA.gene.faa  -d  $FASTA.gene.fasta  -i  $FASTA  -o  $FASTA.prodigal.out  -p meta   
 
 #rm -f run_prodigal.sh.$FASTA
 

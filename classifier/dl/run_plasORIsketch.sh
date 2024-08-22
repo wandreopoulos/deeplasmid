@@ -19,7 +19,7 @@ FASTA=$1
 #echo "$SEQ" >> $FASTA.run_plasORIsketch.sh &
 #cp /dev/stdin run_plasORIsketch.sh.$FASTA
 
-./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=/dev/shm/$FASTA  ref=./asafl_plasmidPred/plasmid_originOfReplication.nr.fasta.sketch persequence   
+./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=$FASTA  ref=./asafl_plasmidPred/plasmid_originOfReplication.nr.fasta.sketch persequence   
 
 #rm -f run_plasORIsketch.sh.$FASTA
 #& ID=$! ; fg

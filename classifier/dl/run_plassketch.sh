@@ -19,7 +19,7 @@ FASTA=$1
 #echo "$SEQ" >> $FASTA.run_plassketch.sh &
 #cp /dev/stdin run_plassketch.sh.$FASTA
 
-./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=/dev/shm/$FASTA translate ref=./asafl_plasmidPred/plasmidProt.faa.sketch persequence   
+./bbmap/comparesketch.sh   -Xmx1000m -threads=1  in=$FASTA translate ref=./asafl_plasmidPred/plasmidProt.faa.sketch persequence   
 
 #rm -f run_plassketch.sh.$FASTA
 #& ID=$! ; fg
