@@ -85,11 +85,11 @@ du -ks /var/* | sort -nr | more
 docker system prune -a -f
 ```
 
-Please see the Supplementary Information from the publication for things to consider if re-building the Docker image.
-These need to be available under the top build directory (they will be copied in the Docker container):
+These are some things to consider if re-building the Docker image (also described in the Supplementary Information from the publication). These need to be available under the top build directory (they will be copied in the Docker container):
 - Prodigal, use git clone https://github.com/hyattpd/Prodigal.git 
 - hmmer (v3.3.2 was used initially) 
 - bbtools/sketch (BBMap_38.73.tar.gz was used initially) 
+
 The models, sketch and pfam files can be downloaded from https://portal.nersc.gov/dna/microbial/assembly/deeplasmid/ :
 - the model .h5 files from training should be under Plasmid_Models/plasmid4z-newfeat12-?? subdirs. These can be downloaded quickly from nersc with wget
 - several sketch files should be under the asafl_plasmidPred subdirectory
