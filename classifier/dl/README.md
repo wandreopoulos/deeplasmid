@@ -56,7 +56,7 @@ docker pull billandreo/deeplasmid.tf.gpu3
 Run deeplasmid for plasmid identification on GPU as follows (note you may need to run docker with sudo on your system):
 
 ```
-~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it       -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid.tf.gpu3   deeplasmid.sh  in.fasta outdir
+~/Downloads/deeplasmid/classifier/dl$ sudo /usr/bin/docker run -it  --gpus all   -v `pwd`/testing/649989979/649989979.fna:/srv/jgi-ml/classifier/dl/in.fasta  -v  `pwd`/testing/649989979/649989979.fna.OUT:/srv/jgi-ml/classifier/dl/outdir   billandreo/deeplasmid.tf.gpu3   deeplasmid.sh  in.fasta outdir
 ```
 
 GPU result:
